@@ -1,14 +1,22 @@
 # Delivery Workflow
 
 ## Current Delivery Model
-- Repository currently contains static prototype screens and planning artifacts.
-- No formal build pipeline, test runner, or deployment config is defined in repo.
+- Repository now includes a Next.js application scaffold plus legacy static prototype screens.
+- Build pipeline exists for Next.js app runtime; automated test runner is still not configured.
 
 ## Build and Test Commands
 
 ### Current (Observed)
-- Build command: `TBD` (no package/build system configured).
+- Build command: `npm run build`.
 - Automated test command: `TBD` (no test framework configured).
+
+### Next.js Runtime (Primary for migrated screens)
+- Install dependencies: `npm install`
+- Start dev server: `npm run dev`
+- Open: `http://localhost:3000/`
+- Migrated routes:
+  - `/` (React Screen 1)
+  - `/screen2-world-map-topic-selection` (temporary React shell)
 
 ### Practical Local Preview (Manual)
 - `python3 -m http.server 5173`
@@ -58,7 +66,7 @@ Minimum quality bar:
 
 ## Release Flow (Current)
 1. Update planning + docs context for changed behavior.
-2. Run manual browser smoke tests.
+2. Run Next.js build (`npm run build`) and manual browser smoke tests.
 3. Resolve all blocking checklist items.
 4. Tag release notes manually (`TBD` tag strategy).
 5. Publish static files to chosen hosting target (`TBD` platform).

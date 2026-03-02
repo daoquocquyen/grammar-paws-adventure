@@ -1,7 +1,9 @@
 # Architecture
 
 ## System Overview
-Current repository state is a static, browser-only prototype with Stitch-derived HTML screens and embedded JavaScript.
+Repository now has a dual-runtime state:
+- Legacy static prototype with Stitch-derived HTML screens and embedded JavaScript.
+- New Next.js App Router scaffold for incremental React migration.
 
 ```mermaid
 flowchart LR
@@ -17,8 +19,10 @@ flowchart LR
 ```
 
 ## Runtime Components
-- UI layer: static HTML in `src/ui/stitch/`.
-- Styling: Tailwind via CDN + inline `tailwind.config`.
+- UI layer (legacy): static HTML in `src/ui/stitch/`.
+- UI layer (new): Next.js App Router pages in `app/`.
+- Styling (legacy): Tailwind via CDN + inline `tailwind.config`.
+- Styling (new): Tailwind CSS via PostCSS build pipeline.
 - State: localStorage keys:
   - `gpa_player_profile_v1`
   - `gpa_selected_topic_v1`
@@ -26,14 +30,17 @@ flowchart LR
   - `gpa_player_progress_v1` (planned)
   - `gpa_pet_accessories_v1` (planned)
 - Voice: browser `speechSynthesis` in topic intro screen.
-- Navigation: relative links and `window.location.href`.
+- Navigation (legacy): relative links and `window.location.href`.
+- Navigation (new): Next.js route navigation (`next/navigation`).
 
-## Tech Stack (Observed)
+## Tech Stack (Current)
 | Area | Current Choice | Version Status |
 |---|---|---|
-| Markup | HTML5 | No explicit version pin |
-| Styling | Tailwind CDN (`cdn.tailwindcss.com`) | CDN/latest, exact version TBD |
-| Script | Vanilla JavaScript in page `<script>` tags | No build/transpile step |
+| App Framework | Next.js (App Router) | `14.2.5` |
+| UI Runtime | React | `18.2.0` |
+| Markup | HTML5 + JSX | Active migration |
+| Styling | Tailwind CSS (build-time) + Tailwind CDN (legacy) | Build stack pinned; legacy CDN remains |
+| Script | React components + legacy Vanilla JavaScript | Mixed during migration |
 | Fonts | Google Fonts (`Spline Sans`) | CDN/latest, exact version TBD |
 | Icons | Material Symbols | CDN/latest, exact version TBD |
 | Storage | Browser `localStorage` | Browser-provided |
@@ -42,6 +49,8 @@ flowchart LR
 ## Key Architectural Decisions
 - Keep Stitch raw exports in `_bmad-output/implementation-artifacts/stich-export/`.
 - Keep working, editable copies in `src/ui/stitch/`.
+- Add Next.js scaffold at repo root (`app/`, `package.json`, Tailwind/PostCSS configs) for gradual migration.
+- Migrate Screen 1 behavior first into `app/page.js` while preserving legacy source for verification.
 - Use local-first persistence for MVP (no backend dependency yet).
 - Persist learner return state (name, selected pet, progress, accessories) and restore it on app entry to avoid repeated onboarding.
 - Keep gameplay rules defined in planning artifacts before engine wiring.
@@ -54,7 +63,7 @@ flowchart LR
 - Fallback behavior: missing/corrupt keys fail safe to first-time onboarding state without runtime crash.
 
 ## Constraints
-- No package manager manifest (`package.json`) and no formal build/test scripts.
+- Framework migration is in progress: legacy static pages and new React routes coexist.
 - No CI pipeline or workflow automation defined in repo.
 - External CDN dependency for style/fonts/icons and image assets.
 - Screen naming inconsistency exists:
@@ -71,8 +80,13 @@ flowchart LR
   - Evolution/dashboard
 - Domain entities and rules defined in functional requirements, pending code implementation.
 
+## Migration Status
+- ✅ Next.js app scaffold created (`package.json`, `app/layout.js`, `app/globals.css`, `app/page.js`).
+- ✅ Screen 1 onboarding ported to React route `/` with validation + pet selection behavior.
+- 🟡 Screen 2 has temporary route shell at `/screen2-world-map-topic-selection`; full behavior still legacy in `src/ui/stitch/screen2-world-map-topic-selection.html`.
+- 🟡 Screens 3-4 remain legacy static HTML and are pending migration.
+
 ## Architecture TBDs
-- Final app framework choice (React/Next/Vue/etc.) is TBD.
 - Data/service boundary for question bank source is TBD.
 - Production deployment topology is TBD.
 - Error telemetry and analytics instrumentation are TBD.
@@ -85,3 +99,6 @@ flowchart LR
 - `src/ui/stitch/screen2-world-map-topic-selection.html`
 - `src/ui/stitch/screen3-grammar-topic-intro.html`
 - `src/ui/stitch/screen4-game-challenge.html`
+- `app/layout.js`
+- `app/page.js`
+- `app/screen2-world-map-topic-selection/page.js`

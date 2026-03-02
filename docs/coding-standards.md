@@ -1,15 +1,17 @@
 # Coding Standards
 
 ## Scope
-Rules for implementing and extending this repo's current browser-first Stitch codebase.
+Rules for implementing and extending this repo during the Next.js migration period.
 
 ## Naming and File Conventions
 - Screen files: `screen{n}-kebab-case.html` in `src/ui/stitch/`.
+- Next.js routes: folder-based App Router paths in `app/` (e.g., `app/screen2-world-map-topic-selection/page.js`).
 - JS identifiers: `camelCase`.
 - Storage key constants: `*StorageKey` or `*Key` (constant string in one place).
 - IDs for important interactive elements must be explicit and unique.
 
 ## Folder Patterns
+- `app/`: Next.js App Router pages/layout and global styles.
 - `src/ui/stitch/`: working UI screen files.
 - `_bmad-output/planning-artifacts/`: planning source-of-truth.
 - `_bmad-output/implementation-artifacts/`: import/export handoff records.
@@ -32,6 +34,12 @@ Rules for implementing and extending this repo's current browser-first Stitch co
 - Prefer `addEventListener` over inline event handlers for behavior wiring.
 - Keep small named functions for responsibilities (`hydrateProfile`, `renderTopic`, `speakTopic` pattern).
 - Avoid hardcoded duplicated literals (route names, storage keys, thresholds).
+
+## React/Next Conventions
+- Use client components (`"use client"`) only when browser APIs/state/hooks are needed.
+- Keep route behavior in `app/**/page.js`; avoid mixing route logic into layout files.
+- Preserve existing UX copy and Tailwind tokens when porting from Stitch HTML to React.
+- During migration, maintain feature parity before refactoring structure.
 
 ## Clean-Code Rules
 - Business rules (pass threshold, question formula) must be centralized constants when implemented.

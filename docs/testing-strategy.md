@@ -1,8 +1,8 @@
 # Testing Strategy
 
 ## Current Baseline
-- No automated test framework is present in repository (`package.json`/test runner missing).
-- Current validation is manual browser flow verification on static screens.
+- No automated test framework is present yet (unit/integration/E2E still TBD).
+- Next.js scaffold is present; baseline validation includes `npm run build` plus manual browser flow checks.
 
 ## Test Levels and Scope
 
@@ -47,6 +47,10 @@ Focus on user outcomes:
   - score boundary: 79%, 80%, 100%
 
 ## Manual Regression Checklist (Current Required Gate)
+- [ ] `npm run build` passes for Next.js runtime.
+- [ ] React route `/` loads without console-breaking errors.
+- [ ] React Screen 1 validation blocks start when name or pet is missing.
+- [ ] React Screen 1 navigates to `/screen2-world-map-topic-selection` when valid.
 - [ ] All existing screen files load without console-breaking errors.
 - [ ] Screen 2 `Start Topic` stores selected topic and opens screen 3.
 - [ ] Screen 1 persists learner name + selected pet and survives hard refresh.

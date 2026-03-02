@@ -4,15 +4,16 @@
 1. Functional requirements: `_bmad-output/planning-artifacts/functional-requirements-mvp.md`
 2. PRD scope: `_bmad-output/planning-artifacts/prd-mvp-grammar-paws-adventure.md`
 3. Slice plan: `_bmad-output/planning-artifacts/implementation-slices-feature-and-screen-plan.md`
-4. Working UI files: `src/ui/stitch/*.html`
-5. Raw Stitch exports: `_bmad-output/implementation-artifacts/stich-export/*.html`
+4. Next.js runtime files: `app/**/*.js`
+5. Working legacy UI files: `src/ui/stitch/*.html`
+6. Raw Stitch exports: `_bmad-output/implementation-artifacts/stich-export/*.html`
 
 ## Implemented vs Planned
 | Feature ID | Feature | Status | Primary Files | Notes |
 |---|---|---|---|---|
-| F-00 | Home / Start Journey onboarding | Partial | `src/ui/stitch/screen1-home-start-journey.html` | UI present; profile hydrate exists; form submit/validation wiring incomplete. |
+| F-00 | Home / Start Journey onboarding | Partial-High | `app/page.js`, `src/ui/stitch/screen1-home-start-journey.html` | React route implemented at `/` with validation and pet selection; legacy HTML retained during migration. |
 | F-00A | Player state persistence + returning session restore | Planned | `src/ui/stitch/screen1-home-start-journey.html`, `src/ui/stitch/screen2-world-map-topic-selection.html`, `TBD` | Must persist and restore name, selected pet, topic progress, unlocked/equipped accessories from localStorage to avoid redo next day. |
-| F-01 | World Map / Topic Selection | Partial | `src/ui/stitch/screen2-world-map-topic-selection.html` | Topic select saves `"verbs"` and routes to screen 3. |
+| F-01 | World Map / Topic Selection | Partial | `app/screen2-world-map-topic-selection/page.js`, `src/ui/stitch/screen2-world-map-topic-selection.html` | Temporary React route exists; full behavior remains in legacy screen. |
 | F-02 | Grammar Topic Intro + voice controls | Partial-High | `src/ui/stitch/screen3-grammar-topic-intro.html` | Loading/error/content states + aspect render + mute/replay voice. |
 | F-03 | Challenge screen | Prototype | `src/ui/stitch/screen4-game-challenge.html` | Static UI example; challenge engine and scoring logic not wired. |
 | F-04 | Results + pass/fail feedback | Planned | `TBD` | Required by PRD/FR, screen file not present. |
@@ -30,6 +31,7 @@
 | `TBD` | `src/ui/stitch/screen4-game-challenge.html` | Working copy exists; naming differs from status convention |
 
 ## Known Mapping Gaps
+- Dual runtime currently exists (React routes + legacy Stitch HTML); source ownership per feature must remain explicit.
 - Naming mismatch:
   - Planned/status naming: `screen4-challenge-screen.html`
   - Existing file: `screen4-game-challenge.html`
@@ -38,6 +40,8 @@
 - No canonical storage schema file currently maps persisted profile/progress/accessory keys and version migration behavior.
 
 ## Next Mapping Maintenance Actions
+- [ ] Migrate Screen 2 behavior from `src/ui/stitch` into `app/screen2-world-map-topic-selection/page.js`.
+- [ ] Define migration sequence for screens 3-4 into Next.js routes.
 - [ ] Resolve screen 4 filename/link mismatch and update all references.
 - [ ] Update `stitch-import-status.md` for current screen inventory.
 - [ ] Define canonical localStorage schema for `name`, `selectedPet`, progress state, and accessory unlock/equip state (versioned key strategy).
@@ -53,3 +57,5 @@
 - `src/ui/stitch/screen2-world-map-topic-selection.html`
 - `src/ui/stitch/screen3-grammar-topic-intro.html`
 - `src/ui/stitch/screen4-game-challenge.html`
+- `app/page.js`
+- `app/screen2-world-map-topic-selection/page.js`
