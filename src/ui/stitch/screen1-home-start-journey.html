@@ -12,9 +12,6 @@
     <link
         href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap"
         rel="stylesheet" />
-    <link
-        href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap"
-        rel="stylesheet" />
     <script id="tailwind-config">
         tailwind.config = {
             darkMode: "class",
@@ -105,10 +102,14 @@
                                 <h3 class="text-lg font-bold">1. Who are you?</h3>
                             </div>
                             <div class="max-w-xs">
-                                <label class="block text-xs font-bold text-slate-500 mb-1">Enter Your Name</label>
-                                <input
+                                <label class="block text-xs font-bold text-slate-500 mb-1" for="playerNameInput">Enter
+                                    Your Name</label>
+                                <input id="playerNameInput" aria-describedby="nameValidationMessage"
                                     class="w-full h-10 px-3 rounded-lg border-2 border-slate-100 dark:border-slate-800 bg-slate-50 dark:bg-slate-800 focus:border-primary focus:ring-2 focus:ring-primary/10 transition-all outline-none text-sm font-bold"
                                     placeholder="Type name..." type="text" />
+                                <p id="nameValidationMessage" class="mt-2 text-xs font-semibold text-rose-600 hidden"
+                                    aria-live="polite">
+                                </p>
                             </div>
                         </div>
                         <!-- Pet Selection Grid -->
@@ -118,10 +119,10 @@
                                     class="material-symbols-outlined text-primary text-xl">diversity_1</span>
                                 <h3 class="text-lg font-bold">2. Choose your Companion</h3>
                             </div>
-                            <div class="grid grid-cols-3 gap-2">
+                            <div class="grid grid-cols-3 gap-2" id="petOptionsGrid">
                                 <!-- Pet Item 1 -->
-                                <button
-                                    class="group relative bg-slate-50 dark:bg-slate-800 rounded-xl border-2 border-transparent hover:border-primary hover:bg-primary/5 transition-all text-center focus:ring-4 focus:ring-primary/20 p-2 max-w-[120px] mx-auto">
+                                <button type="button" aria-pressed="false"
+                                    class="pet-option group relative bg-slate-50 dark:bg-slate-800 rounded-xl border-2 border-transparent hover:border-primary hover:bg-primary/5 transition-all text-center focus:ring-4 focus:ring-primary/20 p-2 max-w-[120px] mx-auto">
                                     <div
                                         class="aspect-square rounded-lg bg-white dark:bg-slate-700 flex items-center justify-center overflow-hidden shadow-inner mb-1">
                                         <img alt=""
@@ -132,8 +133,8 @@
                                     <span class="font-bold dark:text-slate-200 text-xs">Brave Puppy</span>
                                 </button>
                                 <!-- Pet Item 2 -->
-                                <button
-                                    class="group relative bg-slate-50 dark:bg-slate-800 rounded-xl border-2 border-primary bg-primary/5 transition-all text-center p-2 max-w-[120px] mx-auto">
+                                <button type="button" aria-pressed="false"
+                                    class="pet-option group relative bg-slate-50 dark:bg-slate-800 rounded-xl border-2 border-transparent hover:border-primary hover:bg-primary/5 transition-all text-center p-2 max-w-[120px] mx-auto">
                                     <div
                                         class="aspect-square rounded-lg bg-white dark:bg-slate-700 flex items-center justify-center overflow-hidden shadow-inner mb-1">
                                         <img alt=""
@@ -142,13 +143,10 @@
                                             src="https://lh3.googleusercontent.com/aida-public/AB6AXuB5E1yagRgTQDhzkkiH1Z2CFZOL6i2dCszN8wKwrkeSPODDca-qhj_TxgvSsIytjeJuqHg8am8KFJuSxK-BI6XbzHMivZnxQhdVeYrP5lIC1lXuVDSLE1HGOopsI461dIZPO-sSSlob8ku513pA2DVZqBZd8Gg6TFyeGWTq_hYRpHTEIUQGfkLhJ1bplVqJeWQ7Hr8zJI7jdFH-07PxPO9crdCPHRasfWFtdr2s13S4E2hJNaOslEXeEEhs0ooN4211MMcSFSsHHQuH" />
                                     </div>
                                     <span class="font-bold text-xs">Wise Kitten</span>
-                                    <div
-                                        class="absolute -top-2 -right-2 bg-primary text-white text-[10px] font-black px-2 py-1 rounded-full uppercase tracking-widest">
-                                        Selected</div>
                                 </button>
                                 <!-- Pet Item 3 -->
-                                <button
-                                    class="group relative bg-slate-50 dark:bg-slate-800 rounded-xl border-2 border-transparent hover:border-primary hover:bg-primary/5 transition-all text-center p-2 max-w-[120px] mx-auto">
+                                <button type="button" aria-pressed="false"
+                                    class="pet-option group relative bg-slate-50 dark:bg-slate-800 rounded-xl border-2 border-transparent hover:border-primary hover:bg-primary/5 transition-all text-center p-2 max-w-[120px] mx-auto">
                                     <div
                                         class="aspect-square rounded-lg bg-white dark:bg-slate-700 flex items-center justify-center overflow-hidden shadow-inner mb-1">
                                         <img alt=""
@@ -159,8 +157,8 @@
                                     <span class="font-bold dark:text-slate-200 text-xs">Swift Bunny</span>
                                 </button>
                                 <!-- Pet Item 4 -->
-                                <button
-                                    class="group relative bg-slate-50 dark:bg-slate-800 rounded-xl border-2 border-transparent hover:border-primary hover:bg-primary/5 transition-all text-center p-2 max-w-[120px] mx-auto">
+                                <button type="button" aria-pressed="false"
+                                    class="pet-option group relative bg-slate-50 dark:bg-slate-800 rounded-xl border-2 border-transparent hover:border-primary hover:bg-primary/5 transition-all text-center p-2 max-w-[120px] mx-auto">
                                     <div
                                         class="aspect-square rounded-lg bg-white dark:bg-slate-700 flex items-center justify-center overflow-hidden shadow-inner mb-1">
                                         <img alt=""
@@ -171,8 +169,8 @@
                                     <span class="font-bold dark:text-slate-200 text-xs">Happy Hamster</span>
                                 </button>
                                 <!-- Pet Item 5 -->
-                                <button
-                                    class="group relative bg-slate-50 dark:bg-slate-800 rounded-xl border-2 border-transparent hover:border-primary hover:bg-primary/5 transition-all text-center p-2 max-w-[120px] mx-auto">
+                                <button type="button" aria-pressed="false"
+                                    class="pet-option group relative bg-slate-50 dark:bg-slate-800 rounded-xl border-2 border-transparent hover:border-primary hover:bg-primary/5 transition-all text-center p-2 max-w-[120px] mx-auto">
                                     <div
                                         class="aspect-square rounded-lg bg-white dark:bg-slate-700 flex items-center justify-center overflow-hidden shadow-inner mb-1">
                                         <img alt=""
@@ -183,8 +181,8 @@
                                     <span class="font-bold dark:text-slate-200 text-xs">Steady Turtle</span>
                                 </button>
                                 <!-- Pet Item 6 -->
-                                <button
-                                    class="group relative bg-slate-50 dark:bg-slate-800 rounded-xl border-2 border-transparent hover:border-primary hover:bg-primary/5 transition-all text-center p-2 max-w-[120px] mx-auto">
+                                <button type="button" aria-pressed="false"
+                                    class="pet-option group relative bg-slate-50 dark:bg-slate-800 rounded-xl border-2 border-transparent hover:border-primary hover:bg-primary/5 transition-all text-center p-2 max-w-[120px] mx-auto">
                                     <div
                                         class="aspect-square rounded-lg bg-white dark:bg-slate-700 flex items-center justify-center overflow-hidden shadow-inner mb-1">
                                         <img alt=""
@@ -195,6 +193,8 @@
                                     <span class="font-bold dark:text-slate-200 text-xs">Magic Dragon</span>
                                 </button>
                             </div>
+                            <p id="petValidationMessage" class="mt-3 text-xs font-semibold text-rose-600 hidden"
+                                aria-live="polite"></p>
                         </div>
                     </div>
                     <!-- Right Column: Preview & CTA -->
@@ -207,7 +207,7 @@
                                     Friend</h3>
                                 <div
                                     class="w-40 h-40 rounded-full bg-primary/10 mb-3 flex items-center justify-center relative">
-                                    <img alt=""
+                                    <img id="previewPetImage" alt=""
                                         class="w-36 h-36 object-cover rounded-full shadow-lg border-2 border-white dark:border-slate-800"
                                         data-alt="Large preview of wise kitten"
                                         src="https://lh3.googleusercontent.com/aida-public/AB6AXuBxIEk80WhWypY2O6RflSgzygZol80zCMrqV-ZC7GZm2qWEMazmobmMc0z_71W4LQCJZL6AWaaSCbOtxj4aSb6zGMRIT-xZ2uP9h_F8rYeo0hf3RDecAwJZ2qwC1-ZRBW6xkfm-Q26RTQq0xgti8JcZcJACBs822F6VRR4xvilhhVQv1xkQVz8LaBZEs0nac4QoMegO03zPCHbO7Ej3eKGveugD7qz1mx2vGJvsueR0JfTmBvs2u36amVR6yBL7TM77qKkMb-qPT7BP" />
@@ -215,8 +215,13 @@
                                         class="absolute -bottom-2 bg-yellow-400 text-yellow-900 font-bold px-4 py-1 rounded-full shadow-md text-sm border-2 border-white">
                                         Level 1</div>
                                 </div>
-                                <h4 class="text-xl font-black text-slate-900 dark:text-white mb-1">Wise Kitten</h4>
-                                <p class="text-slate-500 text-xs leading-tight mb-4">"Meow! I'm ready to learn some
+                                <h4 id="previewPetName" class="text-xl font-black text-slate-900 dark:text-white mb-1">
+                                    Choose a companion</h4>
+                                <p id="previewPetQuote" class="text-slate-500 text-xs leading-tight mb-4">"Pick your pet
+                                    to begin this adventure together!"</p>
+                                <p class="sr-only" id="onboardingValidationMessage" aria-live="polite"></p>
+                                <p class="text-slate-500 text-xs leading-tight mb-4 hidden">"Meow! I'm ready to learn
+                                    some
                                     grammar rules with you, partner!"</p>
                                 <div class="w-full space-y-3">
                                     <div class="flex justify-between text-xs font-bold text-slate-400 uppercase">
@@ -246,7 +251,7 @@
                         </div>
                         <!-- Start Button Card -->
                         <div class="mt-auto">
-                            <button
+                            <button id="startAdventureButton" type="button"
                                 class="w-full px-8 py-2.5 bg-primary text-white rounded-full font-black text-sm shadow-lg shadow-primary/25">
                                 Start Adventure
                             </button>
@@ -266,12 +271,111 @@
     </div>
     <script>
         const screen1ProfileKey = "gpa_player_profile_v1";
+        const screen2Route = "./screen2-world-map-topic-selection.html";
+
         const headerPlayerName = document.getElementById("headerPlayerName");
         const headerPetName = document.getElementById("headerPetName");
         const headerPlayerAvatar = document.getElementById("headerPlayerAvatar");
 
-        const screen1ProfileRaw = localStorage.getItem(screen1ProfileKey);
-        if (screen1ProfileRaw) {
+        const playerNameInput = document.getElementById("playerNameInput");
+        const nameValidationMessage = document.getElementById("nameValidationMessage");
+        const petValidationMessage = document.getElementById("petValidationMessage");
+        const onboardingValidationMessage = document.getElementById("onboardingValidationMessage");
+        const previewPetName = document.getElementById("previewPetName");
+        const previewPetQuote = document.getElementById("previewPetQuote");
+        const previewPetImage = document.getElementById("previewPetImage");
+        const startAdventureButton = document.getElementById("startAdventureButton");
+        const petOptionButtons = Array.from(document.querySelectorAll(".pet-option"));
+
+        const petQuotes = {
+            "Brave Puppy": "Woof! I’ll cheer you on while you learn!",
+            "Wise Kitten": "Meow! Let’s solve grammar together!",
+            "Swift Bunny": "Hop hop! Quick thinking makes learning fun!",
+            "Happy Hamster": "Squeak! Tiny steps make big progress!",
+            "Steady Turtle": "Slow and steady, we’ll learn every rule!",
+            "Magic Dragon": "Roar! Let’s spark some grammar magic!"
+        };
+
+        let selectedPetButton = null;
+
+        const setHiddenState = (element, isHidden) => {
+            element.classList.toggle("hidden", isHidden);
+        };
+
+        const setNameValidation = (message) => {
+            const hasMessage = Boolean(message);
+            setHiddenState(nameValidationMessage, !hasMessage);
+            nameValidationMessage.textContent = message || "";
+            playerNameInput.classList.toggle("border-rose-400", hasMessage);
+            playerNameInput.setAttribute("aria-invalid", hasMessage ? "true" : "false");
+        };
+
+        const setPetValidation = (message) => {
+            const hasMessage = Boolean(message);
+            setHiddenState(petValidationMessage, !hasMessage);
+            petValidationMessage.textContent = message || "";
+        };
+
+        const updateLiveValidationMessage = (nameMessage, petMessage) => {
+            const parts = [nameMessage, petMessage].filter(Boolean);
+            onboardingValidationMessage.textContent = parts.join(" ");
+        };
+
+        const clearValidation = () => {
+            setNameValidation("");
+            setPetValidation("");
+            updateLiveValidationMessage("", "");
+        };
+
+        const updatePetSelectionStyles = () => {
+            petOptionButtons.forEach((button) => {
+                const isSelected = button === selectedPetButton;
+                button.setAttribute("aria-pressed", isSelected ? "true" : "false");
+                button.classList.toggle("border-primary", isSelected);
+                button.classList.toggle("bg-primary/5", isSelected);
+                button.classList.toggle("border-transparent", !isSelected);
+            });
+        };
+
+        const selectPet = (button) => {
+            selectedPetButton = button;
+            updatePetSelectionStyles();
+
+            const petName = button.querySelector("span")?.textContent?.trim() || "Choose a companion";
+            const petImage = button.querySelector("img")?.src || "";
+
+            previewPetName.textContent = petName;
+            previewPetQuote.textContent = `"${petQuotes[petName] || "Your companion is ready to learn with you!"}"`;
+            if (petImage) {
+                previewPetImage.src = petImage;
+            }
+
+            setPetValidation("");
+            updateLiveValidationMessage(nameValidationMessage.textContent, "");
+        };
+
+        const validateOnboarding = () => {
+            const enteredName = playerNameInput.value.trim();
+            const nameError = enteredName ? "" : "Please enter your name so your pet can cheer for you!";
+            const petError = selectedPetButton ? "" : "Please choose one companion before you start.";
+
+            setNameValidation(nameError);
+            setPetValidation(petError);
+            updateLiveValidationMessage(nameError, petError);
+
+            return {
+                isValid: !nameError && !petError,
+                nameError,
+                petError
+            };
+        };
+
+        const hydrateHeaderFromStoredProfile = () => {
+            const screen1ProfileRaw = localStorage.getItem(screen1ProfileKey);
+            if (!screen1ProfileRaw) {
+                return;
+            }
+
             try {
                 const profile = JSON.parse(screen1ProfileRaw);
                 if (profile.name) {
@@ -286,7 +390,49 @@
             } catch (error) {
                 console.error("Failed to parse player profile", error);
             }
-        }
+        };
+
+        petOptionButtons.forEach((button) => {
+            button.addEventListener("click", () => {
+                selectPet(button);
+            });
+        });
+
+        playerNameInput.addEventListener("input", () => {
+            if (playerNameInput.value.trim()) {
+                setNameValidation("");
+                updateLiveValidationMessage("", petValidationMessage.textContent);
+            }
+        });
+
+        const handleStartAdventure = () => {
+            const validation = validateOnboarding();
+            if (!validation.isValid) {
+                if (validation.nameError) {
+                    playerNameInput.focus();
+                    return;
+                }
+                if (validation.petError) {
+                    petOptionButtons[0]?.focus();
+                }
+                return;
+            }
+
+            clearValidation();
+            window.location.href = screen2Route;
+        };
+
+        startAdventureButton.addEventListener("click", handleStartAdventure);
+
+        playerNameInput.addEventListener("keydown", (event) => {
+            if (event.key === "Enter") {
+                event.preventDefault();
+                handleStartAdventure();
+            }
+        });
+
+        updatePetSelectionStyles();
+        hydrateHeaderFromStoredProfile();
     </script>
 </body>
 
