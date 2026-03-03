@@ -16,10 +16,11 @@ Planning artifacts were used only to identify intended behavior and mark gaps.
 - Background tokens:
   - Light: `#f5f7f8` (`background-light`)
   - Dark: `#101a22` (`background-dark`)
+- Shared app background (current Next.js runtime): light blue vertical gradient with playful decorative icons (clouds, stars, sparkles, pet/kid symbols) rendered globally behind screen content.
 - Supporting colors in components:
   - Success/positive: green shades on progress and feedback.
   - Error: rose/red shades (screen 3 error state).
-- High-level pattern: white card surfaces on soft gray background with bright blue CTA emphasis.
+- High-level pattern: white card surfaces floating above a soft kid-friendly blue background with bright blue CTA emphasis.
 
 ### Typography
 - Primary typeface: `Spline Sans` (Google Fonts).
@@ -31,6 +32,7 @@ Planning artifacts were used only to identify intended behavior and mark gaps.
 ### Iconography
 - Material Symbols used consistently for pets, status, voice, locks, progression arrows.
 - Icon + label pattern is used in many places, but not universally applied for buttons.
+- Decorative Material Symbols are also used as non-interactive background motifs to increase playful tone.
 
 ### Spacing and Layout
 - Max-width layout containers with wide desktop gutters (`md:px-20` patterns).

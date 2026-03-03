@@ -17,3 +17,106 @@
     -webkit-font-feature-settings: 'liga';
     -webkit-font-smoothing: antialiased;
 }
+
+.gpa-kid-bg {
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    z-index: 0;
+    background: linear-gradient(180deg, #dceeff 0%, #eaf5ff 55%, #f4f9ff 100%);
+}
+
+.gpa-kid-icon {
+    position: absolute;
+    color: #7bbcf1;
+    opacity: 0.5;
+    user-select: none;
+    filter: drop-shadow(0 1px 0 rgba(255, 255, 255, 0.95));
+}
+
+.gpa-kid-icon.material-symbols-outlined {
+    font-variation-settings: 'FILL' 0, 'wght' 700, 'GRAD' 0, 'opsz' 48;
+    -webkit-text-stroke: 1.1px rgba(122, 184, 233, 0.95);
+    text-shadow:
+        0 1px 0 rgba(255, 255, 255, 0.95),
+        1px 0 0 rgba(255, 255, 255, 0.7),
+        -1px 0 0 rgba(255, 255, 255, 0.7);
+}
+
+.gpa-kid-icon-cloud-left {
+    top: 11%;
+    left: 3%;
+    font-size: 46px;
+}
+
+.gpa-kid-icon-cloud-right {
+    top: 18%;
+    right: 5%;
+    font-size: 34px;
+}
+
+.gpa-kid-icon-star-top {
+    top: 7%;
+    left: 34%;
+    font-size: 24px;
+}
+
+.gpa-kid-icon-star-mid {
+    top: 46%;
+    right: 7%;
+    font-size: 20px;
+}
+
+.gpa-kid-icon-sparkle {
+    bottom: 14%;
+    right: 4%;
+    font-size: 32px;
+}
+
+.gpa-kid-icon-sparkle-right {
+    bottom: 24%;
+    left: 56%;
+    font-size: 18px;
+}
+
+.gpa-kid-icon-balloon {
+    top: 30%;
+    left: 12%;
+    font-size: 30px;
+}
+
+.gpa-kid-icon-paw {
+    top: 58%;
+    left: 6%;
+    font-size: 24px;
+}
+
+.gpa-kid-icon-school {
+    top: 26%;
+    right: 28%;
+    font-size: 27px;
+}
+
+.gpa-kid-icon-heart {
+    top: 63%;
+    right: 18%;
+    font-size: 22px;
+}
+
+.gpa-kid-icon-puzzle {
+    bottom: 17%;
+    left: 22%;
+    font-size: 25px;
+}
+
+.gpa-kid-icon-smile {
+    bottom: 10%;
+    right: 35%;
+    font-size: 28px;
+}
+
+.gpa-kid-icon-bone {
+    bottom: 9%;
+    left: 9%;
+    font-size: 34px;
+}

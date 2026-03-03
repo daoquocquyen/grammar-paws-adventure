@@ -226,7 +226,7 @@ export default function Screen3TopicIntroPage() {
     };
 
     return (
-        <div className="relative flex min-h-screen w-full flex-col overflow-x-hidden bg-background-light text-slate-900">
+        <div className="relative flex min-h-screen w-full flex-col overflow-x-hidden text-slate-900">
             <header className="flex items-center justify-between whitespace-nowrap border-b border-solid border-primary/10 px-6 md:px-20 py-4 bg-white/80 backdrop-blur-md sticky top-0 z-50 md:py-6">
                 <div className="max-w-[1320px] w-full mx-auto flex items-center justify-between">
                     <div className="flex items-center gap-3">

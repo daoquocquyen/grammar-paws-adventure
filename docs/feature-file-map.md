@@ -12,6 +12,7 @@
 | Feature ID | Feature | Status | Primary Files | Notes |
 |---|---|---|---|---|
 | F-00 | Home / Start Journey onboarding | Partial-High | `app/page.js`, `src/ui/stitch/screen1-home-start-journey.html` | React route implemented at `/` with validation and pet selection; legacy HTML retained during migration. |
+| F-00B | Shared kid-friendly app background layer | Implemented | `app/layout.js`, `app/globals.css` | Global light-blue gradient with decorative kid/pet icons rendered behind all screens; screen routes use transparent page wrappers to reveal shared layer. |
 | F-00A | Player state persistence + returning session restore | Planned | `src/ui/stitch/screen1-home-start-journey.html`, `src/ui/stitch/screen2-world-map-topic-selection.html`, `TBD` | Must persist and restore name, selected pet, topic progress, unlocked/equipped accessories from localStorage to avoid redo next day. |
 | F-01 | World Map / Topic Selection | Partial-High | `app/screen2-world-map-topic-selection/page.js`, `src/lib/playerLevel.js`, `src/ui/stitch/screen2-world-map-topic-selection.html` | React route includes profile hydration, intro-first start-topic routing, easy-to-hard ordering, dynamic topic states (`done`/`ongoing`/`locked`), pet-dependent topic icons, and progress-derived level badge. |
 | F-02 | Grammar Topic Intro + voice controls | Partial-High | `src/ui/stitch/screen3-grammar-topic-intro.html` | Loading/error/content states + aspect render + mute/replay voice. |
