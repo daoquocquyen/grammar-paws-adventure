@@ -22,7 +22,7 @@ so that I always see rules and examples before challenge.
   - [x] Persist `gpa_selected_topic_v1` on start
   - [x] Navigate to `/topic-intro`
 - [x] Add React intro route scaffold (AC: 3)
-  - [x] Create `app/topic-intro/page.js` (re-exporting `app/screen3-grammar-topic-intro/page.js`)
+  - [x] Create `app/topic-intro/page.js`
   - [x] Hydrate selected topic label from storage
 - [x] Preserve profile context continuity (AC: 4)
   - [x] Keep header profile hydration in Screen 2
@@ -63,7 +63,6 @@ GPT-5.3-Codex
 - _bmad-output/implementation-artifacts/1-4-topic-selection-routes-to-topic-intro-first.md
 - app/topic-intro/page.js
 - app/world-map/page.js
-- app/screen2-world-map-topic-selection/page.js
 
 ### Change Log
 - 2026-03-03: Implemented topic intro-first routing from Screen 2 and added intro route scaffold.

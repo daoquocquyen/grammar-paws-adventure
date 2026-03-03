@@ -5,7 +5,7 @@ Rules for implementing and extending this repo during the Next.js migration peri
 
 ## Naming and File Conventions
 - Screen files: `screen{n}-kebab-case.html` in `src/ui/stitch/`.
-- Next.js routes: folder-based App Router paths in `app/` (e.g., `app/screen2-world-map-topic-selection/page.js`).
+- Next.js routes: folder-based App Router paths in `app/` using clean semantic slugs (e.g., `app/world-map/page.js`).
 - JS identifiers: `camelCase`.
 - Storage key constants: `*StorageKey` or `*Key` (constant string in one place).
 - IDs for important interactive elements must be explicit and unique.
