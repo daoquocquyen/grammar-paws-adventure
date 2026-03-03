@@ -2,6 +2,7 @@
 
 import { useRouter } from "next/navigation";
 import { useEffect, useMemo, useRef, useState } from "react";
+import HeaderBlock from "../../src/components/HeaderBlock";
 import { getPlayerLevelInfo } from "../../src/lib/playerLevel";
 
 const profileStorageKey = "gpa_player_profile_v1";
@@ -465,28 +466,14 @@ export default function Screen2TopicSelectionPage() {
 
     return (
         <div className="relative flex min-h-screen w-full flex-col overflow-x-hidden text-slate-900">
-            <header className="flex items-center justify-between whitespace-nowrap border-b border-solid border-primary/10 px-6 md:px-20 py-4 bg-white/80 backdrop-blur-md sticky top-0 z-50 md:py-6">
-                <div className="max-w-[1320px] w-full mx-auto flex items-center justify-between">
-                    <div className="flex items-center gap-3">
-                        <div className="bg-primary p-2 rounded-full shadow-lg shadow-primary/30 text-white">
-                            <span className="material-symbols-outlined text-2xl">pets</span>
-                        </div>
-                        <div className="text-left">
-                            <h1 className="text-xl font-black tracking-tight text-primary">Grammar Paws Adventure</h1>
-                            <p className="text-[10px] uppercase font-bold tracking-widest text-slate-400">{headerLevelLabel}</p>
-                        </div>
-                    </div>
-                    <div className="flex items-center gap-4 ml-auto">
-                        <div className="hidden md:flex flex-col items-end mr-2">
-                            <span className="text-sm font-bold text-slate-700">{headerName}</span>
-                            <span className="text-xs text-primary font-medium">{headerPetText}</span>
-                        </div>
-                        <div className="size-12 rounded-full border-4 border-white shadow-md overflow-hidden bg-slate-200">
-                            <img className="w-full h-full object-cover" src={headerAvatar} alt="Player avatar" />
-                        </div>
-                    </div>
-                </div>
-            </header>
+            <HeaderBlock
+                subtitle={headerLevelLabel}
+                showProfile
+                profileName={headerName}
+                profilePetText={headerPetText}
+                profileAvatar={headerAvatar}
+                profileAvatarAlt="Player avatar"
+            />
 
             <main className="relative flex-1 px-4 md:px-8 lg:px-10 max-w-[1400px] mx-auto w-full py-6 md:py-8">
                 <div className="text-center mb-8">

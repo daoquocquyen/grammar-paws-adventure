@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
+import HeaderBlock from "../../src/components/HeaderBlock";
 import { getPlayerLevelInfo } from "../../src/lib/playerLevel";
 
 const profileStorageKey = "gpa_player_profile_v1";
@@ -292,28 +293,14 @@ export default function Screen3TopicIntroPage() {
             <span className="gpa-kid-icon gpa-kid-icon-sparkle material-symbols-outlined" aria-hidden="true">auto_awesome</span>
             <span className="gpa-kid-icon gpa-kid-icon-bone material-symbols-outlined" aria-hidden="true">abc</span>
 
-            <header className="sticky top-0 z-50 flex items-center justify-between whitespace-nowrap border-b border-solid border-primary/10 bg-white/80 px-6 py-4 backdrop-blur-md md:px-20 md:py-6">
-                <div className="mx-auto flex w-full max-w-[1320px] items-center justify-between">
-                    <div className="flex items-center gap-3">
-                        <div className="rounded-full bg-primary p-2 text-white shadow-lg shadow-primary/30">
-                            <span className="material-symbols-outlined text-2xl">pets</span>
-                        </div>
-                        <div className="text-left">
-                            <h1 className="text-xl font-black tracking-tight text-primary">Grammar Paws Adventure</h1>
-                            <p className="text-[10px] font-bold uppercase tracking-widest text-slate-400">{headerLevelLabel}</p>
-                        </div>
-                    </div>
-                    <div className="ml-auto flex items-center gap-4">
-                        <div className="mr-2 hidden flex-col items-end md:flex">
-                            <span className="text-sm font-bold text-slate-700">{headerName}</span>
-                            <span className="text-xs font-medium text-primary">{headerPetText}</span>
-                        </div>
-                        <div className="size-12 overflow-hidden rounded-full border-4 border-white bg-slate-200 shadow-md">
-                            <img className="h-full w-full object-cover" src={headerAvatar} alt="Player avatar" />
-                        </div>
-                    </div>
-                </div>
-            </header>
+            <HeaderBlock
+                subtitle={headerLevelLabel}
+                showProfile
+                profileName={headerName}
+                profilePetText={headerPetText}
+                profileAvatar={headerAvatar}
+                profileAvatarAlt="Player avatar"
+            />
 
             <main className="relative z-10 mx-auto flex w-full max-w-7xl flex-1 flex-col items-center justify-start px-4 py-6 md:py-8">
                 {isLoading && (

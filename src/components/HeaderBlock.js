@@ -1,16 +1,40 @@
-export default function HeaderBlock() {
+export default function HeaderBlock({
+    title = "Grammar Paws Adventure",
+    subtitle = "Learn grammar, unlock pet powers!",
+    subtitleClassName = "text-[10px] font-bold uppercase tracking-widest text-slate-400",
+    showIcon = true,
+    showProfile = false,
+    profileName = "Adventurer",
+    profilePetText = "Choose your first topic",
+    profileAvatar = "",
+    profileAvatarAlt = "Player avatar",
+}) {
     return (
-        <header className="flex items-center justify-between whitespace-nowrap border-b border-solid border-primary/10 px-6 md:px-20 py-4 bg-white/80 backdrop-blur-md sticky top-0 z-50 md:py-6">
-            <div className="max-w-[1320px] w-full mx-auto flex items-center justify-start">
+        <header className="sticky top-0 z-50 flex items-center justify-between whitespace-nowrap border-b border-solid border-primary/10 bg-white/80 px-6 py-4 backdrop-blur-md md:px-20 md:py-6">
+            <div className="flex w-full items-center justify-between">
                 <div className="flex items-center gap-3">
-                    <div className="bg-primary p-2 rounded-full shadow-lg shadow-primary/30 text-white">
-                        <span className="material-symbols-outlined text-2xl">pets</span>
-                    </div>
+                    {showIcon && (
+                        <div className="rounded-full bg-primary p-2 text-white shadow-lg shadow-primary/30">
+                            <span className="material-symbols-outlined text-2xl">pets</span>
+                        </div>
+                    )}
                     <div className="text-left">
-                        <h2 className="text-primary text-xl font-extrabold leading-tight tracking-tight">Grammar Paws Adventure</h2>
-                        <p className="text-xs font-medium text-slate-500">Learn grammar, unlock pet powers!</p>
+                        <h1 className="text-xl font-black tracking-tight text-primary">{title}</h1>
+                        <p className={subtitleClassName}>{subtitle}</p>
                     </div>
                 </div>
+
+                {showProfile && (
+                    <div className="ml-auto flex items-center gap-4">
+                        <div className="mr-2 hidden flex-col items-end md:flex">
+                            <span className="text-sm font-bold text-slate-700">{profileName}</span>
+                            <span className="text-xs font-medium text-primary">{profilePetText}</span>
+                        </div>
+                        <div className="size-12 overflow-hidden rounded-full border-4 border-white bg-slate-200 shadow-md">
+                            <img className="h-full w-full object-cover" src={profileAvatar} alt={profileAvatarAlt} />
+                        </div>
+                    </div>
+                )}
             </div>
         </header>
     );
