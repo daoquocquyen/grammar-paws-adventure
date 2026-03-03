@@ -89,9 +89,11 @@ Current navigation issue:
 - UX goal: orient child in progression and guide to next actionable topic.
 - Key components:
   - Shared branded header with profile context (name, pet, avatar).
-  - Two-lane road-path topic cards with completed/in-progress/locked styles.
+  - Single-row horizontal topic carousel with exactly four visible cards in viewport.
+  - Edge-mounted chevron controls (left/right) for carousel movement.
+  - Drag-to-scroll and ArrowLeft/ArrowRight keyboard movement support.
   - Progress indicators and lock cues.
-  - Decorative curved path connectors to imply journey.
+  - Companion dialog bubble (rounded rectangle + pointer tail) above large companion avatar.
   - Dual icon system per topic (status icon + pet-dependent topic icon).
 - Interaction behavior:
   - `Start Topic`/`Review` saves selected topic key to `gpa_selected_topic_v1`.
@@ -100,7 +102,9 @@ Current navigation issue:
   - Header level badge hydrates from `gpa_player_progress_v1` and renders grouped title bands (e.g., level 1-3 Explorer).
   - Topic ordering is easy-to-hard.
   - Topic status is computed dynamically from learner history + level (`done`, `ongoing`, `locked`).
-  - Locked topics are non-interactive and cannot expand.
+  - Locked topics are non-interactive.
+  - Focused topic card is emphasized via border glow/ring (without card scaling).
+  - Companion avatar resolves from selected pet identity (pet avatar map fallback) rather than human avatar default.
 - CTA hierarchy:
   - Primary: `Start Topic` on ongoing cards.
   - Secondary: `Review` on done cards.

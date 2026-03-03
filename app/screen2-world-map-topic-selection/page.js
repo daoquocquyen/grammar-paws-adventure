@@ -9,8 +9,16 @@ const profileStorageKey = "gpa_player_profile_v1";
 const playerProgressKey = "gpa_player_progress_v1";
 const selectedTopicStorageKey = "gpa_selected_topic_v1";
 
-const defaultAvatar =
-    "https://lh3.googleusercontent.com/aida-public/AB6AXuCLzcyBcB1kXBKC87wVxPydRH8Z6etHELsVc2a1F90LjG3faXsG9lcV1nj4uPhMSLAcvG1K9WOjsOJUuFf9vn8cBvgVinFbMVfVQ4ZsvoqR4VsFMMOjU7W5ziFsCOdbm7y1Hzdi2OKt3DanVq7pUtiZPHqlA4Mp83miQek9iHzud_HcCndkFiA08inxZL51ILoGwd7eaPfnNDpGQDJ2JVcaceXxCStVVVV0SO1cUgoyLzo3h93o1VTGgpLm4BvSOg96jdnpWU7crOjd";
+const petAvatarByName = {
+    "Brave Puppy": "https://lh3.googleusercontent.com/aida-public/AB6AXuC8UfnI-4ZD6WEiN5gXUwP6EMRX8mNxLA9lGZ-YGKsdeGIk3_z0ChWxvjCrlNqwdcRcIKhpf8cbPISdsBtzfR8ZWbQLVLIB3hMDemAxSYWw_y4NW3ORCs0G_OOf1VMb0Ohrjwb84k4ocpIXuMQ5Kugzcsr8FyeyWl-MWUFSwrE5_U_ArLy3y0ASzoi7bAL2jCMtsYqFsoLW3v5f5hCDNNQXiiTMcEn5moNywZMVUmPowbyKNzSpFejqiHpOjSKx5qq22mJLQE20Nlmn",
+    "Wise Kitten": "https://lh3.googleusercontent.com/aida-public/AB6AXuB5E1yagRgTQDhzkkiH1Z2CFZOL6i2dCszN8wKwrkeSPODDca-qhj_TxgvSsIytjeJuqHg8am8KFJuSxK-BI6XbzHMivZnxQhdVeYrP5lIC1lXuVDSLE1HGOopsI461dIZPO-sSSlob8ku513pA2DVZqBZd8Gg6TFyeGWTq_hYRpHTEIUQGfkLhJ1bplVqJeWQ7Hr8zJI7jdFH-07PxPO9crdCPHRasfWFtdr2s13S4E2hJNaOslEXeEEhs0ooN4211MMcSFSsHHQuH",
+    "Swift Bunny": "https://lh3.googleusercontent.com/aida-public/AB6AXuBmx66OJYOOhrLcMEF9rs4_vmdVbAy8khc5VWVTgQUhCDz9HHcP5ZjRid_jTSIi4P7iSRATxBB67mNbPWnElulY7iGXcpxh2S-IQ8LTTWNMk8Gbp8XMCdN4df7qqvE4edbpCIjc347_Ibv6GyuLJO6t3QCHSt4iGFQ19jgvg0vzZq4EW1ibIhv--_LQegdyf9pw-AYhsqmt5MUfy1JQfWU3m-fnTUUPzHuvJacNm4FwnROdAv2_1wM2TLB2a5CyEmV0DEn6MO5aM4Fa",
+    "Happy Hamster": "https://lh3.googleusercontent.com/aida-public/AB6AXuBJ5l3I0e6UIAujP1swxyelIDciALjoKFoCygY-EW7QoSpnoajHDEsFBXr6xy6eAW1ddDsNpb0B2WLgo19m_Foe_3BMsUIzQLTd9Adz9vZAJMU0Bz2IMjUSEp03P6_MpHz1OyWhoWr62FGytj2DTo5S18AoGyADFdcey47VuH_7ptbli7bbx86xstDJEvfv6tDsuBt9oNVCsCglpcJIH185hG9xcCbD_syhGUdU3ijf7Xsmy7iu0-VFcJkVHN5Gl5MWJ9WArOx009VO",
+    "Steady Turtle": "https://lh3.googleusercontent.com/aida-public/AB6AXuCWVNsQrrHlzjhXt6-JawZXqs8hMsLHZXaCr1K-SeNmCrhfJrhs71q3QFdcZ99isFQ5HxsrNpP3s_2Y4ID1DTlEJ5m-UOLkhChZTWE3V4jn33vzK-C_dSHOqrjcvw38p62g3u9rQHydnKPNRZoMFQCYANpoYJNweDZqxNT3TMVobDJj5orTLsz8hpTgNrW9onS77Dp6lhu76oEDqWATFced9fJDhxOaCPinxeik57KCGKrQOUnRN8Zm9zLxEwCNieSHJ8v-QdHwgMx2",
+    "Magic Dragon": "https://lh3.googleusercontent.com/aida-public/AB6AXuAblbJmRXR3T20lYkFMbjW7V2nawLnAVPYrazc27WtJ0Ls9bEv3NqcPaIcycgvrkkPR3aR36ufzZ2VU9oH7SbI8xcWe71WOpmLjosPJK0uAzfDefFBQIs9s8Ps5XU02S58g7naEzlaeP2OO8ITuCGHMuy1eUmWX_axPdMG0TdN5Y4MGpBXKd4NihhjS7CoW8ZFZNVPbZ1avtEGuPMqnMs2waECZaOupHvsARJMBhdZX-EXxiA2baHgCXj4ohbO5jb_uDLsp-uq08XWC",
+};
+
+const defaultAvatar = petAvatarByName["Brave Puppy"];
 
 const defaultProgressState = {
     completedTopics: [],
@@ -231,10 +239,6 @@ const normalizeTopicProgress = (progressState) => {
     return normalizedProgress;
 };
 
-const getLaneAlignmentClass = (index) => {
-    return index % 2 === 0 ? "md:justify-start" : "md:justify-end";
-};
-
 const getStatusAvatar = (status) => {
     if (status === "done") {
         return {
@@ -292,15 +296,15 @@ export default function Screen2TopicSelectionPage() {
     const [selectedPetName, setSelectedPetName] = useState("");
     const [headerAvatar, setHeaderAvatar] = useState(defaultAvatar);
     const [headerLevelLabel, setHeaderLevelLabel] = useState("Level 1 • Explorer");
-    const [mapTitle, setMapTitle] = useState("World Map Topic Selection");
+    const [mapTitle] = useState("Grammar World Map");
     const [startMessage, setStartMessage] = useState("");
-    const [expandedTopicKey, setExpandedTopicKey] = useState(topicDefinitions[0].topicKey);
+    const [focusedTopicKey, setFocusedTopicKey] = useState(topicDefinitions[0].topicKey);
     const [playerLevel, setPlayerLevel] = useState(1);
     const [playerProgress, setPlayerProgress] = useState(defaultProgressState);
-    const [roadPath, setRoadPath] = useState("");
+    const [isDraggingCarousel, setIsDraggingCarousel] = useState(false);
 
-    const roadContainerRef = useRef(null);
-    const topicNodeRefs = useRef({});
+    const carouselViewportRef = useRef(null);
+    const dragStateRef = useRef({ active: false, startX: 0, startScrollLeft: 0, moved: false });
 
     const topicCards = useMemo(() => {
         const normalizedProgress = normalizeTopicProgress(playerProgress);
@@ -344,18 +348,21 @@ export default function Screen2TopicSelectionPage() {
             try {
                 const profile = JSON.parse(profileRaw);
                 if (typeof profile?.name === "string" && profile.name.trim()) {
-                    const restoredName = profile.name.trim();
-                    setHeaderName(restoredName);
-                    setMapTitle(`${restoredName}'s World Map`);
+                    setHeaderName(profile.name.trim());
                 }
 
                 if (typeof profile?.petName === "string" && profile.petName.trim()) {
                     const restoredPetName = profile.petName.trim();
                     setSelectedPetName(restoredPetName);
                     setHeaderPetText(`${restoredPetName} companion`);
+                    setHeaderAvatar(petAvatarByName[restoredPetName] ?? defaultAvatar);
                 }
 
-                if (typeof profile?.petImage === "string" && profile.petImage.trim()) {
+                if (
+                    (!profile?.petName || !String(profile.petName).trim())
+                    && typeof profile?.petImage === "string"
+                    && profile.petImage.trim()
+                ) {
                     setHeaderAvatar(profile.petImage.trim());
                 }
             } catch (error) {
@@ -386,19 +393,19 @@ export default function Screen2TopicSelectionPage() {
     }, []);
 
     useEffect(() => {
-        const expandedCard = topicCards.find((card) => card.topicKey === expandedTopicKey);
-        if (expandedCard && expandedCard.status !== "locked") {
+        const focusedCard = topicCards.find((card) => card.topicKey === focusedTopicKey);
+        if (focusedCard && focusedCard.status !== "locked") {
             return;
         }
 
         const firstInteractiveCard = topicCards.find((card) => card.status !== "locked") ?? topicCards[0];
         if (firstInteractiveCard) {
-            setExpandedTopicKey(firstInteractiveCard.topicKey);
+            setFocusedTopicKey(firstInteractiveCard.topicKey);
         }
-    }, [expandedTopicKey, topicCards]);
+    }, [focusedTopicKey, topicCards]);
 
-    const handleOpenTopic = (topicKey) => {
-        setExpandedTopicKey(topicKey);
+    const handleFocusTopic = (topicKey) => {
+        setFocusedTopicKey(topicKey);
     };
 
     const handleStartTopic = (topicKey, status) => {
@@ -412,60 +419,106 @@ export default function Screen2TopicSelectionPage() {
         router.push("/screen3-grammar-topic-intro");
     };
 
-    useEffect(() => {
-        const buildRoadPath = () => {
-            const container = roadContainerRef.current;
-            if (!container) {
-                return;
-            }
+    const moveCarouselByDirection = (direction) => {
+        const viewport = carouselViewportRef.current;
+        if (!viewport) {
+            return;
+        }
 
-            const containerRect = container.getBoundingClientRect();
-            const points = topicCards
-                .map((card) => {
-                    const node = topicNodeRefs.current[card.topicKey];
-                    if (!node) {
-                        return null;
-                    }
+        const gap = 16;
+        const cardWidth = (viewport.clientWidth - (gap * 3)) / 4;
+        const offset = Math.max(0, cardWidth + gap);
 
-                    const nodeRect = node.getBoundingClientRect();
-                    return {
-                        x: nodeRect.left - containerRect.left + nodeRect.width / 2,
-                        y: nodeRect.top - containerRect.top + nodeRect.height / 2,
-                    };
-                })
-                .filter(Boolean);
+        viewport.scrollBy({
+            left: direction === "right" ? offset : -offset,
+            behavior: "smooth",
+        });
+    };
 
-            if (points.length < 2) {
-                setRoadPath("");
-                return;
-            }
+    const handleCarouselKeyDown = (event) => {
+        if (event.key === "ArrowRight") {
+            event.preventDefault();
+            moveCarouselByDirection("right");
+            return;
+        }
 
-            let pathData = `M ${points[0].x} ${points[0].y}`;
+        if (event.key === "ArrowLeft") {
+            event.preventDefault();
+            moveCarouselByDirection("left");
+        }
+    };
 
-            for (let index = 1; index < points.length - 1; index += 1) {
-                const current = points[index];
-                const next = points[index + 1];
-                const midX = (current.x + next.x) / 2;
-                const midY = (current.y + next.y) / 2;
-                pathData += ` Q ${current.x} ${current.y} ${midX} ${midY}`;
-            }
+    const handleCarouselPointerDown = (event) => {
+        const viewport = carouselViewportRef.current;
+        if (!viewport) {
+            return;
+        }
 
-            const lastPoint = points[points.length - 1];
-            pathData += ` T ${lastPoint.x} ${lastPoint.y}`;
-            setRoadPath(pathData);
+        dragStateRef.current = {
+            active: true,
+            startX: event.clientX,
+            startScrollLeft: viewport.scrollLeft,
+            moved: false,
         };
+        setIsDraggingCarousel(true);
+    };
 
-        const frameId = window.requestAnimationFrame(buildRoadPath);
-        window.addEventListener("resize", buildRoadPath);
+    const handleCarouselPointerMove = (event) => {
+        const viewport = carouselViewportRef.current;
+        const dragState = dragStateRef.current;
 
-        return () => {
-            window.cancelAnimationFrame(frameId);
-            window.removeEventListener("resize", buildRoadPath);
-        };
-    }, [expandedTopicKey, topicCards]);
+        if (!viewport || !dragState.active) {
+            return;
+        }
+
+        const deltaX = event.clientX - dragState.startX;
+        if (Math.abs(deltaX) > 6) {
+            dragStateRef.current.moved = true;
+        }
+
+        viewport.scrollLeft = dragState.startScrollLeft - deltaX;
+    };
+
+    const handleCarouselPointerUp = () => {
+        dragStateRef.current.active = false;
+        setIsDraggingCarousel(false);
+    };
+
+    const handleCardClick = (topicKey, isLocked) => {
+        if (dragStateRef.current.moved) {
+            dragStateRef.current.moved = false;
+            return;
+        }
+
+        if (!isLocked) {
+            handleFocusTopic(topicKey);
+        }
+    };
+
+    const focusedTopicCard = useMemo(
+        () => topicCards.find((card) => card.topicKey === focusedTopicKey) ?? topicCards.find((card) => card.status !== "locked") ?? topicCards[0],
+        [focusedTopicKey, topicCards]
+    );
+
+    const companionPrompt = useMemo(() => {
+        if (!focusedTopicCard) {
+            return `Ready to continue your grammar journey, ${headerName}?`;
+        }
+
+        if (focusedTopicCard.status === "locked") {
+            return `Unlock ${focusedTopicCard.title} by mastering earlier topics first.`;
+        }
+
+        return `Ready to leap into ${focusedTopicCard.title.toLowerCase()}, ${headerName}?`;
+    }, [focusedTopicCard, headerName]);
 
     return (
-        <div className="relative flex min-h-screen w-full flex-col overflow-x-hidden text-slate-900">
+        <div className="relative flex min-h-screen w-full flex-col overflow-x-hidden bg-slate-100 text-slate-900">
+            <div className="gpa-kid-bg" aria-hidden="true" />
+            <span className="gpa-kid-icon gpa-kid-icon-cloud-left material-symbols-outlined" aria-hidden="true">cloud</span>
+            <span className="gpa-kid-icon gpa-kid-icon-star-mid material-symbols-outlined" aria-hidden="true">star</span>
+            <span className="gpa-kid-icon gpa-kid-icon-sparkle material-symbols-outlined" aria-hidden="true">auto_awesome</span>
+
             <HeaderBlock
                 subtitle={headerLevelLabel}
                 showProfile
@@ -475,112 +528,143 @@ export default function Screen2TopicSelectionPage() {
                 profileAvatarAlt="Player avatar"
             />
 
-            <main className="relative flex-1 px-4 md:px-8 lg:px-10 max-w-[1400px] mx-auto w-full py-6 md:py-8">
-                <div className="text-center mb-8">
-                    <h2 className="text-4xl md:text-5xl font-black text-slate-800 mb-3">{mapTitle}</h2>
-                    <p className="text-lg md:text-xl text-slate-500 font-medium max-w-3xl mx-auto leading-relaxed">
-                        Follow the winding road and tap each topic to see details before you start.
+            <main className="relative z-10 mx-auto flex w-full max-w-7xl flex-1 flex-col px-4 py-6 md:py-8">
+                <div className="text-center">
+                    <h2 className="text-4xl md:text-5xl font-black text-slate-800">{mapTitle}</h2>
+                    <p className="mt-2 text-base md:text-lg text-slate-600 font-medium max-w-2xl mx-auto">
+                        Explore and master the building blocks of language.
                     </p>
                 </div>
 
-                <section className="relative rounded-xl overflow-hidden shadow-lg border-2 border-white bg-white p-4 md:p-6 lg:p-8">
+                <section className="mt-7 flex flex-col items-center">
+                    <div className="relative max-w-sm rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm font-bold text-slate-700 shadow-sm">
+                        <p>{companionPrompt}</p>
+                        <span
+                            className="absolute left-1/2 top-full h-3 w-3 -translate-x-1/2 -translate-y-1/2 rotate-45 border-r border-b border-slate-200 bg-white"
+                            aria-hidden="true"
+                        />
+                    </div>
+                    <div className="mt-2 size-[190px] overflow-hidden rounded-full border-4 border-white bg-slate-200 shadow-md">
+                        <img className="h-full w-full object-cover" src={headerAvatar} alt="Companion avatar" />
+                    </div>
+                </section>
 
-                    <section ref={roadContainerRef} className="relative max-w-5xl mx-auto pb-8" aria-label="Topic road map">
-                        {roadPath && (
-                            <svg
-                                className="absolute inset-0 w-full h-full pointer-events-none"
-                                xmlns="http://www.w3.org/2000/svg"
-                                aria-hidden="true"
-                            >
-                                <path d={roadPath} fill="none" stroke="rgb(226 232 240)" strokeWidth="22" strokeLinecap="round" strokeLinejoin="round" />
-                                <path
-                                    d={roadPath}
-                                    fill="none"
-                                    stroke="rgb(148 163 184 / 0.7)"
-                                    strokeWidth="3"
-                                    strokeLinecap="round"
-                                    strokeLinejoin="round"
-                                    strokeDasharray="7 9"
-                                />
-                            </svg>
-                        )}
+                <section className="relative mt-8 w-full">
+                    <div className="flex w-full items-center gap-2 sm:gap-3">
+                        <button
+                            type="button"
+                            onClick={() => moveCarouselByDirection("left")}
+                            className="inline-flex size-9 shrink-0 items-center justify-center rounded-full border border-primary/20 bg-white text-primary shadow-sm transition hover:bg-sky-50"
+                            aria-label="Scroll topics left"
+                        >
+                            <span className="material-symbols-outlined text-[20px]">chevron_left</span>
+                        </button>
 
-                        <div className="relative space-y-6 md:space-y-10">
-                            {topicCards.map((card, index) => {
-                                const avatar = getStatusAvatar(card.status);
-                                const isDone = card.status === "done";
-                                const isLocked = card.status === "locked";
-                                const isExpanded = !isLocked && expandedTopicKey === card.topicKey;
-                                const laneAlignmentClass = getLaneAlignmentClass(index);
-                                const cardStateClass = isLocked
-                                    ? "bg-slate-100 border-slate-300"
-                                    : card.status === "done"
-                                        ? "bg-emerald-50 border-emerald-300"
-                                        : "bg-sky-50 border-sky-300";
+                        <div
+                            ref={carouselViewportRef}
+                            role="region"
+                            aria-label="Topic cards carousel"
+                            tabIndex={0}
+                            onKeyDown={handleCarouselKeyDown}
+                            onPointerDown={handleCarouselPointerDown}
+                            onPointerMove={handleCarouselPointerMove}
+                            onPointerUp={handleCarouselPointerUp}
+                            onPointerCancel={handleCarouselPointerUp}
+                            onPointerLeave={handleCarouselPointerUp}
+                            className={`flex-1 overflow-x-auto overflow-y-visible pb-2 focus:outline-none focus-visible:ring-2 focus-visible:ring-primary/30 ${isDraggingCarousel ? "cursor-grabbing" : "cursor-grab"}`}
+                            style={{ scrollbarWidth: "none" }}
+                        >
+                            <div className="flex min-w-full gap-4">
+                                {topicCards.map((card) => {
+                                    const avatar = getStatusAvatar(card.status);
+                                    const isDone = card.status === "done";
+                                    const isLocked = card.status === "locked";
+                                    const isFocused = focusedTopicCard?.topicKey === card.topicKey;
+                                    const cardStateClass = isLocked
+                                        ? "border-slate-200 bg-white/80 opacity-70"
+                                        : isDone
+                                            ? "border-emerald-200 bg-white"
+                                            : isFocused
+                                                ? "border-primary ring-2 ring-primary/25 shadow-lg shadow-primary/25 bg-white"
+                                                : "border-primary/15 bg-white";
 
-                                return (
-                                    <div key={card.topicKey} className={`relative flex justify-center ${laneAlignmentClass}`}>
-                                        <button
-                                            ref={(element) => {
-                                                topicNodeRefs.current[card.topicKey] = element;
-                                            }}
-                                            type="button"
-                                            disabled={isLocked}
-                                            onClick={() => {
-                                                if (!isLocked) {
-                                                    handleOpenTopic(card.topicKey);
+                                    return (
+                                        <article
+                                            key={card.topicKey}
+                                            role={isLocked ? undefined : "button"}
+                                            tabIndex={isLocked ? -1 : 0}
+                                            onClick={() => handleCardClick(card.topicKey, isLocked)}
+                                            onKeyDown={(event) => {
+                                                if (isLocked) {
+                                                    return;
+                                                }
+
+                                                if (event.key === "Enter" || event.key === " ") {
+                                                    event.preventDefault();
+                                                    handleFocusTopic(card.topicKey);
                                                 }
                                             }}
-                                            aria-expanded={isExpanded}
-                                            className={`w-full md:w-[360px] rounded-2xl border-2 text-left transition-all duration-200 ${cardStateClass} ${isExpanded
-                                                ? "shadow-lg shadow-primary/20 p-5"
-                                                : "p-4"
-                                                }`}
+                                            className={`relative min-h-[245px] rounded-[28px] border p-5 text-left shadow-sm transition-all ${cardStateClass} ${isLocked ? "cursor-not-allowed" : "cursor-pointer"}`}
+                                            style={{ flex: "0 0 calc((100% - 3rem) / 4)" }}
                                         >
-                                            <div className="flex items-center gap-3 min-w-0">
-                                                <div className={`size-10 rounded-full flex items-center justify-center ${avatar.containerClass}`}>
-                                                    <span className="material-symbols-outlined text-xl">{avatar.icon}</span>
-                                                </div>
-                                                <div className={`size-10 rounded-full flex items-center justify-center ${getTopicIconContainerClass(card.status)}`}>
-                                                    <span className="material-symbols-outlined text-xl">{card.topicIcon}</span>
-                                                </div>
-                                                <h3 className={`text-lg font-black leading-tight ${isLocked ? "text-slate-600" : "text-slate-800"}`}>{card.title}</h3>
+                                            <div className={`mx-auto flex size-14 items-center justify-center rounded-2xl ${getTopicIconContainerClass(card.status)}`}>
+                                                <span className="material-symbols-outlined text-[26px]">{card.topicIcon}</span>
                                             </div>
 
-                                            <p className={`text-sm ${isLocked ? "text-slate-500" : "text-slate-600"} ${isExpanded ? "mt-4" : "mt-3"}`}>{card.summary}</p>
+                                            <h3 className={`mt-3 text-center text-2xl font-black leading-tight ${isLocked ? "text-slate-400" : "text-slate-800"}`}>
+                                                {card.title}
+                                            </h3>
 
-                                            {isExpanded && (
-                                                <div className="mt-4 space-y-4">
-                                                    <div className="flex items-center gap-3">
-                                                        <div className="flex-1 h-3 bg-slate-100 rounded-full overflow-hidden">
-                                                            <div className={`h-full rounded-full ${getProgressColorClass(card.status)}`} style={{ width: `${card.progress}%` }} />
-                                                        </div>
-                                                        <span className={`text-sm font-bold ${isDone ? "text-emerald-600" : "text-sky-600"}`}>
-                                                            {card.progress}%
-                                                        </span>
-                                                    </div>
+                                            <p className={`mt-2 text-center text-sm leading-snug ${isLocked ? "text-slate-400" : "text-slate-600"}`}>
+                                                {card.summary}
+                                            </p>
 
+                                            <div className="mt-4 flex items-center gap-2">
+                                                <div className="h-2.5 flex-1 overflow-hidden rounded-full bg-slate-100">
+                                                    <div className={`h-full rounded-full ${getProgressColorClass(card.status)}`} style={{ width: `${card.progress}%` }} />
+                                                </div>
+                                                <span className={`text-xs font-bold ${isDone ? "text-emerald-600" : card.status === "ongoing" ? "text-primary" : "text-slate-400"}`}>
+                                                    {card.progress}%
+                                                </span>
+                                            </div>
+
+                                            <div className="mt-4 flex items-center justify-between">
+                                                <span className={`inline-flex items-center gap-1 rounded-full px-2.5 py-1 text-[10px] font-black ${avatar.containerClass}`}>
+                                                    <span className="material-symbols-outlined text-sm">{avatar.icon}</span>
+                                                    {isDone ? "MASTERED" : isLocked ? "LOCKED" : "IN PROGRESS"}
+                                                </span>
+
+                                                {!isLocked && isFocused && (
                                                     <button
                                                         type="button"
                                                         onClick={(event) => {
                                                             event.stopPropagation();
                                                             handleStartTopic(card.topicKey, card.status);
                                                         }}
-                                                        className={`w-full h-11 rounded-full text-sm font-bold ${card.status === "done"
+                                                        className={`h-9 rounded-full px-4 text-xs font-black ${card.status === "done"
                                                             ? "bg-emerald-100 text-emerald-700"
                                                             : "bg-primary text-white"
                                                             }`}
                                                     >
                                                         {getActionLabel(card.status)}
                                                     </button>
-                                                </div>
-                                            )}
-                                        </button>
-                                    </div>
-                                );
-                            })}
+                                                )}
+                                            </div>
+                                        </article>
+                                    );
+                                })}
+                            </div>
                         </div>
-                    </section>
+
+                        <button
+                            type="button"
+                            onClick={() => moveCarouselByDirection("right")}
+                            className="inline-flex size-9 shrink-0 items-center justify-center rounded-full border border-primary/20 bg-white text-primary shadow-sm transition hover:bg-sky-50"
+                            aria-label="Scroll topics right"
+                        >
+                            <span className="material-symbols-outlined text-[20px]">chevron_right</span>
+                        </button>
+                    </div>
                 </section>
 
                 <p className="mt-6 text-center text-base font-semibold text-primary" aria-live="polite">

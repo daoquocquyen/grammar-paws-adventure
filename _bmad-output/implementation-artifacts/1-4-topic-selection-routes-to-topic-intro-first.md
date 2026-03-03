@@ -49,18 +49,22 @@ GPT-5.3-Codex
 - Updated Screen 2 start behavior to route into intro-first flow.
 - Added React intro route scaffold with selected topic hydration.
 - Preserved profile hydration on both Screen 2 and intro route headers.
-- Refined Screen 2 map into a two-lane vertical road layout with expandable topic cards.
+- Refined Screen 2 map into a single-row horizontal carousel with four visible topic cards.
+- Added edge-mounted left/right chevron controls, drag-to-scroll, and ArrowLeft/ArrowRight keyboard carousel navigation.
+- Replaced helper text and dotted road connector with cleaner card-focused layout and side controls.
+- Added companion dialog bubble (rounded rectangle with pointer tail) above the companion avatar.
+- Updated companion avatar source to selected pet avatar mapping (fallback provided), avoiding human avatar default.
 - Added easy-to-hard topic ordering and topic intro coverage for all map topics.
 - Implemented dynamic topic state mapping from learner progress (`done`, `ongoing`, `locked`) and disabled interaction for locked topics.
 - Added pet-dependent topic icon sets and rendered a secondary topic icon beside the status icon.
-- Aligned Screen 2 topic container style with Screen 1 white-card treatment for visual consistency.
+- Increased topic description readability and emphasized focused card via border glow/ring without scale distortion.
 
 ### File List
 - _bmad-output/implementation-artifacts/1-4-topic-selection-routes-to-topic-intro-first.md
 - app/screen2-world-map-topic-selection/page.js
-- app/screen3-grammar-topic-intro/page.js
 
 ### Change Log
 - 2026-03-03: Implemented topic intro-first routing from Screen 2 and added intro route scaffold.
 - 2026-03-03: Updated Screen 2 UI scale and added dynamic level-title badge from persisted progress.
 - 2026-03-03: Added dynamic Screen 2 topic progression states, pet-dependent topic icon set, easy-to-hard ordering, and consistent white container styling.
+- 2026-03-03: Converted Screen 2 to one-row horizontal carousel (4 visible cards) with edge chevrons, keyboard/drag navigation, dialog bubble companion callout, and selected-pet avatar usage.
