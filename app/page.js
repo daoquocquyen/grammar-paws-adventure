@@ -2,6 +2,10 @@
 
 import { useRouter } from "next/navigation";
 import { useEffect, useMemo, useState } from "react";
+import HeaderBlock from "../src/components/HeaderBlock";
+import PetOptionCard from "../src/components/PetOptionCard";
+import PrimaryButton from "../src/components/PrimaryButton";
+import ValidationMessage from "../src/components/ValidationMessage";
 
 const screen1ProfileKey = "gpa_player_profile_v1";
 const playerProgressKey = "gpa_player_progress_v1";
@@ -210,30 +214,7 @@ export default function Home() {
     return (
         <div className="relative flex min-h-screen w-full flex-col overflow-x-hidden">
             <div className="layout-container flex h-full grow flex-col">
-                <header className="flex items-center justify-between whitespace-nowrap border-b border-solid border-primary/10 px-6 md:px-20 py-4 bg-white/80 backdrop-blur-md sticky top-0 z-50 md:py-6">
-                    <div className="max-w-[1320px] w-full mx-auto flex items-center justify-between">
-                        <div className="flex items-center gap-3">
-                            <div className="bg-primary p-2 rounded-full shadow-lg shadow-primary/30 text-white">
-                                <span className="material-symbols-outlined text-2xl">pets</span>
-                            </div>
-                            <div className="text-left">
-                                <h2 className="text-primary text-xl font-extrabold leading-tight tracking-tight">
-                                    Grammar Paws Adventure
-                                </h2>
-                                <p className="text-[10px] uppercase font-bold tracking-widest text-slate-400">Level 12 • Explorer</p>
-                            </div>
-                        </div>
-                        <div className="flex items-center gap-4 ml-auto">
-                            <div className="hidden md:flex flex-col items-end mr-2">
-                                <span className="text-sm font-bold text-slate-700">{headerName}</span>
-                                <span className="text-xs text-primary font-medium">{headerPetText}</span>
-                            </div>
-                            <div className="size-12 rounded-full border-4 border-white shadow-md overflow-hidden bg-slate-200">
-                                <img className="w-full h-full object-cover" src={headerAvatar} alt="Player avatar" />
-                            </div>
-                        </div>
-                    </div>
-                </header>
+                <HeaderBlock headerName={headerName} headerPetText={headerPetText} headerAvatar={headerAvatar} />
 
                 <main className="flex-1 min-h-[calc(100vh-180px)] px-4 md:px-8 lg:px-10 max-w-[1400px] mx-auto w-full py-6 md:py-8">
                     <div className="relative rounded-xl overflow-hidden shadow-lg border-2 border-white mb-4">
@@ -280,9 +261,7 @@ export default function Home() {
                                         placeholder="Type name..."
                                         type="text"
                                     />
-                                    <p id="nameValidationMessage" className={`mt-2 text-sm font-semibold text-rose-600 ${nameError ? "" : "hidden"}`} aria-live="polite">
-                                        {nameError}
-                                    </p>
+                                    <ValidationMessage id="nameValidationMessage" message={nameError} />
                                 </div>
                             </div>
 
@@ -295,29 +274,21 @@ export default function Home() {
                                     {pets.map((pet) => {
                                         const isSelected = selectedPetName === pet.name;
                                         return (
-                                            <button
+                                            <PetOptionCard
                                                 key={pet.name}
-                                                type="button"
-                                                aria-pressed={isSelected ? "true" : "false"}
-                                                onClick={() => {
+                                                pet={pet}
+                                                isSelected={isSelected}
+                                                onSelect={() => {
                                                     setSelectedPetName(pet.name);
                                                     setHeaderPetText(`${pet.name} companion`);
                                                     setHeaderAvatar(pet.image);
                                                     setPetError("");
                                                 }}
-                                                className={`pet-option group relative rounded-xl border-2 transition-all text-center p-3 max-w-[150px] mx-auto ${isSelected ? "border-primary bg-primary/5" : "border-transparent bg-slate-50 hover:border-primary hover:bg-primary/5"}`}
-                                            >
-                                                <div className="aspect-square rounded-lg bg-white flex items-center justify-center overflow-hidden shadow-inner mb-1">
-                                                    <img alt="" className="w-full h-full object-cover group-hover:scale-110 transition-transform" src={pet.image} />
-                                                </div>
-                                                <span className="font-bold text-sm">{pet.name}</span>
-                                            </button>
+                                            />
                                         );
                                     })}
                                 </div>
-                                <p id="petValidationMessage" className={`mt-3 text-sm font-semibold text-rose-600 ${petError ? "" : "hidden"}`} aria-live="polite">
-                                    {petError}
-                                </p>
+                                <ValidationMessage id="petValidationMessage" message={petError} />
                             </div>
                         </div>
 
@@ -365,13 +336,7 @@ export default function Home() {
                                 </div>
                             </div>
                             <div className="mt-auto">
-                                <button
-                                    type="button"
-                                    onClick={handleStartAdventure}
-                                    className="w-full px-8 py-3.5 bg-primary text-white rounded-full font-black text-xl shadow-lg shadow-primary/25"
-                                >
-                                    Start Adventure
-                                </button>
+                                <PrimaryButton onClick={handleStartAdventure}>Start Adventure</PrimaryButton>
                             </div>
                         </div>
                     </div>

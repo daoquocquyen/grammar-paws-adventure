@@ -1,6 +1,6 @@
 # Story 1.6: React Reusable UI Components and Screen 1 Refactor
 
-Status: ready-for-dev
+Status: done
 
 ## Story
 
@@ -18,21 +18,21 @@ so that future screens can share consistent UI and reduce duplicated code.
 
 ## Tasks / Subtasks
 
-- [ ] Create reusable component structure for Screen 1
-  - [ ] Add `src/components/` (or equivalent) for shared UI elements
-  - [ ] Implement `Header` component used by Screen 1
-  - [ ] Implement `PetOptionCard` component used in pet selection grid
-  - [ ] Implement `ValidationMessage` component for inline feedback
-  - [ ] Implement `PrimaryButton` component for main CTA
-- [ ] Refactor Screen 1 page to use new components
-  - [ ] Replace duplicated JSX blocks with component usage
-  - [ ] Preserve current state/validation/navigation behavior
-- [ ] Keep migration boundaries explicit
-  - [ ] Do not implement new product features in this story
-  - [ ] Do not alter Story 1.2+ behavior scope
-- [ ] Validate refactor
-  - [ ] Run `npm run build`
-  - [ ] Verify onboarding manual flow remains unchanged
+- [x] Create reusable component structure for Screen 1
+  - [x] Add `src/components/` (or equivalent) for shared UI elements
+  - [x] Implement `Header` component used by Screen 1
+  - [x] Implement `PetOptionCard` component used in pet selection grid
+  - [x] Implement `ValidationMessage` component for inline feedback
+  - [x] Implement `PrimaryButton` component for main CTA
+- [x] Refactor Screen 1 page to use new components
+  - [x] Replace duplicated JSX blocks with component usage
+  - [x] Preserve current state/validation/navigation behavior
+- [x] Keep migration boundaries explicit
+  - [x] Do not implement new product features in this story
+  - [x] Do not alter Story 1.2+ behavior scope
+- [x] Validate refactor
+  - [x] Run `npm run build`
+  - [x] Verify onboarding manual flow remains unchanged
 
 ## Dev Notes
 
@@ -61,11 +61,23 @@ so that future screens can share consistent UI and reduce duplicated code.
 GPT-5.3-Codex
 
 ### Debug Log References
+- `npm run build` (pass)
+- `get_errors` on modified files
 
 ### Completion Notes List
+- Added reusable Screen 1 components in `src/components` for header, pet card, validation message, and primary CTA button.
+- Refactored `app/page.js` to compose extracted components while preserving onboarding validation and route behavior.
+- Preserved Story 1.1 and Story 1.2 behavior boundaries (no new product feature added in this refactor).
 
 ### File List
 - _bmad-output/implementation-artifacts/1-6-react-reusable-ui-components-and-screen1-refactor.md
+- app/page.js
+- src/components/HeaderBlock.js
+- src/components/PetOptionCard.js
+- src/components/ValidationMessage.js
+- src/components/PrimaryButton.js
+- _bmad-output/implementation-artifacts/sprint-status.yaml
 
 ### Change Log
 - 2026-03-02: Story created for componentization refactor after Next.js migration bootstrap.
+- 2026-03-03: Refactored Screen 1 into reusable React components and marked story complete.

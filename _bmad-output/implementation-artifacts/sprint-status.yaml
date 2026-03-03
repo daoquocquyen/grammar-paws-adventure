@@ -46,7 +46,7 @@ development_status:
   1-3-persist-and-restore-progress-and-accessories-for-returning-learner: done
   1-4-topic-selection-routes-to-topic-intro-first: done
   1-5-topic-intro-rendering-and-voice-controls: done
-  1-6-react-reusable-ui-components-and-screen1-refactor: ready-for-dev
+  1-6-react-reusable-ui-components-and-screen1-refactor: done
   epic-1-retrospective: optional
 
   epic-2: backlog
