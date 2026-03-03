@@ -38,6 +38,7 @@ Planning artifacts were used only to identify intended behavior and mark gaps.
 - Max-width layout containers with wide desktop gutters (`md:px-20` patterns).
 - Card-first composition with rounded corners (`rounded-xl`, `rounded-[24px]`).
 - Grid layouts shift from single-column mobile to multi-column desktop.
+- Screens 1-3 now reuse a shared header component to keep paw icon/title alignment consistent.
 
 ### Cards and Surfaces
 - Core surfaces: white cards with subtle borders/shadows.
@@ -70,7 +71,7 @@ Current navigation issue:
 ## Screen 1: Home / Start Journey
 - UX goal: simple onboarding and emotional hook before learning begins.
 - Key components:
-  - Branded header (title + playful subtitle).
+  - Shared branded header (title + subtitle via reusable header component).
   - Name input card.
   - Pet selection grid (6 options shown).
   - Pet preview + milestone panel.
@@ -87,6 +88,7 @@ Current navigation issue:
 ## Screen 2: World Map / Topic Selection
 - UX goal: orient child in progression and guide to next actionable topic.
 - Key components:
+  - Shared branded header with profile context (name, pet, avatar).
   - Two-lane road-path topic cards with completed/in-progress/locked styles.
   - Progress indicators and lock cues.
   - Decorative curved path connectors to imply journey.
@@ -108,7 +110,7 @@ Current navigation issue:
 ## Screen 3: Grammar Topic Intro
 - UX goal: teach topic essentials before challenge and provide confidence.
 - Key components:
-  - Shared sticky header with player identity context.
+  - Shared branded header with profile context (name, pet, avatar, level badge).
   - Centered topic title pill + summary line.
   - Responsive aspect card grid with icon + example copy.
   - Pet speech bubble and avatar.

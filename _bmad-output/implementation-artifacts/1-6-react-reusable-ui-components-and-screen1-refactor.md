@@ -81,3 +81,4 @@ GPT-5.3-Codex
 ### Change Log
 - 2026-03-02: Story created for componentization refactor after Next.js migration bootstrap.
 - 2026-03-03: Refactored Screen 1 into reusable React components and marked story complete.
+- 2026-03-03: Reused `HeaderBlock` across screens 1-3 and normalized brand alignment/structure consistency.
