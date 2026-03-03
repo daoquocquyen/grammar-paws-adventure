@@ -1,19 +1,30 @@
 # Testing Strategy
 
 ## Current Baseline
-- No automated test framework is present yet (unit/integration/E2E still TBD).
-- Next.js scaffold is present; baseline validation includes `npm run build` plus manual browser flow checks.
+- Automated test frameworks are present:
+  - Unit + integration: Vitest + Testing Library (`npm run test`)
+  - Acceptance (E2E): Playwright (`npm run test:acceptance` / `npm run test:e2e`)
+- Baseline validation includes staged automated checks plus manual browser flow checks.
+
+## Required Story Test Execution Order
+For every developed story, execute tests in this order to reduce iteration time and token cost:
+1. Implement story code.
+2. Create/update unit, integration, and acceptance tests for changed behavior.
+3. Print a manual test checklist in the story implementation artifact before running manual validation.
+4. Run **unit tests only** first and fix issues quickly.
+5. Execute manual test checklist and record outcomes.
+6. Only after manual checks pass, run integration tests and acceptance tests.
 
 ## Test Levels and Scope
 
-### Unit (Planned, After Logic Extraction)
+### Unit
 Focus on deterministic gameplay rules:
 - Question count formula: `clamp(aspect_count * 3, 6, 15)`.
 - Pass threshold: `score >= 80%`.
 - Anti-repeat question selection over recent attempts.
 - Voice settings read/write behavior.
 
-### Integration (Manual Now, Automated Later)
+### Integration
 Focus on feature seams between screens and storage:
 - Screen 1 profile -> localStorage (`gpa_player_profile_v1`).
 - Screen 1 save flow also initializes/updates progress + accessories state (`gpa_player_progress_v1`, `gpa_pet_accessories_v1`).
@@ -31,8 +42,7 @@ Focus on user outcomes:
 - Voice unsupported browser still allows gameplay flow.
 
 ## Coverage Targets
-- Current: `TBD` (no automation harness yet).
-- Target after app scaffold:
+- Current targets:
   - Rule engine unit coverage: >= 80%.
   - Core flow integration coverage: 100% of mandatory transitions.
   - Acceptance coverage: 100% of MVP "happy path" + fail/retry branch.
@@ -46,7 +56,7 @@ Focus on user outcomes:
   - aspect_count: 1, 4, 8
   - score boundary: 79%, 80%, 100%
 
-## Manual Regression Checklist (Current Required Gate)
+## Manual Regression Checklist (Required Before Integration/Acceptance Execution)
 - [ ] `npm run build` passes for Next.js runtime.
 - [ ] React route `/` loads without console-breaking errors.
 - [ ] React Screen 1 validation blocks start when name or pet is missing.
@@ -62,8 +72,6 @@ Focus on user outcomes:
 - [ ] Screen 4 displays challenge UI and profile hydration safely.
 
 ## Automation TBDs
-- Unit test framework choice: TBD.
-- Integration/E2E framework choice: TBD.
 - CI execution pipeline: TBD.
 - Artifact for test reports/coverage: TBD.
 

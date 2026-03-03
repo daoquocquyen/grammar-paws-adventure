@@ -44,7 +44,11 @@
 - [ ] Requirements traced to source artifact (PRD/FR/slice).
 - [ ] UI behavior documented in `docs/feature-file-map.md` and relevant screen files.
 - [ ] Security baseline checklist completed.
-- [ ] Testing checklist completed (manual now; automated when available).
+- [ ] Unit, integration, and acceptance tests are created/updated for changed behavior.
+- [ ] Manual test steps are printed in the story implementation artifact before manual validation.
+- [ ] Unit tests pass before manual testing begins.
+- [ ] Manual testing checklist passes before running integration and acceptance tests.
+- [ ] Integration and acceptance tests pass after manual validation.
 - [ ] Accessibility basics checked (focus visibility, labels, contrast, tap size).
 - [ ] Route and storage key changes are backward-safe or migration-documented.
 - [ ] Copy follows kid-friendly, non-shaming tone.

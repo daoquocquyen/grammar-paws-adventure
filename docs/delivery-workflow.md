@@ -2,13 +2,23 @@
 
 ## Current Delivery Model
 - Repository now includes a Next.js application scaffold plus legacy static prototype screens.
-- Build pipeline exists for Next.js app runtime; automated test runner is still not configured.
+- Build pipeline exists for Next.js app runtime; automated test runners are configured.
 
 ## Build and Test Commands
 
 ### Current (Observed)
 - Build command: `npm run build`.
-- Automated test command: `TBD` (no test framework configured).
+- Unit test command: `npx vitest run tests/unit`.
+- Integration test command: `npx vitest run tests/integration`.
+- Acceptance test command: `npm run test:acceptance`.
+
+### Required Test Sequence Per Story
+1. Implement story functionality.
+2. Create/update unit, integration, and acceptance tests for story changes.
+3. Print manual test steps in the implementation artifact.
+4. Run unit tests only (`npx vitest run tests/unit`) and fix failures.
+5. Execute manual test checklist and record results.
+6. Run integration tests (`npx vitest run tests/integration`) and acceptance tests (`npm run test:acceptance`).
 
 ### Next.js Runtime (Primary for migrated screens)
 - Install dependencies: `npm install`
@@ -32,7 +42,9 @@
 - [ ] Related planning docs updated when behavior changes.
 - [ ] Route targets are valid (no broken screen links).
 - [ ] Security baseline checklist reviewed.
+- [ ] Unit tests executed and passing.
 - [ ] Manual regression checklist executed.
+- [ ] Integration + acceptance tests executed after manual checks.
 - [ ] `TBD` items added where implementation detail is unknown.
 
 ## Commit Message Convention (Required)
@@ -66,10 +78,12 @@ Minimum quality bar:
 
 ## Release Flow (Current)
 1. Update planning + docs context for changed behavior.
-2. Run Next.js build (`npm run build`) and manual browser smoke tests.
-3. Resolve all blocking checklist items.
-4. Tag release notes manually (`TBD` tag strategy).
-5. Publish static files to chosen hosting target (`TBD` platform).
+2. Run Next.js build (`npm run build`) and unit tests (`npx vitest run tests/unit`).
+3. Print and execute manual browser smoke tests.
+4. Run integration and acceptance tests after manual checks pass.
+5. Resolve all blocking checklist items.
+6. Tag release notes manually (`TBD` tag strategy).
+7. Publish static files to chosen hosting target (`TBD` platform).
 
 ## Workflow TBDs
 - Branch naming policy: TBD.
