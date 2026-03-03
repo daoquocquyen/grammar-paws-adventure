@@ -110,9 +110,9 @@ Current navigation issue:
 - Key components:
   - Shared sticky header with player identity context.
   - Centered topic title pill + summary line.
-  - Three large aspect cards with icon + example copy.
+  - Responsive aspect card grid with icon + example copy.
   - Pet speech bubble and avatar.
-  - Voice controls: replay + mute toggle.
+  - Voice control: single speaker toggle (on/off) anchored on avatar.
   - CTA pair: Start Challenge / Back to Map.
 - Interaction behavior:
   - Reads selected topic key from localStorage.
@@ -126,9 +126,10 @@ Current navigation issue:
   - Explicit loading, error, and content states are implemented.
 
 ### Current Visual Layout (Screen 3)
-- Desktop composition is vertically centered within available viewport space under header.
+- Main topic header block stays in a stable top position while aspect grid grows below.
 - Intro section is intentionally larger (wider container, larger cards/avatar/CTA) to reduce visual emptiness.
 - Decorative kid-friendly background motifs remain visible behind the content layer.
+- Example copy supports word-level blue emphasis for targeted grammar terms.
 
 ## Screen 4: Game Challenge
 - UX goal: present one clear question with immediate encouragement.

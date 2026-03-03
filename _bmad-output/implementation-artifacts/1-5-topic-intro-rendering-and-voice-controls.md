@@ -5,14 +5,14 @@ Status: done
 ## Story
 
 As a learner,
-I want intro content with replay and mute support,
+I want intro content with simple voice control support,
 so that I can understand the topic in a friendly way.
 
 ## Acceptance Criteria
 
 1. Given a selected topic key from Screen 2, when intro route loads, then topic title, summary, and aspect list render from topic metadata.
 2. Intro route supports loading, error, and content states for topic hydration.
-3. Voice narration supports replay and mute controls when browser speech synthesis is available.
+3. Voice narration supports speaker on/off toggle control when browser speech synthesis is available.
 4. If browser speech synthesis is unavailable, UI degrades safely to text mode without flow-breaking errors.
 5. Profile header context remains hydrated from local profile data.
 6. `npm run build` passes.
@@ -25,8 +25,7 @@ so that I can understand the topic in a friendly way.
   - [x] Render topic summary and aspect cards
 - [x] Implement voice controls and fallback behavior (AC: 3, 4)
   - [x] Detect speech synthesis support
-  - [x] Add replay action for current intro narration
-  - [x] Add mute toggle with persisted `gpa_voice_settings_v1`
+  - [x] Add speaker on/off toggle with persisted `gpa_voice_settings_v1`
   - [x] Show text-mode fallback hint when voice is unavailable
 - [x] Preserve learner identity context in intro (AC: 5)
   - [x] Hydrate name/pet/avatar header from profile storage
@@ -50,7 +49,7 @@ GPT-5.3-Codex
 
 ### Completion Notes List
 - Replaced intro scaffold with topic-aware rendering and graceful loading/error/content states.
-- Added replay/mute voice controls with persisted mute preference and safe voice fallback.
+- Added speaker on/off voice control with persisted mute preference and safe voice fallback.
 - Preserved profile header context on intro screen.
 
 ### File List
@@ -61,3 +60,4 @@ GPT-5.3-Codex
 ### Change Log
 - 2026-03-03: Implemented topic intro rendering and voice controls with fallback behavior.
 - 2026-03-03: Refactored Screen 3 visual layout to centered, larger composition and aligned header style with other screens.
+- 2026-03-03: Removed temporary demo topic and simplified Screen 3 voice UI to single speaker toggle.

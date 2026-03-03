@@ -74,7 +74,7 @@ Focus on user outcomes:
 - [ ] Progress and accessory state keys restore expected UI context on next visit.
 - [ ] Corrupt/missing persisted data degrades safely to first-time flow without crash.
 - [ ] Screen 3 loads topic data and toggles loading/error/content states correctly.
-- [ ] Voice mute/replay controls function or degrade safely.
+- [ ] Voice speaker toggle (on/off) functions or degrades safely.
 - [ ] Screen 3 "Start Challenge" link resolves to an existing file (currently failing; fix required).
 - [ ] Screen 4 displays challenge UI and profile hydration safely.
 
