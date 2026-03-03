@@ -2,8 +2,10 @@
 
 import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
+import { getPlayerLevelInfo } from "../../src/lib/playerLevel";
 
 const profileStorageKey = "gpa_player_profile_v1";
+const playerProgressKey = "gpa_player_progress_v1";
 const selectedTopicStorageKey = "gpa_selected_topic_v1";
 const voiceSettingsKey = "gpa_voice_settings_v1";
 
@@ -173,6 +175,7 @@ export default function Screen3TopicIntroPage() {
     const [headerName, setHeaderName] = useState("Adventurer");
     const [headerPetText, setHeaderPetText] = useState("Choose your first topic");
     const [headerAvatar, setHeaderAvatar] = useState(defaultAvatar);
+    const [headerLevelLabel, setHeaderLevelLabel] = useState("Level 1 • Explorer");
 
     const [selectedTopicKey, setSelectedTopicKey] = useState("verbs");
     const [isLoading, setIsLoading] = useState(true);
@@ -235,6 +238,20 @@ export default function Screen3TopicIntroPage() {
             }
         }
 
+        const progressRaw = localStorage.getItem(playerProgressKey);
+        if (progressRaw) {
+            try {
+                const parsedProgress = JSON.parse(progressRaw);
+                const { level, title } = getPlayerLevelInfo(parsedProgress);
+                setHeaderLevelLabel(`Level ${level} • ${title}`);
+            } catch (error) {
+                console.error("Failed to parse player progress", error);
+                setHeaderLevelLabel("Level 1 • Explorer");
+            }
+        } else {
+            setHeaderLevelLabel("Level 1 • Explorer");
+        }
+
         const selectedTopic = localStorage.getItem(selectedTopicStorageKey);
         if (selectedTopic && topics[selectedTopic]) {
             setSelectedTopicKey(selectedTopic);
@@ -283,7 +300,7 @@ export default function Screen3TopicIntroPage() {
                         </div>
                         <div className="text-left">
                             <h1 className="text-xl font-black tracking-tight text-primary">Grammar Paws Adventure</h1>
-                            <p className="text-[10px] font-bold uppercase tracking-widest text-slate-400">Level 12 • Explorer</p>
+                            <p className="text-[10px] font-bold uppercase tracking-widest text-slate-400">{headerLevelLabel}</p>
                         </div>
                     </div>
                     <div className="ml-auto flex items-center gap-4">
