@@ -2,8 +2,10 @@
 
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
+import { getPlayerLevelInfo } from "../../src/lib/playerLevel";
 
 const profileStorageKey = "gpa_player_profile_v1";
+const playerProgressKey = "gpa_player_progress_v1";
 const selectedTopicStorageKey = "gpa_selected_topic_v1";
 
 const defaultAvatar =
@@ -39,6 +41,7 @@ export default function Screen2TopicSelectionPage() {
     const [headerName, setHeaderName] = useState("Adventurer");
     const [headerPetText, setHeaderPetText] = useState("Choose your first topic");
     const [headerAvatar, setHeaderAvatar] = useState(defaultAvatar);
+    const [headerLevelLabel, setHeaderLevelLabel] = useState("Level 1 • Explorer");
     const [mapTitle, setMapTitle] = useState("World Map Topic Selection");
     const [startMessage, setStartMessage] = useState("");
 
@@ -66,6 +69,19 @@ export default function Screen2TopicSelectionPage() {
         } catch (error) {
             console.error("Failed to parse player profile", error);
         }
+
+        const progressRaw = localStorage.getItem(playerProgressKey);
+        if (!progressRaw) {
+            return;
+        }
+
+        try {
+            const parsedProgress = JSON.parse(progressRaw);
+            const { level, title } = getPlayerLevelInfo(parsedProgress);
+            setHeaderLevelLabel(`Level ${level} • ${title}`);
+        } catch (error) {
+            console.error("Failed to parse player progress", error);
+        }
     }, []);
 
     const handleStartTopic = (topicKey) => {
@@ -84,7 +100,7 @@ export default function Screen2TopicSelectionPage() {
                         </div>
                         <div className="text-left">
                             <h1 className="text-xl font-black tracking-tight text-primary">Grammar Paws Adventure</h1>
-                            <p className="text-[10px] uppercase font-bold tracking-widest text-slate-400">Level 12 • Explorer</p>
+                            <p className="text-[10px] uppercase font-bold tracking-widest text-slate-400">{headerLevelLabel}</p>
                         </div>
                     </div>
                     <div className="flex items-center gap-4 ml-auto">
@@ -99,15 +115,15 @@ export default function Screen2TopicSelectionPage() {
                 </div>
             </header>
 
-            <main className="relative flex-1 px-4 md:px-6 lg:px-8 max-w-[1320px] mx-auto w-full py-4">
-                <div className="text-center mb-8">
-                    <h2 className="text-3xl md:text-4xl font-black text-slate-800 mb-3">{mapTitle}</h2>
-                    <p className="text-base text-slate-500 font-medium max-w-lg mx-auto leading-relaxed">
+            <main className="relative flex-1 px-4 md:px-8 lg:px-10 max-w-[1400px] mx-auto w-full py-6 md:py-8">
+                <div className="text-center mb-10">
+                    <h2 className="text-4xl md:text-5xl font-black text-slate-800 mb-3">{mapTitle}</h2>
+                    <p className="text-lg md:text-xl text-slate-500 font-medium max-w-3xl mx-auto leading-relaxed">
                         Master grammar one paw at a time! Follow the path to unlock new islands of knowledge.
                     </p>
                 </div>
 
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-8 items-stretch">
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-8 items-stretch">
                     {cards.map((card) => {
                         const isActive = card.state === "active";
                         const isCompleted = card.state === "completed";
@@ -116,47 +132,43 @@ export default function Screen2TopicSelectionPage() {
                         return (
                             <article
                                 key={card.title}
-                                className={`h-[220px] p-4 rounded-lg border-2 flex flex-col ${
-                                    isActive
+                                className={`min-h-[300px] p-6 rounded-xl border-2 flex flex-col ${isActive
                                         ? "bg-white shadow-xl shadow-primary/20 border-primary"
                                         : isCompleted
-                                          ? "bg-white shadow-lg shadow-slate-200/50 border-emerald-500/30"
-                                          : "bg-white border-slate-200 opacity-75"
-                                }`}
+                                            ? "bg-white shadow-lg shadow-slate-200/50 border-emerald-500/30"
+                                            : "bg-white border-slate-200 opacity-75"
+                                    }`}
                             >
-                                <div className="flex items-start justify-between mb-2">
+                                <div className="flex items-start justify-between mb-3">
                                     <div
-                                        className={`size-8 rounded-full flex items-center justify-center ${
-                                            isActive
+                                        className={`size-9 rounded-full flex items-center justify-center ${isActive
                                                 ? "bg-primary/10 text-primary"
                                                 : isCompleted
-                                                  ? "bg-emerald-100 text-emerald-600"
-                                                  : "bg-slate-100 text-slate-400"
-                                        }`}
+                                                    ? "bg-emerald-100 text-emerald-600"
+                                                    : "bg-slate-100 text-slate-400"
+                                            }`}
                                     >
-                                        <span className="material-symbols-outlined text-lg">
+                                        <span className="material-symbols-outlined text-xl">
                                             {isLocked ? "lock" : isCompleted ? "check_circle" : "play_circle"}
                                         </span>
                                     </div>
                                 </div>
 
-                                <h3 className={`text-lg font-black ${isLocked ? "text-slate-400" : "text-slate-800"}`}>{card.title}</h3>
-                                <p className={`text-xs mb-3 h-8 ${isLocked ? "text-slate-400" : "text-slate-500"}`}>{card.summary}</p>
+                                <h3 className={`text-2xl font-black ${isLocked ? "text-slate-400" : "text-slate-800"}`}>{card.title}</h3>
+                                <p className={`text-sm md:text-base mb-5 min-h-[48px] ${isLocked ? "text-slate-400" : "text-slate-500"}`}>{card.summary}</p>
 
                                 <div className="mt-auto">
-                                    <div className="flex items-center gap-2 mb-3">
-                                        <div className="flex-1 h-2.5 bg-slate-100 rounded-full overflow-hidden">
+                                    <div className="flex items-center gap-3 mb-4">
+                                        <div className="flex-1 h-3 bg-slate-100 rounded-full overflow-hidden">
                                             <div
-                                                className={`h-full rounded-full ${
-                                                    isActive ? "bg-primary" : isCompleted ? "bg-emerald-500" : "bg-slate-300"
-                                                }`}
+                                                className={`h-full rounded-full ${isActive ? "bg-primary" : isCompleted ? "bg-emerald-500" : "bg-slate-300"
+                                                    }`}
                                                 style={{ width: `${card.progress}%` }}
                                             />
                                         </div>
                                         <span
-                                            className={`text-xs font-bold ${
-                                                isActive ? "text-primary" : isCompleted ? "text-emerald-600" : "text-slate-400"
-                                            }`}
+                                            className={`text-sm font-bold ${isActive ? "text-primary" : isCompleted ? "text-emerald-600" : "text-slate-400"
+                                                }`}
                                         >
                                             {card.progress}%
                                         </span>
@@ -170,13 +182,12 @@ export default function Screen2TopicSelectionPage() {
                                                 handleStartTopic(card.topicKey);
                                             }
                                         }}
-                                        className={`w-full py-1.5 rounded-full text-xs font-bold ${
-                                            isActive
+                                        className={`w-full h-12 rounded-full text-sm font-bold ${isActive
                                                 ? "bg-primary text-white"
                                                 : isCompleted
-                                                  ? "bg-emerald-100 text-emerald-700"
-                                                  : "bg-slate-100 text-slate-400 cursor-not-allowed"
-                                        }`}
+                                                    ? "bg-emerald-100 text-emerald-700"
+                                                    : "bg-slate-100 text-slate-400 cursor-not-allowed"
+                                            }`}
                                     >
                                         {card.cta}
                                     </button>
@@ -186,7 +197,7 @@ export default function Screen2TopicSelectionPage() {
                     })}
                 </div>
 
-                <p className="mt-5 text-center text-sm font-semibold text-primary" aria-live="polite">
+                <p className="mt-6 text-center text-base font-semibold text-primary" aria-live="polite">
                     {startMessage}
                 </p>
             </main>

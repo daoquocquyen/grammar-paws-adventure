@@ -92,11 +92,13 @@ Current navigation issue:
   - `Start Topic` saves selected topic (`"verbs"`) to `gpa_selected_topic_v1`.
   - Routes to screen 3.
   - Header profile hydrates from stored player profile.
+  - Header level badge hydrates from `gpa_player_progress_v1` and renders grouped title bands (e.g., level 1-3 Explorer).
 - CTA hierarchy:
   - Primary: `Start Topic` on active/in-progress card.
   - Secondary: `Review` or locked/disabled buttons.
 - State handling:
   - Visual state variants exist (completed/in-progress/locked), but are mostly static markup.
+  - Level/title badge is dynamic and progress-derived, while topic cards are still static sample progression.
 
 ## Screen 3: Grammar Topic Intro
 - UX goal: teach topic essentials before challenge and provide confidence.
