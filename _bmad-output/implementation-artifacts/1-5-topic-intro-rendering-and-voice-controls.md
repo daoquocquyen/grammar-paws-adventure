@@ -54,6 +54,7 @@ GPT-5.3-Codex
 
 ### File List
 - _bmad-output/implementation-artifacts/1-5-topic-intro-rendering-and-voice-controls.md
+- app/topic-intro/page.js
 - app/screen3-grammar-topic-intro/page.js
 - _bmad-output/implementation-artifacts/sprint-status.yaml
 

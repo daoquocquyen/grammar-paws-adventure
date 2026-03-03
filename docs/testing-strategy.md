@@ -67,7 +67,7 @@ Focus on user outcomes:
 - [ ] `npm run build` passes for Next.js runtime.
 - [ ] React route `/` loads without console-breaking errors.
 - [ ] React Screen 1 validation blocks start when name or pet is missing.
-- [ ] React Screen 1 navigates to `/screen2-world-map-topic-selection` when valid.
+- [ ] React Screen 1 navigates to `/world-map` when valid.
 - [ ] All existing screen files load without console-breaking errors.
 - [ ] Screen 2 `Start Topic` stores selected topic and opens screen 3.
 - [ ] Screen 1 persists learner name + selected pet and survives hard refresh.

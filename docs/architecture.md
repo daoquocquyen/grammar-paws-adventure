@@ -83,7 +83,9 @@ flowchart LR
 ## Migration Status
 - ✅ Next.js app scaffold created (`package.json`, `app/layout.js`, `app/globals.css`, `app/page.js`).
 - ✅ Screen 1 onboarding ported to React route `/` with validation + pet selection behavior.
-- 🟡 Screen 2 has temporary route shell at `/screen2-world-map-topic-selection`; full behavior still legacy in `src/ui/stitch/screen2-world-map-topic-selection.html`.
+- ✅ Canonical clean routes enabled for migrated screens: `/world-map` and `/topic-intro`.
+- ✅ Backward compatibility redirects from legacy paths `/screen2-world-map-topic-selection` -> `/world-map` and `/screen3-grammar-topic-intro` -> `/topic-intro`.
+- 🟡 Screen 2 behavior is implemented in React and surfaced via `app/world-map/page.js` (currently re-exporting `app/screen2-world-map-topic-selection/page.js`) while legacy Stitch source remains for migration traceability.
 - 🟡 Screens 3-4 remain legacy static HTML and are pending migration.
 
 ## Architecture TBDs
@@ -101,4 +103,6 @@ flowchart LR
 - `src/ui/stitch/screen4-game-challenge.html`
 - `app/layout.js`
 - `app/page.js`
+- `app/world-map/page.js`
+- `app/topic-intro/page.js`
 - `app/screen2-world-map-topic-selection/page.js`

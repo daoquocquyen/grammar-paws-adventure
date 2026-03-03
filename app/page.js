@@ -181,7 +181,7 @@ export default function Home() {
 
         ensureReturningState();
 
-        router.push("/screen2-world-map-topic-selection");
+        router.push("/world-map");
     };
 
     return (

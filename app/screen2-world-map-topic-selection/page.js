@@ -416,7 +416,7 @@ export default function Screen2TopicSelectionPage() {
 
         localStorage.setItem(selectedTopicStorageKey, topicKey);
         setStartMessage("Opening topic intro...");
-        router.push("/screen3-grammar-topic-intro");
+        router.push("/topic-intro");
     };
 
     const moveCarouselByDirection = (direction) => {

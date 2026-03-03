@@ -11,7 +11,7 @@ so that I always see rules and examples before challenge.
 ## Acceptance Criteria
 
 1. Given the learner is on Screen 2 React route, when the learner presses `Start Topic`, then selected topic key is persisted to `gpa_selected_topic_v1`.
-2. Given `Start Topic` is pressed, navigation routes to topic intro route first (`/screen3-grammar-topic-intro`) rather than challenge.
+2. Given `Start Topic` is pressed, navigation routes to topic intro route first (`/topic-intro`) rather than challenge.
 3. Topic intro route is available and renders selected topic label from persisted selection.
 4. Existing profile hydration behavior remains available in Screen 2 and intro header.
 5. `npm run build` passes.
@@ -20,9 +20,9 @@ so that I always see rules and examples before challenge.
 
 - [x] Wire Screen 2 start action to intro-first route (AC: 1, 2)
   - [x] Persist `gpa_selected_topic_v1` on start
-  - [x] Navigate to `/screen3-grammar-topic-intro`
+  - [x] Navigate to `/topic-intro`
 - [x] Add React intro route scaffold (AC: 3)
-  - [x] Create `app/screen3-grammar-topic-intro/page.js`
+  - [x] Create `app/topic-intro/page.js` (re-exporting `app/screen3-grammar-topic-intro/page.js`)
   - [x] Hydrate selected topic label from storage
 - [x] Preserve profile context continuity (AC: 4)
   - [x] Keep header profile hydration in Screen 2
@@ -61,6 +61,8 @@ GPT-5.3-Codex
 
 ### File List
 - _bmad-output/implementation-artifacts/1-4-topic-selection-routes-to-topic-intro-first.md
+- app/topic-intro/page.js
+- app/world-map/page.js
 - app/screen2-world-map-topic-selection/page.js
 
 ### Change Log
@@ -68,3 +70,4 @@ GPT-5.3-Codex
 - 2026-03-03: Updated Screen 2 UI scale and added dynamic level-title badge from persisted progress.
 - 2026-03-03: Added dynamic Screen 2 topic progression states, pet-dependent topic icon set, easy-to-hard ordering, and consistent white container styling.
 - 2026-03-03: Converted Screen 2 to one-row horizontal carousel (4 visible cards) with edge chevrons, keyboard/drag navigation, dialog bubble companion callout, and selected-pet avatar usage.
+- 2026-03-03: Adopted canonical clean routes `/world-map` and `/topic-intro`, with redirects from legacy `/screen2-world-map-topic-selection` and `/screen3-grammar-topic-intro`.

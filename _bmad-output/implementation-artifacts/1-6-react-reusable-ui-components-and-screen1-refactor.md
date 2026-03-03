@@ -53,7 +53,7 @@ so that future screens can share consistent UI and reduce duplicated code.
 - No automated test harness yet; required checks:
   - `npm run build` passes
   - Name/pet validation still blocks invalid start
-  - Successful path still routes to `/screen2-world-map-topic-selection`
+  - Successful path still routes to `/world-map`
 
 ## Dev Agent Record
 

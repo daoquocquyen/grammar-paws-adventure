@@ -36,7 +36,7 @@ describe("Screen 1 onboarding integration", () => {
         fireEvent.click(screen.getAllByRole("button", { name: "Brave Puppy" })[0]);
         fireEvent.click(screen.getAllByRole("button", { name: "Start Adventure" })[0]);
 
-        expect(pushMock).toHaveBeenCalledWith("/screen2-world-map-topic-selection");
+        expect(pushMock).toHaveBeenCalledWith("/world-map");
     });
 
     it("persists a versioned player profile before navigation", () => {
@@ -56,7 +56,7 @@ describe("Screen 1 onboarding integration", () => {
                 petName: "Brave Puppy",
             })
         );
-        expect(pushMock).toHaveBeenCalledWith("/screen2-world-map-topic-selection");
+        expect(pushMock).toHaveBeenCalledWith("/world-map");
     });
 
     it("hydrates name and selected pet from stored versioned profile", () => {

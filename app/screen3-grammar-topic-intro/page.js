@@ -314,7 +314,7 @@ export default function Screen3TopicIntroPage() {
                         <h3 className="mb-1 text-sm font-black text-rose-600">We couldn't load this topic.</h3>
                         <p className="mb-3 text-xs text-rose-500">{loadError}</p>
                         <Link
-                            href="/screen2-world-map-topic-selection"
+                            href="/world-map"
                             className="inline-flex items-center gap-2 rounded-full bg-rose-500 px-4 py-2 text-xs font-black text-white"
                         >
                             Back to Map
@@ -405,7 +405,7 @@ export default function Screen3TopicIntroPage() {
                                 <span className="material-symbols-outlined text-base">play_circle</span>
                             </button>
                             <Link
-                                href="/screen2-world-map-topic-selection"
+                                href="/world-map"
                                 className="inline-flex items-center gap-2 rounded-full border-2 border-primary bg-white px-9 py-3.5 text-lg font-black text-primary"
                             >
                                 <span className="material-symbols-outlined text-base">map</span>

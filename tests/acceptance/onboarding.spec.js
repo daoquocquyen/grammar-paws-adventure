@@ -22,7 +22,7 @@ test.describe("Story 1.1 onboarding acceptance", () => {
         await expect(bravePuppyButton).toHaveAttribute("aria-pressed", "true");
         await startAdventureButton.click();
 
-        await expect(page).toHaveURL(/\/screen2-world-map-topic-selection$/);
+        await expect(page).toHaveURL(/\/world-map$/);
     });
 
     test("persists and restores player profile across refresh", async ({ page }) => {
@@ -34,7 +34,7 @@ test.describe("Story 1.1 onboarding acceptance", () => {
         await expect(wiseKittenButton).toHaveAttribute("aria-pressed", "true");
         await startAdventureButton.click();
 
-        await expect(page).toHaveURL(/\/screen2-world-map-topic-selection$/);
+        await expect(page).toHaveURL(/\/world-map$/);
 
         const persistedProfile = await page.evaluate(() => {
             const raw = window.localStorage.getItem("gpa_player_profile_v1");

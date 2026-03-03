@@ -13,7 +13,7 @@ so that the learner does not lose identity on refresh.
 1. Given the learner completes valid onboarding on React Screen 1 (`app/page.js`), when `Start Adventure` is clicked, then player profile is saved to `localStorage` under `gpa_player_profile_v1` before navigation.
 2. Given an existing valid `gpa_player_profile_v1` payload, when Screen 1 is loaded or refreshed, then player name and selected pet are restored into UI state.
 3. Persistence is versioned and backward-safe for MVP (`*_v1` key; safe parse guard and fallback behavior on malformed data).
-4. Existing Story 1.1 behavior remains intact: required name, required pet, and route to `/screen2-world-map-topic-selection` when valid.
+4. Existing Story 1.1 behavior remains intact: required name, required pet, and route to `/world-map` when valid.
 5. `npm run build` passes after changes.
 
 ## Tasks / Subtasks
