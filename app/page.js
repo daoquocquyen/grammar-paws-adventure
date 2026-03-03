@@ -18,36 +18,48 @@ const pets = [
         image:
             "https://lh3.googleusercontent.com/aida-public/AB6AXuC8UfnI-4ZD6WEiN5gXUwP6EMRX8mNxLA9lGZ-YGKsdeGIk3_z0ChWxvjCrlNqwdcRcIKhpf8cbPISdsBtzfR8ZWbQLVLIB3hMDemAxSYWw_y4NW3ORCs0G_OOf1VMb0Ohrjwb84k4ocpIXuMQ5Kugzcsr8FyeyWl-MWUFSwrE5_U_ArLy3y0ASzoi7bAL2jCMtsYqFsoLW3v5f5hCDNNQXiiTMcEn5moNywZMVUmPowbyKNzSpFejqiHpOjSKx5qq22mJLQE20Nlmn",
         quote: "Woof! I’ll cheer you on while you learn!",
+        characteristic: "Bravery",
+        moodScore: 98,
     },
     {
         name: "Wise Kitten",
         image:
             "https://lh3.googleusercontent.com/aida-public/AB6AXuB5E1yagRgTQDhzkkiH1Z2CFZOL6i2dCszN8wKwrkeSPODDca-qhj_TxgvSsIytjeJuqHg8am8KFJuSxK-BI6XbzHMivZnxQhdVeYrP5lIC1lXuVDSLE1HGOopsI461dIZPO-sSSlob8ku513pA2DVZqBZd8Gg6TFyeGWTq_hYRpHTEIUQGfkLhJ1bplVqJeWQ7Hr8zJI7jdFH-07PxPO9crdCPHRasfWFtdr2s13S4E2hJNaOslEXeEEhs0ooN4211MMcSFSsHHQuH",
         quote: "Meow! Let’s solve grammar together!",
+        characteristic: "Wisdom",
+        moodScore: 96,
     },
     {
         name: "Swift Bunny",
         image:
             "https://lh3.googleusercontent.com/aida-public/AB6AXuBmx66OJYOOhrLcMEF9rs4_vmdVbAy8khc5VWVTgQUhCDz9HHcP5ZjRid_jTSIi4P7iSRATxBB67mNbPWnElulY7iGXcpxh2S-IQ8LTTWNMk8Gbp8XMCdN4df7qqvE4edbpCIjc347_Ibv6GyuLJO6t3QCHSt4iGFQ19jgvg0vzZq4EW1ibIhv--_LQegdyf9pw-AYhsqmt5MUfy1JQfWU3m-fnTUUPzHuvJacNm4FwnROdAv2_1wM2TLB2a5CyEmV0DEn6MO5aM4Fa",
         quote: "Hop hop! Quick thinking makes learning fun!",
+        characteristic: "Agility",
+        moodScore: 94,
     },
     {
         name: "Happy Hamster",
         image:
             "https://lh3.googleusercontent.com/aida-public/AB6AXuBJ5l3I0e6UIAujP1swxyelIDciALjoKFoCygY-EW7QoSpnoajHDEsFBXr6xy6eAW1ddDsNpb0B2WLgo19m_Foe_3BMsUIzQLTd9Adz9vZAJMU0Bz2IMjUSEp03P6_MpHz1OyWhoWr62FGytj2DTo5S18AoGyADFdcey47VuH_7ptbli7bbx86xstDJEvfv6tDsuBt9oNVCsCglpcJIH185hG9xcCbD_syhGUdU3ijf7Xsmy7iu0-VFcJkVHN5Gl5MWJ9WArOx009VO",
         quote: "Squeak! Tiny steps make big progress!",
+        characteristic: "Joy",
+        moodScore: 99,
     },
     {
         name: "Steady Turtle",
         image:
             "https://lh3.googleusercontent.com/aida-public/AB6AXuCWVNsQrrHlzjhXt6-JawZXqs8hMsLHZXaCr1K-SeNmCrhfJrhs71q3QFdcZ99isFQ5HxsrNpP3s_2Y4ID1DTlEJ5m-UOLkhChZTWE3V4jn33vzK-C_dSHOqrjcvw38p62g3u9rQHydnKPNRZoMFQCYANpoYJNweDZqxNT3TMVobDJj5orTLsz8hpTgNrW9onS77Dp6lhu76oEDqWATFced9fJDhxOaCPinxeik57KCGKrQOUnRN8Zm9zLxEwCNieSHJ8v-QdHwgMx2",
         quote: "Slow and steady, we’ll learn every rule!",
+        characteristic: "Patience",
+        moodScore: 97,
     },
     {
         name: "Magic Dragon",
         image:
             "https://lh3.googleusercontent.com/aida-public/AB6AXuAblbJmRXR3T20lYkFMbjW7V2nawLnAVPYrazc27WtJ0Ls9bEv3NqcPaIcycgvrkkPR3aR36ufzZ2VU9oH7SbI8xcWe71WOpmLjosPJK0uAzfDefFBQIs9s8Ps5XU02S58g7naEzlaeP2OO8ITuCGHMuy1eUmWX_axPdMG0TdN5Y4MGpBXKd4NihhjS7CoW8ZFZNVPbZ1avtEGuPMqnMs2waECZaOupHvsARJMBhdZX-EXxiA2baHgCXj4ohbO5jb_uDLsp-uq08XWC",
         quote: "Roar! Let’s spark some grammar magic!",
+        characteristic: "Curiosity",
+        moodScore: 95,
     },
 ];
 
@@ -272,11 +284,11 @@ export default function Home() {
 
                                     <div className="w-full space-y-3">
                                         <div className="flex justify-between text-sm font-bold text-slate-400 uppercase">
-                                            <span>Happiness</span>
-                                            <span>100%</span>
+                                            <span>{selectedPet?.characteristic ?? "Mood"}</span>
+                                            <span>{selectedPet?.moodScore ?? 100}%</span>
                                         </div>
                                         <div className="w-full bg-slate-100 h-3 rounded-full overflow-hidden">
-                                            <div className="bg-green-500 h-full w-full" />
+                                            <div className="bg-green-500 h-full" style={{ width: `${selectedPet?.moodScore ?? 100}%` }} />
                                         </div>
                                     </div>
 
