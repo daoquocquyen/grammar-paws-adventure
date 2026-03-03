@@ -6,6 +6,7 @@ import HeaderBlock from "../src/components/HeaderBlock";
 import PetOptionCard from "../src/components/PetOptionCard";
 import PrimaryButton from "../src/components/PrimaryButton";
 import ValidationMessage from "../src/components/ValidationMessage";
+import { validateOnboardingInput } from "../src/lib/onboardingValidation";
 
 const screen1ProfileKey = "gpa_player_profile_v1";
 const playerProgressKey = "gpa_player_progress_v1";
@@ -148,11 +149,7 @@ export default function Home() {
     const liveValidationMessage = [nameError, petError].filter(Boolean).join(" ");
 
     const validateOnboarding = () => {
-        const trimmedName = playerName.trim();
-        const currentNameError = trimmedName
-            ? ""
-            : "Please enter your name so your pet can cheer for you!";
-        const currentPetError = selectedPet ? "" : "Please choose one companion before you start.";
+        const { nameError: currentNameError, petError: currentPetError } = validateOnboardingInput(playerName, selectedPet);
 
         setNameError(currentNameError);
         setPetError(currentPetError);

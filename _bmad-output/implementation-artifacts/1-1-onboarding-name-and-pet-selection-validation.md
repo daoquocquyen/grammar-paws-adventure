@@ -43,7 +43,7 @@ so that I can start my learning journey with my own companion.
 ### Architecture and Constraints
 - Runtime is static HTML + in-page JavaScript in `src/ui/stitch/`.
 - Keep implementation in `src/ui/stitch/screen1-home-start-journey.html`.
-- No build pipeline or automated test framework is currently configured.
+- Current app implementation also exists in Next.js (`app/page.js`) and is covered by automated tests.
 
 ### UX and Accessibility Requirements
 - Follow existing screen visual system and Tailwind tokens already in the file.
@@ -60,6 +60,10 @@ so that I can start my learning journey with my own companion.
 
 ### Testing Requirements
 - Manual validation is the current required gate.
+- Automated validation is now available for Story 1.1 in this repository:
+  - Unit: `tests/unit/onboardingValidation.test.js`
+  - Integration: `tests/integration/onboarding.screen1.integration.test.jsx`
+  - Acceptance: `tests/acceptance/onboarding.spec.js`
 - Minimum checks:
   - Empty name + no pet blocks start and displays guidance.
   - Name only blocks start with pet guidance.
@@ -84,6 +88,8 @@ GPT-5.3-Codex
 ### Debug Log References
 - `get_errors` run on modified files (no diagnostics)
 - Route target existence check: `src/ui/stitch/screen2-world-map-topic-selection.html` confirmed
+- `npm run test` (Vitest unit + integration): pass
+- `npm run test:acceptance` (Playwright acceptance): pass
 
 ### Completion Notes List
 - Implemented Story 1.1 validation and route gating in `screen1-home-start-journey.html`.
@@ -91,16 +97,29 @@ GPT-5.3-Codex
 - Added keyboard-accessible pet selection with `aria-pressed` state and ARIA-live feedback for validation.
 - Preserved Story 1.1 scope by not introducing profile persistence behavior (reserved for Story 1.2).
 - Addressed code-review findings: removed duplicate stylesheet include, added `aria-invalid` updates for name validation, and added Enter-key submit behavior from name input.
+- Added Story 1.1 automated test coverage in the Next.js app for unit, integration, and acceptance flows.
+- Extracted onboarding validation logic into `src/lib/onboardingValidation.js` to support focused unit testing.
 
 ### File List
 - _bmad-output/implementation-artifacts/1-1-onboarding-name-and-pet-selection-validation.md
 - src/ui/stitch/screen1-home-start-journey.html
 - _bmad-output/implementation-artifacts/sprint-status.yaml
+- app/page.js
+- src/lib/onboardingValidation.js
+- tests/unit/onboardingValidation.test.js
+- tests/integration/onboarding.screen1.integration.test.jsx
+- tests/acceptance/onboarding.spec.js
+- tests/setup.js
+- vitest.config.mjs
+- playwright.config.mjs
+- package.json
+- package-lock.json
 
 ### Change Log
 - 2026-03-02: Story file created from Epic 1 Story 1.1 with implementation guardrails and acceptance criteria.
 - 2026-03-02: Implemented onboarding validation, accessible pet selection state, and valid-path navigation to world map.
 - 2026-03-02: Senior code review completed; 3 medium findings fixed and story approved.
+- 2026-03-03: Added automated Story 1.1 test harness and coverage (Vitest unit/integration + Playwright acceptance), all passing.
 
 ## Senior Developer Review (AI)
 
