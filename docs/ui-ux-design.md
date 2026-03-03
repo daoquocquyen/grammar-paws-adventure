@@ -68,13 +68,13 @@ Current navigation issue:
 ## Screen 1: Home / Start Journey
 - UX goal: simple onboarding and emotional hook before learning begins.
 - Key components:
-  - Header with player/pet summary.
+  - Branded header (title + playful subtitle).
   - Name input card.
   - Pet selection grid (6 options shown).
   - Pet preview + milestone panel.
   - Primary CTA: Start Adventure.
 - Interaction behavior:
-  - Current JS hydrates header from `gpa_player_profile_v1`.
+  - Current JS hydrates onboarding fields from `gpa_player_profile_v1`.
   - Pet selection and name submission behavior is mostly visual (no full save/validate flow yet).
 - CTA hierarchy:
   - Primary: `Start Adventure`.

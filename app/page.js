@@ -10,8 +10,6 @@ import ValidationMessage from "../src/components/ValidationMessage";
 const screen1ProfileKey = "gpa_player_profile_v1";
 const playerProgressKey = "gpa_player_progress_v1";
 const petAccessoriesKey = "gpa_pet_accessories_v1";
-const defaultAvatar =
-    "https://lh3.googleusercontent.com/aida-public/AB6AXuCLzcyBcB1kXBKC87wVxPydRH8Z6etHELsVc2a1F90LjG3faXsG9lcV1nj4uPhMSLAcvG1K9WOjsOJUuFf9vn8cBvgVinFbMVfVQ4ZsvoqR4VsFMMOjU7W5ziFsCOdbm7y1Hzdi2OKt3DanVq7pUtiZPHqlA4Mp83miQek9iHzud_HcCndkFiA08inxZL51ILoGwd7eaPfnNDpGQDJ2JVcaceXxCStVVVV0SO1cUgoyLzo3h93o1VTGgpLm4BvSOg96jdnpWU7crOjd";
 
 const pets = [
     {
@@ -72,11 +70,6 @@ export default function Home() {
     const [selectedPetName, setSelectedPetName] = useState("");
     const [nameError, setNameError] = useState("");
     const [petError, setPetError] = useState("");
-    const [headerName, setHeaderName] = useState("Adventurer");
-    const [headerPetText, setHeaderPetText] = useState("Choose your first topic");
-    const [headerAvatar, setHeaderAvatar] = useState(defaultAvatar);
-    const [completedTopicCount, setCompletedTopicCount] = useState(0);
-    const [unlockedAccessoryCount, setUnlockedAccessoryCount] = useState(0);
 
     const selectedPet = useMemo(
         () => pets.find((pet) => pet.name === selectedPetName) ?? null,
@@ -95,31 +88,6 @@ export default function Home() {
             localStorage.setItem(screen1ProfileKey, JSON.stringify(payload));
         } catch (error) {
             console.error("Failed to save player profile", error);
-        }
-    };
-
-    const restoreReturningState = () => {
-        const progressRaw = localStorage.getItem(playerProgressKey);
-        const accessoriesRaw = localStorage.getItem(petAccessoriesKey);
-
-        try {
-            if (progressRaw) {
-                const progress = JSON.parse(progressRaw);
-                if (Array.isArray(progress?.completedTopics)) {
-                    setCompletedTopicCount(progress.completedTopics.length);
-                }
-            }
-
-            if (accessoriesRaw) {
-                const accessories = JSON.parse(accessoriesRaw);
-                if (Array.isArray(accessories?.unlockedAccessoryIds)) {
-                    setUnlockedAccessoryCount(accessories.unlockedAccessoryIds.length);
-                }
-            }
-        } catch (error) {
-            console.error("Failed to parse returning learner state", error);
-            setCompletedTopicCount(0);
-            setUnlockedAccessoryCount(0);
         }
     };
 
@@ -161,7 +129,6 @@ export default function Home() {
             const profile = JSON.parse(screen1ProfileRaw);
             if (isValidProfileName(profile?.name)) {
                 const restoredName = profile.name.trim();
-                setHeaderName(restoredName);
                 setPlayerName(restoredName);
             }
 
@@ -169,8 +136,6 @@ export default function Home() {
                 const matchingPet = pets.find((pet) => pet.name === profile.petName);
                 if (matchingPet) {
                     setSelectedPetName(matchingPet.name);
-                    setHeaderPetText(`${matchingPet.name} companion`);
-                    setHeaderAvatar(matchingPet.image);
                 }
             }
         } catch (error) {
@@ -178,7 +143,6 @@ export default function Home() {
         }
 
         ensureReturningState();
-        restoreReturningState();
     }, []);
 
     const liveValidationMessage = [nameError, petError].filter(Boolean).join(" ");
@@ -214,7 +178,7 @@ export default function Home() {
     return (
         <div className="relative flex min-h-screen w-full flex-col overflow-x-hidden">
             <div className="layout-container flex h-full grow flex-col">
-                <HeaderBlock headerName={headerName} headerPetText={headerPetText} headerAvatar={headerAvatar} />
+                <HeaderBlock />
 
                 <main className="flex-1 min-h-[calc(100vh-180px)] px-4 md:px-8 lg:px-10 max-w-[1400px] mx-auto w-full py-6 md:py-8">
                     <div className="relative rounded-xl overflow-hidden shadow-lg border-2 border-white mb-4">
@@ -233,10 +197,10 @@ export default function Home() {
                             <div className="bg-white p-6 rounded-xl shadow-sm border border-slate-200">
                                 <div className="flex items-center gap-2 mb-2">
                                     <span className="material-symbols-outlined text-primary text-xl">badge</span>
-                                    <h3 className="text-3xl font-bold">1. Who are you?</h3>
+                                    <h3 className="text-3xl font-bold">Your Hero Name</h3>
                                 </div>
                                 <div className="max-w-md">
-                                    <label className="block text-sm font-bold text-slate-500 mb-2" htmlFor="playerNameInput">Enter Your Name</label>
+                                    <label className="sr-only" htmlFor="playerNameInput">Enter your hero name</label>
                                     <input
                                         id="playerNameInput"
                                         aria-describedby="nameValidationMessage"
@@ -245,7 +209,6 @@ export default function Home() {
                                         onChange={(event) => {
                                             const nextName = event.target.value;
                                             setPlayerName(nextName);
-                                            setHeaderName(nextName.trim() || "Adventurer");
 
                                             if (nextName.trim()) {
                                                 setNameError("");
@@ -258,7 +221,7 @@ export default function Home() {
                                             }
                                         }}
                                         className={`w-full h-12 px-4 rounded-lg border-2 bg-slate-50 focus:border-primary focus:ring-2 focus:ring-primary/10 transition-all outline-none text-base font-bold ${nameError ? "border-rose-400" : "border-slate-100"}`}
-                                        placeholder="Type name..."
+                                        placeholder="Enter your hero name"
                                         type="text"
                                     />
                                     <ValidationMessage id="nameValidationMessage" message={nameError} />
@@ -268,7 +231,7 @@ export default function Home() {
                             <div className="bg-white p-6 rounded-xl shadow-sm border border-slate-200">
                                 <div className="flex items-center gap-3 mb-6">
                                     <span className="material-symbols-outlined text-primary text-xl">diversity_1</span>
-                                    <h3 className="text-3xl font-bold">2. Choose your Companion</h3>
+                                    <h3 className="text-3xl font-bold">Your Companion</h3>
                                 </div>
                                 <div className="grid grid-cols-3 gap-4">
                                     {pets.map((pet) => {
@@ -280,8 +243,6 @@ export default function Home() {
                                                 isSelected={isSelected}
                                                 onSelect={() => {
                                                     setSelectedPetName(pet.name);
-                                                    setHeaderPetText(`${pet.name} companion`);
-                                                    setHeaderAvatar(pet.image);
                                                     setPetError("");
                                                 }}
                                             />
@@ -325,13 +286,6 @@ export default function Home() {
                                     <div className="w-full mt-5 p-3 rounded-lg bg-primary/5 border border-primary/20 text-left">
                                         <p className="text-xs font-black uppercase tracking-widest text-primary mb-1">Next Milestone</p>
                                         <p className="text-xl font-bold text-slate-800">Complete 1 challenge to unlock a new pet accessory.</p>
-                                        <p className="mt-2 text-sm font-semibold text-slate-600">
-                                            Progress restored: {completedTopicCount} topics completed, {unlockedAccessoryCount} accessories unlocked.
-                                        </p>
-                                        <div className="mt-2 flex items-center gap-2 text-[11px] font-bold">
-                                            <span className="px-2 py-1 rounded-full bg-white border border-slate-200 text-slate-600 text-base">+20 Grammar XP</span>
-                                            <span className="px-2 py-1 rounded-full bg-white border border-slate-200 text-slate-600 text-base">+10 Pet Mood</span>
-                                        </div>
                                     </div>
                                 </div>
                             </div>
