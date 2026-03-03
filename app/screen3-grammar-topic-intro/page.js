@@ -16,9 +16,9 @@ const topics = {
         summary: "Learn how to describe things happening right now!",
         petQuote: "Meow! Let's learn how to talk about what's happening right this second!",
         aspects: [
-            { rule: "The -ing Ending", example: "I am playing with my pet." },
-            { rule: "Am, Is, Are", example: "The puppy is sleeping." },
-            { rule: "Now / Right Now", example: "She is drawing now." },
+            { rule: "The -ing Ending", example: "I am playing with my pet.", highlightWords: ["playing"] },
+            { rule: "Am, Is, Are", example: "The puppy is sleeping.", highlightWords: ["is", "sleeping"] },
+            { rule: "Now / Right Now", example: "She is drawing now.", highlightWords: ["drawing", "now"] },
         ],
     },
     nouns: {
@@ -26,9 +26,9 @@ const topics = {
         summary: "Learn the names of people, places, animals, and things.",
         petQuote: "Let's find naming words together!",
         aspects: [
-            { rule: "Common Nouns", example: "The dog runs fast." },
-            { rule: "Proper Nouns", example: "Mia visits Ha Noi." },
-            { rule: "Singular and Plural", example: "One apple, two apples." },
+            { rule: "Common Nouns", example: "The dog runs fast.", highlightWords: ["dog"] },
+            { rule: "Proper Nouns", example: "Mia visits Ha Noi.", highlightWords: ["Mia", "Ha Noi"] },
+            { rule: "Singular and Plural", example: "One apple, two apples.", highlightWords: ["apple", "apples"] },
         ],
     },
     pronouns: {
@@ -36,9 +36,9 @@ const topics = {
         summary: "Use helper words that replace nouns.",
         petQuote: "Pronouns are shortcut words, and shortcuts are awesome!",
         aspects: [
-            { rule: "Subject Pronouns", example: "She likes music." },
-            { rule: "Object Pronouns", example: "I saw him at school." },
-            { rule: "Possessive Pronouns", example: "The blue bag is mine." },
+            { rule: "Subject Pronouns", example: "She likes music.", highlightWords: ["She"] },
+            { rule: "Object Pronouns", example: "I saw him at school.", highlightWords: ["him"] },
+            { rule: "Possessive Pronouns", example: "The blue bag is mine.", highlightWords: ["mine"] },
         ],
     },
     adjectives: {
@@ -46,9 +46,9 @@ const topics = {
         summary: "Describe nouns with words that add color and detail.",
         petQuote: "Let's paint our sentences with describing words!",
         aspects: [
-            { rule: "Describing Size", example: "The tiny kitten slept." },
-            { rule: "Describing Color", example: "I found a red ball." },
-            { rule: "Order of Adjectives", example: "She has a small blue bag." },
+            { rule: "Describing Size", example: "The tiny kitten slept.", highlightWords: ["tiny"] },
+            { rule: "Describing Color", example: "I found a red ball.", highlightWords: ["red"] },
+            { rule: "Order of Adjectives", example: "She has a small blue bag.", highlightWords: ["small", "blue"] },
         ],
     },
     adverbs: {
@@ -56,9 +56,9 @@ const topics = {
         summary: "Tell how, when, or where an action happens.",
         petQuote: "Zoom quickly, learn happily!",
         aspects: [
-            { rule: "How", example: "He runs quickly." },
-            { rule: "When", example: "We will practice tomorrow." },
-            { rule: "Where", example: "The dog waits outside." },
+            { rule: "How", example: "He runs quickly.", highlightWords: ["quickly"] },
+            { rule: "When", example: "We will practice tomorrow.", highlightWords: ["tomorrow"] },
+            { rule: "Where", example: "The dog waits outside.", highlightWords: ["outside"] },
         ],
     },
     prepositions: {
@@ -66,9 +66,9 @@ const topics = {
         summary: "Show the relationship between words in a sentence.",
         petQuote: "Look under, over, and beside for meaning clues!",
         aspects: [
-            { rule: "Place", example: "The book is on the table." },
-            { rule: "Time", example: "Class starts at nine." },
-            { rule: "Direction", example: "We walked into the room." },
+            { rule: "Place", example: "The book is on the table.", highlightWords: ["on"] },
+            { rule: "Time", example: "Class starts at nine.", highlightWords: ["at"] },
+            { rule: "Direction", example: "We walked into the room.", highlightWords: ["into"] },
         ],
     },
     conjunctions: {
@@ -76,9 +76,9 @@ const topics = {
         summary: "Join words and ideas into smoother sentences.",
         petQuote: "Connect ideas like puzzle pieces!",
         aspects: [
-            { rule: "And / But", example: "I like tea and juice." },
-            { rule: "Because", example: "She smiled because she won." },
-            { rule: "Or", example: "Do you want rice or noodles?" },
+            { rule: "And / But", example: "I like tea and juice.", highlightWords: ["and"] },
+            { rule: "Because", example: "She smiled because she won.", highlightWords: ["because"] },
+            { rule: "Or", example: "Do you want rice or noodles?", highlightWords: ["or"] },
         ],
     },
     articles: {
@@ -86,9 +86,9 @@ const topics = {
         summary: "Use a, an, and the with confidence.",
         petQuote: "Tiny words, big difference!",
         aspects: [
-            { rule: "A", example: "I saw a cat." },
-            { rule: "An", example: "She ate an apple." },
-            { rule: "The", example: "The moon is bright." },
+            { rule: "A", example: "I saw a cat.", highlightWords: ["a"] },
+            { rule: "An", example: "She ate an apple.", highlightWords: ["an"] },
+            { rule: "The", example: "The moon is bright.", highlightWords: ["The"] },
         ],
     },
     tenses: {
@@ -96,9 +96,9 @@ const topics = {
         summary: "Choose verb forms for past, present, and future.",
         petQuote: "Time travel with verbs!",
         aspects: [
-            { rule: "Past", example: "We played yesterday." },
-            { rule: "Present", example: "I play every day." },
-            { rule: "Future", example: "They will play tomorrow." },
+            { rule: "Past", example: "We played yesterday.", highlightWords: ["played", "yesterday"] },
+            { rule: "Present", example: "I play every day.", highlightWords: ["play"] },
+            { rule: "Future", example: "They will play tomorrow.", highlightWords: ["will", "tomorrow"] },
         ],
     },
     punctuation: {
@@ -106,9 +106,9 @@ const topics = {
         summary: "Use marks to make writing clear and expressive.",
         petQuote: "Commas pause, periods stop, and questions ask!",
         aspects: [
-            { rule: "Period", example: "I love reading." },
-            { rule: "Question Mark", example: "Are you ready?" },
-            { rule: "Comma", example: "We packed books, pens, and snacks." },
+            { rule: "Period", example: "I love reading.", highlightWords: ["."] },
+            { rule: "Question Mark", example: "Are you ready?", highlightWords: ["?"] },
+            { rule: "Comma", example: "We packed books, pens, and snacks.", highlightWords: [","] },
         ],
     },
     "sentence-structure": {
@@ -116,11 +116,57 @@ const topics = {
         summary: "Build complete sentences with clear word order.",
         petQuote: "Strong sentences are built one block at a time!",
         aspects: [
-            { rule: "Subject + Verb", example: "Birds sing." },
-            { rule: "Complete Thought", example: "The baby laughed loudly." },
-            { rule: "Word Order", example: "My friend reads books." },
+            { rule: "Subject + Verb", example: "Birds sing.", highlightWords: ["Birds", "sing"] },
+            { rule: "Complete Thought", example: "The baby laughed loudly.", highlightWords: ["baby", "laughed"] },
+            { rule: "Word Order", example: "My friend reads books.", highlightWords: ["friend", "reads", "books"] },
         ],
     },
+};
+
+const aspectIcons = [
+    "category",
+    "location_city",
+    "exposure_plus_1",
+    "list_alt",
+    "sort_by_alpha",
+    "checklist",
+    "book_2",
+    "extension",
+    "tactic",
+];
+
+const escapeRegExp = (text) => text.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+
+const renderHighlightedExample = (exampleText, highlightWords = []) => {
+    const validWords = Array.from(
+        new Set(
+            highlightWords
+                .filter((word) => typeof word === "string")
+                .map((word) => word.trim())
+                .filter(Boolean)
+        )
+    ).sort((firstWord, secondWord) => secondWord.length - firstWord.length);
+
+    if (validWords.length === 0) {
+        return exampleText;
+    }
+
+    const highlightPattern = validWords.map((word) => escapeRegExp(word)).join("|");
+    const highlightRegex = new RegExp(`(${highlightPattern})`, "gi");
+
+    return exampleText.split(highlightRegex).map((chunk, chunkIndex) => {
+        const isHighlighted = validWords.some((word) => word.toLowerCase() === chunk.toLowerCase());
+
+        if (!isHighlighted) {
+            return chunk;
+        }
+
+        return (
+            <span key={`${chunk}-${chunkIndex}`} className="font-semibold text-primary">
+                {chunk}
+            </span>
+        );
+    });
 };
 
 export default function Screen3TopicIntroPage() {
@@ -206,10 +252,6 @@ export default function Screen3TopicIntroPage() {
         }
     }, [isLoading, topic, voiceMuted, voiceSupported]);
 
-    const handleReplayVoice = () => {
-        speakTopicIntro(topic);
-    };
-
     const handleToggleMute = () => {
         const nextMuted = !voiceMuted;
         setVoiceMuted(nextMuted);
@@ -256,7 +298,7 @@ export default function Screen3TopicIntroPage() {
                 </div>
             </header>
 
-            <main className="relative z-10 mx-auto flex w-full max-w-7xl flex-1 flex-col items-center justify-center px-4 py-6 md:py-8">
+            <main className="relative z-10 mx-auto flex w-full max-w-7xl flex-1 flex-col items-center justify-start px-4 py-6 md:py-8">
                 {isLoading && (
                     <section className="w-full max-w-3xl rounded-[28px] border border-slate-200 bg-white p-4 text-center">
                         <p className="text-sm font-bold text-slate-500">Loading topic content...</p>
@@ -277,16 +319,17 @@ export default function Screen3TopicIntroPage() {
                 )}
 
                 {!isLoading && !loadError && topic && (
-                    <section className="w-full max-w-5xl">
+                    <section className="w-full max-w-5xl pt-4 md:pt-8">
                         <div className="mx-auto flex w-fit items-center gap-2 rounded-full border border-primary/20 bg-white px-6 py-2 shadow-sm">
                             <span className="material-symbols-outlined text-primary text-[18px]">book_2</span>
                             <h2 className="text-4xl font-black tracking-tight text-slate-900 md:text-5xl">{topic.title}</h2>
                         </div>
                         <p className="mt-3 text-center text-lg font-semibold text-slate-700">{topic.summary}</p>
 
-                        <section className="mt-8 grid grid-cols-1 gap-5 md:grid-cols-3">
+                        <section className="mt-8 grid grid-cols-1 gap-5 md:[grid-template-columns:repeat(auto-fit,minmax(240px,1fr))]">
                             {topic.aspects.map((aspect, index) => {
-                                const aspectIcon = index === 0 ? "category" : index === 1 ? "location_city" : "exposure_plus_1";
+                                const aspectIcon = aspectIcons[index % aspectIcons.length];
+                                const highlightedExample = renderHighlightedExample(aspect.example, aspect.highlightWords);
 
                                 return (
                                     <article
@@ -298,11 +341,18 @@ export default function Screen3TopicIntroPage() {
                                         </div>
                                         <h3 className="text-2xl font-black text-slate-900">{aspect.rule}</h3>
                                         <p className="mt-2 text-sm italic text-slate-500">
-                                            Example: <span className="text-primary">"{aspect.example}"</span>
+                                            Example: {highlightedExample}
                                         </p>
                                     </article>
                                 );
                             })}
+
+                            {topic.aspects.length === 0 && (
+                                <article className="rounded-[28px] border border-primary/15 bg-white px-5 py-8 text-center shadow-sm md:col-span-full">
+                                    <h3 className="text-xl font-black text-slate-900">No aspects available yet</h3>
+                                    <p className="mt-2 text-sm text-slate-500">Please pick another topic from the map.</p>
+                                </article>
+                            )}
                         </section>
 
                         <section className="mt-12 flex flex-col items-center justify-center gap-6 md:flex-row md:items-end">
@@ -314,19 +364,7 @@ export default function Screen3TopicIntroPage() {
                                         alt={`${headerPetText} avatar`}
                                     />
                                 </div>
-                                <div className="absolute -bottom-1 left-1/2 flex -translate-x-1/2 items-center gap-2">
-                                    <button
-                                        id="replayVoiceButton"
-                                        type="button"
-                                        onClick={handleReplayVoice}
-                                        disabled={!voiceSupported || voiceMuted}
-                                        className={`size-8 rounded-full border border-slate-200 bg-white text-primary shadow-sm ${!voiceSupported || voiceMuted
-                                            ? "cursor-not-allowed text-slate-400"
-                                            : ""
-                                            }`}
-                                    >
-                                        <span className="material-symbols-outlined text-base">volume_up</span>
-                                    </button>
+                                <div className="absolute -bottom-1 -right-1 flex items-center">
                                     <button
                                         id="muteToggleButton"
                                         type="button"
@@ -337,13 +375,12 @@ export default function Screen3TopicIntroPage() {
                                             : ""
                                             }`}
                                     >
-                                        <span className="material-symbols-outlined text-base">{voiceMuted ? "volume_off" : "hearing"}</span>
+                                        <span className="material-symbols-outlined text-base">{voiceMuted ? "volume_off" : "volume_up"}</span>
                                     </button>
                                 </div>
                             </div>
 
                             <div className="max-w-xl rounded-[28px] border border-primary/15 bg-white px-7 py-6 text-left shadow-sm">
-                                <p className="text-[26px] leading-none text-primary">“</p>
                                 <p className="mt-1 text-xl font-black leading-snug text-slate-900">{topic.petQuote}</p>
                                 <p className="mt-2 text-xs text-slate-500" aria-live="polite">
                                     {!voiceSupported
