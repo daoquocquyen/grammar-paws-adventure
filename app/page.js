@@ -4,6 +4,8 @@ import { useRouter } from "next/navigation";
 import { useEffect, useMemo, useState } from "react";
 
 const screen1ProfileKey = "gpa_player_profile_v1";
+const playerProgressKey = "gpa_player_progress_v1";
+const petAccessoriesKey = "gpa_pet_accessories_v1";
 const defaultAvatar =
     "https://lh3.googleusercontent.com/aida-public/AB6AXuCLzcyBcB1kXBKC87wVxPydRH8Z6etHELsVc2a1F90LjG3faXsG9lcV1nj4uPhMSLAcvG1K9WOjsOJUuFf9vn8cBvgVinFbMVfVQ4ZsvoqR4VsFMMOjU7W5ziFsCOdbm7y1Hzdi2OKt3DanVq7pUtiZPHqlA4Mp83miQek9iHzud_HcCndkFiA08inxZL51ILoGwd7eaPfnNDpGQDJ2JVcaceXxCStVVVV0SO1cUgoyLzo3h93o1VTGgpLm4BvSOg96jdnpWU7crOjd";
 
@@ -48,6 +50,18 @@ const pets = [
 
 const isValidProfileName = (value) => typeof value === "string" && value.trim().length > 0;
 
+const defaultProgressState = {
+    version: 1,
+    completedTopics: [],
+    topicProgress: {},
+};
+
+const defaultAccessoriesState = {
+    version: 1,
+    unlockedAccessoryIds: [],
+    equippedAccessoryId: null,
+};
+
 export default function Home() {
     const router = useRouter();
     const [playerName, setPlayerName] = useState("");
@@ -57,6 +71,8 @@ export default function Home() {
     const [headerName, setHeaderName] = useState("Adventurer");
     const [headerPetText, setHeaderPetText] = useState("Choose your first topic");
     const [headerAvatar, setHeaderAvatar] = useState(defaultAvatar);
+    const [completedTopicCount, setCompletedTopicCount] = useState(0);
+    const [unlockedAccessoryCount, setUnlockedAccessoryCount] = useState(0);
 
     const selectedPet = useMemo(
         () => pets.find((pet) => pet.name === selectedPetName) ?? null,
@@ -75,6 +91,60 @@ export default function Home() {
             localStorage.setItem(screen1ProfileKey, JSON.stringify(payload));
         } catch (error) {
             console.error("Failed to save player profile", error);
+        }
+    };
+
+    const restoreReturningState = () => {
+        const progressRaw = localStorage.getItem(playerProgressKey);
+        const accessoriesRaw = localStorage.getItem(petAccessoriesKey);
+
+        try {
+            if (progressRaw) {
+                const progress = JSON.parse(progressRaw);
+                if (Array.isArray(progress?.completedTopics)) {
+                    setCompletedTopicCount(progress.completedTopics.length);
+                }
+            }
+
+            if (accessoriesRaw) {
+                const accessories = JSON.parse(accessoriesRaw);
+                if (Array.isArray(accessories?.unlockedAccessoryIds)) {
+                    setUnlockedAccessoryCount(accessories.unlockedAccessoryIds.length);
+                }
+            }
+        } catch (error) {
+            console.error("Failed to parse returning learner state", error);
+            setCompletedTopicCount(0);
+            setUnlockedAccessoryCount(0);
+        }
+    };
+
+    const ensureReturningState = () => {
+        try {
+            const progressRaw = localStorage.getItem(playerProgressKey);
+            const accessoriesRaw = localStorage.getItem(petAccessoriesKey);
+
+            if (!progressRaw) {
+                localStorage.setItem(playerProgressKey, JSON.stringify(defaultProgressState));
+            } else {
+                const parsedProgress = JSON.parse(progressRaw);
+                if (!Array.isArray(parsedProgress?.completedTopics)) {
+                    localStorage.setItem(playerProgressKey, JSON.stringify(defaultProgressState));
+                }
+            }
+
+            if (!accessoriesRaw) {
+                localStorage.setItem(petAccessoriesKey, JSON.stringify(defaultAccessoriesState));
+            } else {
+                const parsedAccessories = JSON.parse(accessoriesRaw);
+                if (!Array.isArray(parsedAccessories?.unlockedAccessoryIds)) {
+                    localStorage.setItem(petAccessoriesKey, JSON.stringify(defaultAccessoriesState));
+                }
+            }
+        } catch (error) {
+            console.error("Failed to initialize returning learner state", error);
+            localStorage.setItem(playerProgressKey, JSON.stringify(defaultProgressState));
+            localStorage.setItem(petAccessoriesKey, JSON.stringify(defaultAccessoriesState));
         }
     };
 
@@ -102,6 +172,9 @@ export default function Home() {
         } catch (error) {
             console.error("Failed to parse player profile", error);
         }
+
+        ensureReturningState();
+        restoreReturningState();
     }, []);
 
     const liveValidationMessage = [nameError, petError].filter(Boolean).join(" ");
@@ -128,6 +201,8 @@ export default function Home() {
         if (selectedPet) {
             persistPlayerProfile(trimmedName, selectedPet);
         }
+
+        ensureReturningState();
 
         router.push("/screen2-world-map-topic-selection");
     };
@@ -279,6 +354,9 @@ export default function Home() {
                                     <div className="w-full mt-5 p-3 rounded-lg bg-primary/5 border border-primary/20 text-left">
                                         <p className="text-xs font-black uppercase tracking-widest text-primary mb-1">Next Milestone</p>
                                         <p className="text-xl font-bold text-slate-800">Complete 1 challenge to unlock a new pet accessory.</p>
+                                        <p className="mt-2 text-sm font-semibold text-slate-600">
+                                            Progress restored: {completedTopicCount} topics completed, {unlockedAccessoryCount} accessories unlocked.
+                                        </p>
                                         <div className="mt-2 flex items-center gap-2 text-[11px] font-bold">
                                             <span className="px-2 py-1 rounded-full bg-white border border-slate-200 text-slate-600 text-base">+20 Grammar XP</span>
                                             <span className="px-2 py-1 rounded-full bg-white border border-slate-200 text-slate-600 text-base">+10 Pet Mood</span>
