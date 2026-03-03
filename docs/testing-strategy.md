@@ -11,9 +11,16 @@ For every developed story, execute tests in this order to reduce iteration time 
 1. Implement story code.
 2. Create/update unit, integration, and acceptance tests for changed behavior.
 3. Print a manual test checklist in the story implementation artifact before running manual validation.
-4. Run **unit tests only** first and fix issues quickly.
+4. Run **build + unit tests only** first (`npm run dev-story:validate`) and fix issues quickly.
 5. Execute manual test checklist and record outcomes.
-6. Only after manual checks pass, run integration tests and acceptance tests.
+6. Run integration + acceptance/E2E tests **only when explicitly requested after manual checks** (`npm run dev-story:post-manual`).
+
+## Dev-Story Validation Policy (Token/Time Optimized)
+- Default for `/dev-story`: `build` then `unit` only.
+- Integration and E2E are intentionally deferred until user requests post-manual regression.
+- Script shortcuts:
+  - `npm run dev-story:validate` → `build + unit`
+  - `npm run dev-story:post-manual` → `integration + e2e`
 
 ## Test Levels and Scope
 

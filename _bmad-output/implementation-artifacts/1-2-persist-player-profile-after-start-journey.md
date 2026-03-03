@@ -1,6 +1,6 @@
 # Story 1.2: Persist Player Profile After Start Journey
 
-Status: done
+Status: review
 
 ## Story
 
@@ -72,22 +72,30 @@ GPT-5.3-Codex
 ### Debug Log References
 - `npm run build` (pass)
 - `get_errors` on modified files
+- `npx vitest run tests/unit/onboardingValidation.test.js` (pass)
+- `npx vitest run tests/integration/onboarding.screen1.integration.test.jsx` (pass)
+- `npm run test:acceptance` (pass)
 
 ### Completion Notes List
 - Added versioned profile persistence on successful Start Adventure in `app/page.js`.
 - Added safe hydration for `playerName` and `selectedPetName` from `gpa_player_profile_v1`.
 - Preserved Story 1.1 validation and route behavior while adding persistence.
 - Resolved code-review follow-ups: validated profile payload shape, switched avatar hydration to trusted pet catalog mapping, and synced header identity state with user edits/selections.
+- Re-dev run completed: added integration coverage for persist/hydrate/malformed payload handling and acceptance coverage for profile persistence+refresh restoration.
+- Stabilized acceptance selectors and integration test cleanup for deterministic CI execution.
 
 ### File List
 - _bmad-output/implementation-artifacts/1-2-persist-player-profile-after-start-journey.md
-- app/page.js
+- tests/integration/onboarding.screen1.integration.test.jsx
+- tests/acceptance/onboarding.spec.js
 - _bmad-output/implementation-artifacts/sprint-status.yaml
 
 ### Change Log
 - 2026-03-03: Story file created and implemented for Epic 1 Story 1.2.
 - 2026-03-03: Added profile persistence and hydration in React Screen 1 flow.
 - 2026-03-03: Senior code review completed; 3 medium findings fixed and story approved.
+- 2026-03-03: Reopened story for re-development run.
+- 2026-03-03: Re-development complete with expanded integration and acceptance tests; story returned to review.
 
 ## Senior Developer Review (AI)
 

@@ -8,17 +8,19 @@
 
 ### Current (Observed)
 - Build command: `npm run build`.
-- Unit test command: `npx vitest run tests/unit`.
-- Integration test command: `npx vitest run tests/integration`.
+- Unit test command: `npm run test:unit`.
+- Integration test command: `npm run test:integration`.
 - Acceptance test command: `npm run test:acceptance`.
+- Dev-story quick validation: `npm run dev-story:validate`.
+- Dev-story post-manual regression: `npm run dev-story:post-manual`.
 
 ### Required Test Sequence Per Story
 1. Implement story functionality.
 2. Create/update unit, integration, and acceptance tests for story changes.
 3. Print manual test steps in the implementation artifact.
-4. Run unit tests only (`npx vitest run tests/unit`) and fix failures.
+4. Run build + unit tests only (`npm run dev-story:validate`) and fix failures.
 5. Execute manual test checklist and record results.
-6. Run integration tests (`npx vitest run tests/integration`) and acceptance tests (`npm run test:acceptance`).
+6. Run integration tests + acceptance tests (`npm run dev-story:post-manual`) only when explicitly requested after manual checks.
 
 ### Next.js Runtime (Primary for migrated screens)
 - Install dependencies: `npm install`
@@ -44,7 +46,7 @@
 - [ ] Security baseline checklist reviewed.
 - [ ] Unit tests executed and passing.
 - [ ] Manual regression checklist executed.
-- [ ] Integration + acceptance tests executed after manual checks.
+- [ ] Integration + acceptance tests executed after manual checks (on explicit request).
 - [ ] `TBD` items added where implementation detail is unknown.
 
 ## Commit Message Convention (Required)
@@ -78,9 +80,9 @@ Minimum quality bar:
 
 ## Release Flow (Current)
 1. Update planning + docs context for changed behavior.
-2. Run Next.js build (`npm run build`) and unit tests (`npx vitest run tests/unit`).
+2. Run Next.js build + unit tests (`npm run dev-story:validate`).
 3. Print and execute manual browser smoke tests.
-4. Run integration and acceptance tests after manual checks pass.
+4. On explicit request, run integration and acceptance tests (`npm run dev-story:post-manual`) after manual checks pass.
 5. Resolve all blocking checklist items.
 6. Tag release notes manually (`TBD` tag strategy).
 7. Publish static files to chosen hosting target (`TBD` platform).
