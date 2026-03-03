@@ -60,3 +60,4 @@ GPT-5.3-Codex
 
 ### Change Log
 - 2026-03-03: Implemented topic intro rendering and voice controls with fallback behavior.
+- 2026-03-03: Refactored Screen 3 visual layout to centered, larger composition and aligned header style with other screens.

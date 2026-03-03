@@ -108,8 +108,9 @@ Current navigation issue:
 ## Screen 3: Grammar Topic Intro
 - UX goal: teach topic essentials before challenge and provide confidence.
 - Key components:
-  - Topic title/summary card.
-  - Aspect list with examples.
+  - Shared sticky header with player identity context.
+  - Centered topic title pill + summary line.
+  - Three large aspect cards with icon + example copy.
   - Pet speech bubble and avatar.
   - Voice controls: replay + mute toggle.
   - CTA pair: Start Challenge / Back to Map.
@@ -123,6 +124,11 @@ Current navigation issue:
   - Secondary: `Back to Map`.
 - State handling:
   - Explicit loading, error, and content states are implemented.
+
+### Current Visual Layout (Screen 3)
+- Desktop composition is vertically centered within available viewport space under header.
+- Intro section is intentionally larger (wider container, larger cards/avatar/CTA) to reduce visual emptiness.
+- Decorative kid-friendly background motifs remain visible behind the content layer.
 
 ## Screen 4: Game Challenge
 - UX goal: present one clear question with immediate encouragement.
