@@ -85,20 +85,23 @@ Current navigation issue:
 ## Screen 2: World Map / Topic Selection
 - UX goal: orient child in progression and guide to next actionable topic.
 - Key components:
-  - Topic cards with completed/in-progress/locked styles.
+  - Two-lane road-path topic cards with completed/in-progress/locked styles.
   - Progress indicators and lock cues.
-  - Decorative path connectors to imply journey.
+  - Decorative curved path connectors to imply journey.
+  - Dual icon system per topic (status icon + pet-dependent topic icon).
 - Interaction behavior:
-  - `Start Topic` saves selected topic (`"verbs"`) to `gpa_selected_topic_v1`.
+  - `Start Topic`/`Review` saves selected topic key to `gpa_selected_topic_v1`.
   - Routes to screen 3.
   - Header profile hydrates from stored player profile.
   - Header level badge hydrates from `gpa_player_progress_v1` and renders grouped title bands (e.g., level 1-3 Explorer).
+  - Topic ordering is easy-to-hard.
+  - Topic status is computed dynamically from learner history + level (`done`, `ongoing`, `locked`).
+  - Locked topics are non-interactive and cannot expand.
 - CTA hierarchy:
-  - Primary: `Start Topic` on active/in-progress card.
-  - Secondary: `Review` or locked/disabled buttons.
+  - Primary: `Start Topic` on ongoing cards.
+  - Secondary: `Review` on done cards.
 - State handling:
-  - Visual state variants exist (completed/in-progress/locked), but are mostly static markup.
-  - Level/title badge is dynamic and progress-derived, while topic cards are still static sample progression.
+  - Visual state variants (completed/in-progress/locked) are fully dynamic based on persisted progress data.
 
 ## Screen 3: Grammar Topic Intro
 - UX goal: teach topic essentials before challenge and provide confidence.

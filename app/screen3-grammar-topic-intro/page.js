@@ -41,6 +41,86 @@ const topics = {
             { rule: "Possessive Pronouns", example: "The blue bag is mine." },
         ],
     },
+    adjectives: {
+        title: "Adjectives",
+        summary: "Describe nouns with words that add color and detail.",
+        petQuote: "Let's paint our sentences with describing words!",
+        aspects: [
+            { rule: "Describing Size", example: "The tiny kitten slept." },
+            { rule: "Describing Color", example: "I found a red ball." },
+            { rule: "Order of Adjectives", example: "She has a small blue bag." },
+        ],
+    },
+    adverbs: {
+        title: "Adverbs",
+        summary: "Tell how, when, or where an action happens.",
+        petQuote: "Zoom quickly, learn happily!",
+        aspects: [
+            { rule: "How", example: "He runs quickly." },
+            { rule: "When", example: "We will practice tomorrow." },
+            { rule: "Where", example: "The dog waits outside." },
+        ],
+    },
+    prepositions: {
+        title: "Prepositions",
+        summary: "Show the relationship between words in a sentence.",
+        petQuote: "Look under, over, and beside for meaning clues!",
+        aspects: [
+            { rule: "Place", example: "The book is on the table." },
+            { rule: "Time", example: "Class starts at nine." },
+            { rule: "Direction", example: "We walked into the room." },
+        ],
+    },
+    conjunctions: {
+        title: "Conjunctions",
+        summary: "Join words and ideas into smoother sentences.",
+        petQuote: "Connect ideas like puzzle pieces!",
+        aspects: [
+            { rule: "And / But", example: "I like tea and juice." },
+            { rule: "Because", example: "She smiled because she won." },
+            { rule: "Or", example: "Do you want rice or noodles?" },
+        ],
+    },
+    articles: {
+        title: "Articles",
+        summary: "Use a, an, and the with confidence.",
+        petQuote: "Tiny words, big difference!",
+        aspects: [
+            { rule: "A", example: "I saw a cat." },
+            { rule: "An", example: "She ate an apple." },
+            { rule: "The", example: "The moon is bright." },
+        ],
+    },
+    tenses: {
+        title: "Tenses",
+        summary: "Choose verb forms for past, present, and future.",
+        petQuote: "Time travel with verbs!",
+        aspects: [
+            { rule: "Past", example: "We played yesterday." },
+            { rule: "Present", example: "I play every day." },
+            { rule: "Future", example: "They will play tomorrow." },
+        ],
+    },
+    punctuation: {
+        title: "Punctuation",
+        summary: "Use marks to make writing clear and expressive.",
+        petQuote: "Commas pause, periods stop, and questions ask!",
+        aspects: [
+            { rule: "Period", example: "I love reading." },
+            { rule: "Question Mark", example: "Are you ready?" },
+            { rule: "Comma", example: "We packed books, pens, and snacks." },
+        ],
+    },
+    "sentence-structure": {
+        title: "Sentence Structure",
+        summary: "Build complete sentences with clear word order.",
+        petQuote: "Strong sentences are built one block at a time!",
+        aspects: [
+            { rule: "Subject + Verb", example: "Birds sing." },
+            { rule: "Complete Thought", example: "The baby laughed loudly." },
+            { rule: "Word Order", example: "My friend reads books." },
+        ],
+    },
 };
 
 export default function Screen3TopicIntroPage() {
@@ -206,11 +286,10 @@ export default function Screen3TopicIntroPage() {
                                         type="button"
                                         onClick={handleReplayVoice}
                                         disabled={!voiceSupported || voiceMuted}
-                                        className={`size-8 rounded-full flex items-center justify-center ${
-                                            !voiceSupported || voiceMuted
+                                        className={`size-8 rounded-full flex items-center justify-center ${!voiceSupported || voiceMuted
                                                 ? "bg-slate-200 text-slate-400 cursor-not-allowed"
                                                 : "bg-primary/15 text-primary"
-                                        }`}
+                                            }`}
                                     >
                                         <span className="material-symbols-outlined text-base">volume_up</span>
                                     </button>
@@ -219,11 +298,10 @@ export default function Screen3TopicIntroPage() {
                                         type="button"
                                         onClick={handleToggleMute}
                                         disabled={!voiceSupported}
-                                        className={`size-8 rounded-full flex items-center justify-center ${
-                                            !voiceSupported
+                                        className={`size-8 rounded-full flex items-center justify-center ${!voiceSupported
                                                 ? "bg-slate-200 text-slate-400 cursor-not-allowed"
                                                 : "bg-primary/15 text-primary"
-                                        }`}
+                                            }`}
                                     >
                                         <span className="material-symbols-outlined text-base">{voiceMuted ? "volume_off" : "volume_up"}</span>
                                     </button>
@@ -232,8 +310,8 @@ export default function Screen3TopicIntroPage() {
                                     {!voiceSupported
                                         ? "Voice unavailable in this browser. Text mode is active."
                                         : voiceMuted
-                                          ? "Voice is muted. Tap to unmute."
-                                          : "Voice will play automatically."}
+                                            ? "Voice is muted. Tap to unmute."
+                                            : "Voice will play automatically."}
                                 </p>
                             </section>
 

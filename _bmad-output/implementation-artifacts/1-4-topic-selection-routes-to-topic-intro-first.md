@@ -49,17 +49,18 @@ GPT-5.3-Codex
 - Updated Screen 2 start behavior to route into intro-first flow.
 - Added React intro route scaffold with selected topic hydration.
 - Preserved profile hydration on both Screen 2 and intro route headers.
-- Increased Screen 2 layout and topic card scale to visually align with Screen 1 onboarding sizing.
-- Replaced hardcoded header rank text with progress-derived `Level X • Title` using grouped level bands.
+- Refined Screen 2 map into a two-lane vertical road layout with expandable topic cards.
+- Added easy-to-hard topic ordering and topic intro coverage for all map topics.
+- Implemented dynamic topic state mapping from learner progress (`done`, `ongoing`, `locked`) and disabled interaction for locked topics.
+- Added pet-dependent topic icon sets and rendered a secondary topic icon beside the status icon.
+- Aligned Screen 2 topic container style with Screen 1 white-card treatment for visual consistency.
 
 ### File List
 - _bmad-output/implementation-artifacts/1-4-topic-selection-routes-to-topic-intro-first.md
 - app/screen2-world-map-topic-selection/page.js
 - app/screen3-grammar-topic-intro/page.js
-- src/lib/playerLevel.js
-- tests/unit/playerLevel.test.js
-- _bmad-output/implementation-artifacts/sprint-status.yaml
 
 ### Change Log
 - 2026-03-03: Implemented topic intro-first routing from Screen 2 and added intro route scaffold.
 - 2026-03-03: Updated Screen 2 UI scale and added dynamic level-title badge from persisted progress.
+- 2026-03-03: Added dynamic Screen 2 topic progression states, pet-dependent topic icon set, easy-to-hard ordering, and consistent white container styling.
