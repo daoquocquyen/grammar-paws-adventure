@@ -46,6 +46,8 @@ const pets = [
     },
 ];
 
+const isValidProfileName = (value) => typeof value === "string" && value.trim().length > 0;
+
 export default function Home() {
     const router = useRouter();
     const [playerName, setPlayerName] = useState("");
@@ -61,6 +63,21 @@ export default function Home() {
         [selectedPetName]
     );
 
+    const persistPlayerProfile = (trimmedName, pet) => {
+        const payload = {
+            version: 1,
+            name: trimmedName,
+            petName: pet.name,
+            petImage: pet.image,
+        };
+
+        try {
+            localStorage.setItem(screen1ProfileKey, JSON.stringify(payload));
+        } catch (error) {
+            console.error("Failed to save player profile", error);
+        }
+    };
+
     useEffect(() => {
         const screen1ProfileRaw = localStorage.getItem(screen1ProfileKey);
         if (!screen1ProfileRaw) {
@@ -68,14 +85,19 @@ export default function Home() {
         }
         try {
             const profile = JSON.parse(screen1ProfileRaw);
-            if (profile.name) {
-                setHeaderName(profile.name);
+            if (isValidProfileName(profile?.name)) {
+                const restoredName = profile.name.trim();
+                setHeaderName(restoredName);
+                setPlayerName(restoredName);
             }
-            if (profile.petName) {
-                setHeaderPetText(`${profile.petName} companion`);
-            }
-            if (profile.petImage) {
-                setHeaderAvatar(profile.petImage);
+
+            if (typeof profile?.petName === "string") {
+                const matchingPet = pets.find((pet) => pet.name === profile.petName);
+                if (matchingPet) {
+                    setSelectedPetName(matchingPet.name);
+                    setHeaderPetText(`${matchingPet.name} companion`);
+                    setHeaderAvatar(matchingPet.image);
+                }
             }
         } catch (error) {
             console.error("Failed to parse player profile", error);
@@ -101,6 +123,12 @@ export default function Home() {
         if (!validateOnboarding()) {
             return;
         }
+
+        const trimmedName = playerName.trim();
+        if (selectedPet) {
+            persistPlayerProfile(trimmedName, selectedPet);
+        }
+
         router.push("/screen2-world-map-topic-selection");
     };
 
@@ -159,8 +187,11 @@ export default function Home() {
                                         aria-invalid={nameError ? "true" : "false"}
                                         value={playerName}
                                         onChange={(event) => {
-                                            setPlayerName(event.target.value);
-                                            if (event.target.value.trim()) {
+                                            const nextName = event.target.value;
+                                            setPlayerName(nextName);
+                                            setHeaderName(nextName.trim() || "Adventurer");
+
+                                            if (nextName.trim()) {
                                                 setNameError("");
                                             }
                                         }}
@@ -195,6 +226,8 @@ export default function Home() {
                                                 aria-pressed={isSelected ? "true" : "false"}
                                                 onClick={() => {
                                                     setSelectedPetName(pet.name);
+                                                    setHeaderPetText(`${pet.name} companion`);
+                                                    setHeaderAvatar(pet.image);
                                                     setPetError("");
                                                 }}
                                                 className={`pet-option group relative rounded-xl border-2 transition-all text-center p-3 max-w-[150px] mx-auto ${isSelected ? "border-primary bg-primary/5" : "border-transparent bg-slate-50 hover:border-primary hover:bg-primary/5"}`}
