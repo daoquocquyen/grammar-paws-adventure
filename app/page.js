@@ -122,6 +122,28 @@ const pets = [
     },
 ];
 
+const heroCheerfulMessages = {
+    "hero-girl-1": "I’m Mia—let’s shine bright and win every grammar challenge together!",
+    "hero-boy-1": "I’m Leo—high five! We’re ready to conquer grammar one clue at a time!",
+    "hero-girl-2": "I’m Zuri—your words are powerful, and I’m cheering for every step!",
+    "hero-boy-2": "I’m Kenji—let’s stay brave, focused, and make grammar super fun!",
+    "hero-girl-3": "I’m Lyly—big smiles, brave hearts, and awesome grammar wins ahead!",
+    "hero-boy-3": "I’m Toby—teamwork mode on! Let’s tackle grammar and celebrate every win!",
+    "hero-girl-4": "I’m Sofia—ready, steady, sparkle! We’ve got this grammar adventure!",
+    "hero-boy-4": "I’m Matheus—let’s power up and crush today’s grammar mission!",
+};
+
+const petCheerfulMessages = {
+    "Golden Retriever": "Woof! I’ll cheer you on—let’s make every grammar step fun!",
+    "Calico Cat": "Meow! You’re doing great—let’s pounce on the next grammar puzzle!",
+    "Fluffy Bunny": "Hop hop! You’re amazing—let’s bounce through grammar challenges!",
+    "Playful Hamster": "Squeak! Tiny paws, big energy—let’s roll through grammar wins!",
+    "Cheerful Parakeet": "Tweet tweet! You can do this—let’s sing our way to grammar success!",
+    "Jolly Goldfish": "Splash! Keep going—your grammar skills are swimming stronger already!",
+    "Happy Bearded Dragon": "Roar! You’re bold and brilliant—let’s blaze through grammar quests!",
+    "Smiling Turtle": "Slow and steady smiles—together we’ll master every grammar challenge!",
+};
+
 const isValidProfileName = (value) => typeof value === "string" && value.trim().length > 0;
 
 const defaultProgressState = {
@@ -377,46 +399,56 @@ export default function Home() {
                         </div>
 
                         <div className="lg:col-span-5 flex flex-col gap-2 h-full">
-                            <div className="flex-1 min-h-[460px] bg-white p-4 rounded-lg border-2 border-primary shadow-[0_0_0_2px_rgba(37,157,244,0.2),0_0_18px_rgba(37,157,244,0.35)]">
-                                <div className="flex flex-col items-center text-center">
-                                    <h3 className="text-primary text-sm font-black uppercase tracking-widest mb-2">Your New Friend</h3>
-                                    <div className="w-40 h-40 rounded-full bg-primary/10 mb-2 flex items-center justify-center relative">
-                                        <img
-                                            alt=""
-                                            className="w-36 h-36 object-cover rounded-full shadow-lg border-2 border-white"
-                                            src={selectedPet?.image ?? pets[1].image}
-                                        />
-                                        <div className="absolute bottom-1 right-1 w-14 h-14 rounded-full bg-white p-[2px] shadow-md border border-primary/20">
+                            <div className="flex-1 min-h-[500px] bg-white p-4 rounded-lg border-2 border-primary shadow-[0_0_0_2px_rgba(37,157,244,0.2),0_0_18px_rgba(37,157,244,0.35)]">
+                                <div className="flex flex-col items-center text-center h-full">
+                                    <h3 className="text-primary text-base font-black uppercase tracking-widest mb-4">Your Grammar Hero and Companion</h3>
+                                    <div className="w-full flex-1 flex flex-col justify-between">
+                                        <div className="w-full flex items-start justify-start gap-4">
                                             <img
                                                 alt=""
-                                                className="w-full h-full object-cover rounded-full"
+                                                className="w-32 h-32 object-cover rounded-full shadow-md border-2 border-white"
                                                 src={selectedHero?.image ?? heroes[0].image}
                                             />
+                                            <div className="relative max-w-[62%] min-h-[140px] rounded-2xl bg-primary/10 border border-primary/20 px-6 py-5 text-left flex items-center shadow-md">
+                                                <span className="absolute -left-3 top-1/2 -translate-y-1/2 w-6 h-6 rounded-full bg-primary/10 border border-primary/20 shadow-sm" />
+                                                <span className="absolute -left-5 top-[58%] -translate-y-1/2 w-3 h-3 rounded-full bg-primary/10 border border-primary/20 shadow-sm" />
+                                                <p className="text-lg font-bold text-slate-800 leading-relaxed">
+                                                    {selectedHero
+                                                        ? heroCheerfulMessages[selectedHero.id]
+                                                        : "I’m your Grammar Hero—let’s have fun and do our best together!"}
+                                                </p>
+                                            </div>
                                         </div>
-                                        <div className="absolute -bottom-2 bg-yellow-400 text-yellow-900 font-bold px-3 py-1 rounded-full shadow-md text-xs border-2 border-white">
-                                            Level 1
+
+                                        <div className="w-full flex items-center justify-center py-2">
+                                            <div className="w-full max-w-[78%] flex items-center gap-2">
+                                                <span className="flex-1 border-t-2 border-dashed border-primary/30" />
+                                                <div className="px-3 py-1.5 rounded-full bg-white border border-primary/30 shadow-sm flex items-center gap-1.5">
+                                                    <span className="material-symbols-outlined text-primary text-base leading-none">pets</span>
+                                                    <span className="text-[11px] font-black uppercase tracking-wide text-primary">Ready for Grammar Mission!</span>
+                                                </div>
+                                                <span className="flex-1 border-t-2 border-dashed border-emerald-300" />
+                                            </div>
+                                        </div>
+
+                                        <div className="w-full flex items-end justify-end gap-4">
+                                            <div className="relative max-w-[62%] min-h-[140px] rounded-2xl bg-emerald-50 border border-emerald-200 px-6 py-5 text-left flex items-center shadow-md">
+                                                <span className="absolute -right-3 top-1/2 -translate-y-1/2 w-6 h-6 rounded-full bg-emerald-50 border border-emerald-200 shadow-sm" />
+                                                <span className="absolute -right-5 top-[58%] -translate-y-1/2 w-3 h-3 rounded-full bg-emerald-50 border border-emerald-200 shadow-sm" />
+                                                <p className="text-lg font-bold text-slate-800 leading-relaxed">
+                                                    {selectedPet
+                                                        ? petCheerfulMessages[selectedPet.name]
+                                                        : "I’m your companion—let’s smile, learn, and conquer grammar together!"}
+                                                </p>
+                                            </div>
+                                            <img
+                                                alt=""
+                                                className="w-32 h-32 object-cover rounded-full shadow-md border-2 border-white"
+                                                src={selectedPet?.image ?? pets[1].image}
+                                            />
                                         </div>
                                     </div>
-                                    <h4 className="text-2xl font-black text-slate-900 mb-1">{selectedPet?.name ?? "Choose a companion"}</h4>
-                                    <p className="text-slate-500 text-xs leading-tight mb-2">
-                                        "{selectedPet?.quote ?? "Pick your pet to begin this adventure together!"}"
-                                    </p>
                                     <p className="sr-only" aria-live="polite">{liveValidationMessage}</p>
-
-                                    <div className="w-full space-y-2">
-                                        <div className="flex justify-between text-xs font-bold text-slate-400 uppercase">
-                                            <span>{selectedPet?.characteristic ?? "Mood"}</span>
-                                            <span>{selectedPet?.moodScore ?? 100}%</span>
-                                        </div>
-                                        <div className="w-full bg-slate-100 h-2.5 rounded-full overflow-hidden">
-                                            <div className="bg-green-500 h-full" style={{ width: `${selectedPet?.moodScore ?? 100}%` }} />
-                                        </div>
-                                    </div>
-
-                                    <div className="w-full mt-3 p-2.5 rounded-lg bg-primary/5 border border-primary/20 text-left">
-                                        <p className="text-xs font-black uppercase tracking-widest text-primary mb-1">Next Milestone</p>
-                                        <p className="text-sm font-bold text-slate-800">Complete 1 challenge to unlock a new pet accessory.</p>
-                                    </div>
                                 </div>
                             </div>
                             <div className="mt-auto">

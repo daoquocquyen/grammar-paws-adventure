@@ -73,17 +73,20 @@ Current navigation issue:
 - Key components:
   - Shared branded header (title + subtitle via reusable header component).
   - Name input card.
-  - Pet selection grid (6 options shown).
-  - Pet preview + milestone panel.
+  - Hero selection grid (8 options shown).
+  - Companion selection grid (8 options shown).
+  - Hero + companion preview panel with two supportive dialog bubbles and center connector badge.
   - Primary CTA: Start Adventure.
 - Interaction behavior:
   - Current JS hydrates onboarding fields from `gpa_player_profile_v1`.
-  - Pet selection and name submission behavior is mostly visual (no full save/validate flow yet).
+  - `Start Adventure` validates name + hero + companion selection before routing.
+  - Preview panel updates avatar and dialog copy based on selected hero and companion.
 - CTA hierarchy:
   - Primary: `Start Adventure`.
   - Secondary actions are visual only in current implementation.
 - State handling:
-  - No explicit loading/error/validation state in this file.
+  - Inline validation states for name/hero/companion with ARIA-live feedback.
+  - Legacy mood bar and next-milestone card are removed from the Screen 1 preview panel.
 
 ## Screen 2: World Map / Topic Selection
 - UX goal: orient child in progression and guide to next actionable topic.

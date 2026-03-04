@@ -57,3 +57,4 @@ GPT-5.3-Codex
 - 2026-03-04: Implemented 3D hero avatar selection (6 avatars), added hero-required validation, and persisted hero metadata in profile payload.
 - 2026-03-04: Verified with `npm run test:unit`, `npm run test:integration`, and `npm run test:acceptance` (all passing).
 - 2026-03-04: Corrected hero catalog to true 3D avatar assets with explicit 3 male + 3 female kid hero lineup.
+- 2026-03-04: Refined Screen 1 preview panel to “Your Grammar Hero and Companion” with larger hero/pet avatars, supportive hero/pet-specific dialog bubbles (rounded curl tails + shadow), removed mood/milestone UI, and added a centered dashed connector badge (“Ready for Grammar Mission!”).
