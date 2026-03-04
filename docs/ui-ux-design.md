@@ -38,7 +38,7 @@ Planning artifacts were used only to identify intended behavior and mark gaps.
 - Max-width layout containers with wide desktop gutters (`md:px-20` patterns).
 - Card-first composition with rounded corners (`rounded-xl`, `rounded-[24px]`).
 - Grid layouts shift from single-column mobile to multi-column desktop.
-- Screens 1-3 now reuse a shared header component to keep paw icon/title alignment consistent.
+- Screens 1-3 now reuse a shared, configurable header component to keep paw icon/title alignment consistent while allowing per-screen hide/show of header elements.
 
 ### Cards and Surfaces
 - Core surfaces: white cards with subtle borders/shadows.
@@ -94,7 +94,7 @@ Current navigation issue:
 ## Screen 2: World Map / Topic Selection
 - UX goal: orient child in progression and guide to next actionable topic.
 - Key components:
-  - Shared branded header with profile context (name, pet, avatar).
+  - Shared branded header with profile context (kid name, hero name, hero avatar).
   - Single-row horizontal topic carousel with exactly four visible cards in viewport.
   - Edge-mounted chevron controls (left/right) for carousel movement.
   - Drag-to-scroll and ArrowLeft/ArrowRight keyboard movement support.
@@ -110,7 +110,7 @@ Current navigation issue:
   - Topic status is computed dynamically from learner history + level (`done`, `ongoing`, `locked`).
   - Locked topics are non-interactive.
   - Focused topic card is emphasized via border glow/ring (without card scaling).
-  - Companion avatar resolves from selected pet identity (pet avatar map fallback) rather than human avatar default.
+  - Main companion avatar resolves from `profile.petImage` (kid-selected pet), with shared fallback avatar from `src/lib/avatarDefaults.js`.
 - CTA hierarchy:
   - Primary: `Start Topic` on ongoing cards.
   - Secondary: `Review` on done cards.
@@ -120,7 +120,7 @@ Current navigation issue:
 ## Screen 3: Grammar Topic Intro
 - UX goal: teach topic essentials before challenge and provide confidence.
 - Key components:
-  - Shared branded header with profile context (name, pet, avatar, level badge).
+  - Shared branded header with profile context (kid name, hero name, hero avatar, level badge).
   - Centered topic title pill + summary line.
   - Responsive aspect card grid with icon + example copy.
   - Pet speech bubble and avatar.
@@ -131,6 +131,7 @@ Current navigation issue:
   - Renders topic content from in-file topic map.
   - Auto-plays speech when available and not muted.
   - Saves voice setting to `gpa_voice_settings_v1`.
+  - Main companion avatar resolves from `profile.petImage` (kid-selected pet), with shared fallback avatar from `src/lib/avatarDefaults.js`.
 - CTA hierarchy:
   - Primary: `Start Challenge`.
   - Secondary: `Back to Map`.
