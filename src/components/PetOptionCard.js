@@ -1,17 +1,22 @@
-export default function PetOptionCard({ pet, isSelected, onSelect }) {
+export default function PetOptionCard({ pet, isSelected, onSelect, showLabel = false }) {
     return (
         <button
             type="button"
+            aria-label={pet.name}
             aria-pressed={isSelected ? "true" : "false"}
             onClick={onSelect}
-            className={`pet-option group relative rounded-xl border-2 transition-all text-center p-3 max-w-[150px] mx-auto ${
-                isSelected ? "border-primary bg-primary/5" : "border-transparent bg-slate-50 hover:border-primary hover:bg-primary/5"
-            }`}
+            className="pet-option group flex flex-col items-center bg-transparent text-center transition-all focus:outline-none"
         >
-            <div className="aspect-square rounded-lg bg-white flex items-center justify-center overflow-hidden shadow-inner mb-1">
-                <img alt="" className="w-full h-full object-cover group-hover:scale-110 transition-transform" src={pet.image} />
+            <div className={`rounded-full p-[3px] transition-all ${isSelected ? "bg-primary" : "bg-transparent"}`}>
+                <div className="size-[82px] rounded-full border-4 border-white bg-slate-200 flex items-center justify-center overflow-hidden shadow-md">
+                    <img alt="" className="w-full h-full object-cover group-hover:scale-110 transition-transform" src={pet.image} />
+                </div>
             </div>
-            <span className="font-bold text-sm">{pet.name}</span>
+            {showLabel && (
+                <span className={`mt-1 text-[11px] font-bold leading-tight ${isSelected ? "text-slate-900" : "text-slate-600"}`}>
+                    {pet.name}
+                </span>
+            )}
         </button>
     );
 }

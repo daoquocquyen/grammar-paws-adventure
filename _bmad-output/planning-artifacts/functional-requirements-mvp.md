@@ -31,10 +31,11 @@
 ### SR-00 Home / Start Journey
 - Must be the first screen for a new/local player profile.
 - Capture player name input.
-- Allow choosing one pet 3D avatar from available options.
+- Allow choosing one 3D hero avatar from exactly 6 kid avatars (3 male and 3 female).
+- Allow choosing one pet avatar from available options.
 - Display a short game introduction (2-3 short lines).
 - Primary CTA starts journey and routes to World Map / Topic Selection.
-- Show validation if name or pet selection is missing.
+- Show validation if name, hero avatar, or pet selection is missing.
 
 ### SR-01 World Map / Topic Selection
 - Show available topics with progress state.

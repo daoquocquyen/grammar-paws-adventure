@@ -28,6 +28,11 @@ As a learner,
 I want intro content with replay and mute support,
 so that I can understand the topic in a friendly way.
 
+### Story 1.7: Onboarding 3D Hero Avatar Selection (6 Avatars) and Validation
+As a child learner,
+I want to choose my 3D hero avatar from 6 kid avatars (3 male and 3 female) and also choose my pet avatar,
+so that my learning journey feels personal from the first screen.
+
 ## Epic 2: Challenge Engine and Explanations
 Goal: Core challenge loop works with deterministic rules and immediate learning feedback.
 

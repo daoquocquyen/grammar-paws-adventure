@@ -19,21 +19,23 @@ describe("Screen 1 onboarding integration", () => {
         cleanup();
     });
 
-    it("shows validation messages and blocks navigation when name and pet are missing", () => {
+    it("shows validation messages and blocks navigation when name, hero, and pet are missing", () => {
         render(<Home />);
 
         fireEvent.click(screen.getAllByRole("button", { name: "Start Adventure" })[0]);
 
         expect(screen.getByText("Please enter your name so your pet can cheer for you!")).toBeInTheDocument();
+        expect(screen.getByText("Please choose one 3D hero before you start.")).toBeInTheDocument();
         expect(screen.getByText("Please choose one companion before you start.")).toBeInTheDocument();
         expect(pushMock).not.toHaveBeenCalled();
     });
 
-    it("navigates to screen 2 when name and pet are provided", () => {
+    it("navigates to screen 2 when name, hero, and pet are provided", () => {
         render(<Home />);
 
         fireEvent.change(screen.getByLabelText("Enter your hero name"), { target: { value: "Mia" } });
-        fireEvent.click(screen.getAllByRole("button", { name: "Brave Puppy" })[0]);
+        fireEvent.click(screen.getAllByRole("button", { name: "Mia" })[0]);
+        fireEvent.click(screen.getAllByRole("button", { name: "Golden Retriever" })[0]);
         fireEvent.click(screen.getAllByRole("button", { name: "Start Adventure" })[0]);
 
         expect(pushMock).toHaveBeenCalledWith("/world-map");
@@ -43,7 +45,8 @@ describe("Screen 1 onboarding integration", () => {
         render(<Home />);
 
         fireEvent.change(screen.getByLabelText("Enter your hero name"), { target: { value: "Mia" } });
-        fireEvent.click(screen.getAllByRole("button", { name: "Brave Puppy" })[0]);
+        fireEvent.click(screen.getAllByRole("button", { name: "Mia" })[0]);
+        fireEvent.click(screen.getAllByRole("button", { name: "Golden Retriever" })[0]);
         fireEvent.click(screen.getAllByRole("button", { name: "Start Adventure" })[0]);
 
         const rawProfile = window.localStorage.getItem("gpa_player_profile_v1");
@@ -53,22 +56,25 @@ describe("Screen 1 onboarding integration", () => {
             expect.objectContaining({
                 version: 1,
                 name: "Mia",
-                petName: "Brave Puppy",
+                heroName: "Mia",
+                heroModelType: "3d",
+                petName: "Golden Retriever",
             })
         );
         expect(pushMock).toHaveBeenCalledWith("/world-map");
     });
 
-    it("hydrates name and selected pet from stored versioned profile", () => {
+    it("hydrates name and selected hero/pet from stored versioned profile", () => {
         window.localStorage.setItem(
             "gpa_player_profile_v1",
-            JSON.stringify({ version: 1, name: "Nova", petName: "Wise Kitten" })
+            JSON.stringify({ version: 1, name: "Nova", heroId: "hero-girl-2", petName: "Calico Cat" })
         );
 
         render(<Home />);
 
         expect(screen.getByLabelText("Enter your hero name")).toHaveValue("Nova");
-        expect(screen.getAllByRole("button", { name: "Wise Kitten" })[0]).toHaveAttribute("aria-pressed", "true");
+        expect(screen.getAllByRole("button", { name: "Zuri" })[0]).toHaveAttribute("aria-pressed", "true");
+        expect(screen.getAllByRole("button", { name: "Calico Cat" })[0]).toHaveAttribute("aria-pressed", "true");
     });
 
     it("fails safely when localStorage profile payload is malformed", () => {
@@ -78,7 +84,7 @@ describe("Screen 1 onboarding integration", () => {
         render(<Home />);
 
         expect(screen.getByLabelText("Enter your hero name")).toHaveValue("");
-        expect(screen.getAllByRole("button", { name: "Wise Kitten" })[0]).toHaveAttribute("aria-pressed", "false");
+        expect(screen.getAllByRole("button", { name: "Calico Cat" })[0]).toHaveAttribute("aria-pressed", "false");
 
         consoleErrorSpy.mockRestore();
     });

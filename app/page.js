@@ -12,54 +12,113 @@ const screen1ProfileKey = "gpa_player_profile_v1";
 const playerProgressKey = "gpa_player_progress_v1";
 const petAccessoriesKey = "gpa_pet_accessories_v1";
 
+const heroes = [
+    {
+        id: "hero-girl-1",
+        name: "Mia",
+        gender: "Girl",
+        image: "/heros/mia.png",
+    },
+    {
+        id: "hero-boy-1",
+        name: "Leo",
+        gender: "Boy",
+        image: "/heros/leo.png",
+    },
+    {
+        id: "hero-girl-2",
+        name: "Zuri",
+        gender: "Girl",
+        image: "/heros/zuri.png",
+    },
+    {
+        id: "hero-boy-2",
+        name: "Kenji",
+        gender: "Boy",
+        image: "/heros/kenji.png",
+    },
+    {
+        id: "hero-girl-3",
+        name: "Lyly",
+        gender: "Girl",
+        image: "/heros/lyly.png",
+    },
+    {
+        id: "hero-boy-3",
+        name: "Toby",
+        gender: "Boy",
+        image: "/heros/toby.png",
+    },
+    {
+        id: "hero-girl-4",
+        name: "Sofia",
+        gender: "Girl",
+        image: "/heros/sofia.png",
+    },
+    {
+        id: "hero-boy-4",
+        name: "Matheus",
+        gender: "Boy",
+        image: "/heros/matheus.png",
+    },
+];
+
 const pets = [
     {
-        name: "Brave Puppy",
-        image:
-            "https://lh3.googleusercontent.com/aida-public/AB6AXuC8UfnI-4ZD6WEiN5gXUwP6EMRX8mNxLA9lGZ-YGKsdeGIk3_z0ChWxvjCrlNqwdcRcIKhpf8cbPISdsBtzfR8ZWbQLVLIB3hMDemAxSYWw_y4NW3ORCs0G_OOf1VMb0Ohrjwb84k4ocpIXuMQ5Kugzcsr8FyeyWl-MWUFSwrE5_U_ArLy3y0ASzoi7bAL2jCMtsYqFsoLW3v5f5hCDNNQXiiTMcEn5moNywZMVUmPowbyKNzSpFejqiHpOjSKx5qq22mJLQE20Nlmn",
-        quote: "Woof! I’ll cheer you on while you learn!",
-        characteristic: "Bravery",
+        name: "Golden Retriever",
+        image: "/companions/golden-retriever.png",
+        quote: "Woof! Let’s play and learn together!",
+        characteristic: "Playfulness",
         moodScore: 98,
     },
     {
-        name: "Wise Kitten",
-        image:
-            "https://lh3.googleusercontent.com/aida-public/AB6AXuB5E1yagRgTQDhzkkiH1Z2CFZOL6i2dCszN8wKwrkeSPODDca-qhj_TxgvSsIytjeJuqHg8am8KFJuSxK-BI6XbzHMivZnxQhdVeYrP5lIC1lXuVDSLE1HGOopsI461dIZPO-sSSlob8ku513pA2DVZqBZd8Gg6TFyeGWTq_hYRpHTEIUQGfkLhJ1bplVqJeWQ7Hr8zJI7jdFH-07PxPO9crdCPHRasfWFtdr2s13S4E2hJNaOslEXeEEhs0ooN4211MMcSFSsHHQuH",
-        quote: "Meow! Let’s solve grammar together!",
-        characteristic: "Wisdom",
+        name: "Calico Cat",
+        image: "/companions/calico-cat.png",
+        quote: "Meow! I’m curious about every grammar clue!",
+        characteristic: "Curiosity",
         moodScore: 96,
     },
     {
-        name: "Swift Bunny",
-        image:
-            "https://lh3.googleusercontent.com/aida-public/AB6AXuBmx66OJYOOhrLcMEF9rs4_vmdVbAy8khc5VWVTgQUhCDz9HHcP5ZjRid_jTSIi4P7iSRATxBB67mNbPWnElulY7iGXcpxh2S-IQ8LTTWNMk8Gbp8XMCdN4df7qqvE4edbpCIjc347_Ibv6GyuLJO6t3QCHSt4iGFQ19jgvg0vzZq4EW1ibIhv--_LQegdyf9pw-AYhsqmt5MUfy1JQfWU3m-fnTUUPzHuvJacNm4FwnROdAv2_1wM2TLB2a5CyEmV0DEn6MO5aM4Fa",
-        quote: "Hop hop! Quick thinking makes learning fun!",
-        characteristic: "Agility",
+        name: "Fluffy Bunny",
+        image: "/companions/fluffy-bunny.png",
+        quote: "Hop! I’m ready for round after round of fun.",
+        characteristic: "Cheer",
         moodScore: 94,
     },
     {
-        name: "Happy Hamster",
-        image:
-            "https://lh3.googleusercontent.com/aida-public/AB6AXuBJ5l3I0e6UIAujP1swxyelIDciALjoKFoCygY-EW7QoSpnoajHDEsFBXr6xy6eAW1ddDsNpb0B2WLgo19m_Foe_3BMsUIzQLTd9Adz9vZAJMU0Bz2IMjUSEp03P6_MpHz1OyWhoWr62FGytj2DTo5S18AoGyADFdcey47VuH_7ptbli7bbx86xstDJEvfv6tDsuBt9oNVCsCglpcJIH185hG9xcCbD_syhGUdU3ijf7Xsmy7iu0-VFcJkVHN5Gl5MWJ9WArOx009VO",
-        quote: "Squeak! Tiny steps make big progress!",
-        characteristic: "Joy",
+        name: "Playful Hamster",
+        image: "/companions/playful-hamster.png",
+        quote: "Squeak! Let’s spin through lessons together!",
+        characteristic: "Fun",
         moodScore: 99,
     },
     {
-        name: "Steady Turtle",
-        image:
-            "https://lh3.googleusercontent.com/aida-public/AB6AXuCWVNsQrrHlzjhXt6-JawZXqs8hMsLHZXaCr1K-SeNmCrhfJrhs71q3QFdcZ99isFQ5HxsrNpP3s_2Y4ID1DTlEJ5m-UOLkhChZTWE3V4jn33vzK-C_dSHOqrjcvw38p62g3u9rQHydnKPNRZoMFQCYANpoYJNweDZqxNT3TMVobDJj5orTLsz8hpTgNrW9onS77Dp6lhu76oEDqWATFced9fJDhxOaCPinxeik57KCGKrQOUnRN8Zm9zLxEwCNieSHJ8v-QdHwgMx2",
-        quote: "Slow and steady, we’ll learn every rule!",
-        characteristic: "Patience",
+        name: "Cheerful Parakeet",
+        image: "/companions/cheerful-parakeet.png",
+        quote: "Tweet! I’ll cheer for every grammar win!",
+        characteristic: "Energy",
         moodScore: 97,
     },
     {
-        name: "Magic Dragon",
-        image:
-            "https://lh3.googleusercontent.com/aida-public/AB6AXuAblbJmRXR3T20lYkFMbjW7V2nawLnAVPYrazc27WtJ0Ls9bEv3NqcPaIcycgvrkkPR3aR36ufzZ2VU9oH7SbI8xcWe71WOpmLjosPJK0uAzfDefFBQIs9s8Ps5XU02S58g7naEzlaeP2OO8ITuCGHMuy1eUmWX_axPdMG0TdN5Y4MGpBXKd4NihhjS7CoW8ZFZNVPbZ1avtEGuPMqnMs2waECZaOupHvsARJMBhdZX-EXxiA2baHgCXj4ohbO5jb_uDLsp-uq08XWC",
-        quote: "Roar! Let’s spark some grammar magic!",
-        characteristic: "Curiosity",
+        name: "Jolly Goldfish",
+        image: "/companions/jolly-goldfish.png",
+        quote: "Splash! Let’s swim through grammar quests!",
+        characteristic: "Joy",
         moodScore: 95,
+    },
+    {
+        name: "Happy Bearded Dragon",
+        image: "/companions/happy-bearded-dragon.png",
+        quote: "Roar! Tiny dragon power for big learning!",
+        characteristic: "Bravery",
+        moodScore: 96,
+    },
+    {
+        name: "Smiling Turtle",
+        image: "/companions/smiling-turtle.png",
+        quote: "Slow and steady, we’ll master every sentence!",
+        characteristic: "Patience",
+        moodScore: 97,
     },
 ];
 
@@ -80,19 +139,31 @@ const defaultAccessoriesState = {
 export default function Home() {
     const router = useRouter();
     const [playerName, setPlayerName] = useState("");
+    const [selectedHeroId, setSelectedHeroId] = useState("");
     const [selectedPetName, setSelectedPetName] = useState("");
     const [nameError, setNameError] = useState("");
+    const [heroError, setHeroError] = useState("");
     const [petError, setPetError] = useState("");
+
+    const selectedHero = useMemo(
+        () => heroes.find((hero) => hero.id === selectedHeroId) ?? null,
+        [selectedHeroId]
+    );
 
     const selectedPet = useMemo(
         () => pets.find((pet) => pet.name === selectedPetName) ?? null,
         [selectedPetName]
     );
 
-    const persistPlayerProfile = (trimmedName, pet) => {
+    const persistPlayerProfile = (trimmedName, hero, pet) => {
         const payload = {
             version: 1,
             name: trimmedName,
+            heroId: hero.id,
+            heroName: hero.name,
+            heroImage: hero.image,
+            heroGender: hero.gender,
+            heroModelType: "3d",
             petName: pet.name,
             petImage: pet.image,
         };
@@ -151,6 +222,18 @@ export default function Home() {
                     setSelectedPetName(matchingPet.name);
                 }
             }
+
+            if (typeof profile?.heroId === "string") {
+                const matchingHeroById = heroes.find((hero) => hero.id === profile.heroId);
+                if (matchingHeroById) {
+                    setSelectedHeroId(matchingHeroById.id);
+                }
+            } else if (typeof profile?.heroName === "string") {
+                const matchingHeroByName = heroes.find((hero) => hero.name === profile.heroName);
+                if (matchingHeroByName) {
+                    setSelectedHeroId(matchingHeroByName.id);
+                }
+            }
         } catch (error) {
             console.error("Failed to parse player profile", error);
         }
@@ -158,15 +241,20 @@ export default function Home() {
         ensureReturningState();
     }, []);
 
-    const liveValidationMessage = [nameError, petError].filter(Boolean).join(" ");
+    const liveValidationMessage = [nameError, heroError, petError].filter(Boolean).join(" ");
 
     const validateOnboarding = () => {
-        const { nameError: currentNameError, petError: currentPetError } = validateOnboardingInput(playerName, selectedPet);
+        const {
+            nameError: currentNameError,
+            heroError: currentHeroError,
+            petError: currentPetError,
+        } = validateOnboardingInput(playerName, selectedHero, selectedPet);
 
         setNameError(currentNameError);
+        setHeroError(currentHeroError);
         setPetError(currentPetError);
 
-        return !currentNameError && !currentPetError;
+        return !currentNameError && !currentHeroError && !currentPetError;
     };
 
     const handleStartAdventure = () => {
@@ -175,8 +263,8 @@ export default function Home() {
         }
 
         const trimmedName = playerName.trim();
-        if (selectedPet) {
-            persistPlayerProfile(trimmedName, selectedPet);
+        if (selectedHero && selectedPet) {
+            persistPlayerProfile(trimmedName, selectedHero, selectedPet);
         }
 
         ensureReturningState();
@@ -189,26 +277,26 @@ export default function Home() {
             <div className="layout-container flex h-full grow flex-col">
                 <HeaderBlock />
 
-                <main className="flex-1 min-h-[calc(100vh-180px)] px-4 md:px-8 lg:px-10 max-w-[1400px] mx-auto w-full py-6 md:py-8">
-                    <div className="relative rounded-xl overflow-hidden shadow-lg border-2 border-white mb-4">
-                        <div className="bg-gradient-to-b from-[#e0f2fe] to-[#f0f9ff] flex flex-col items-center justify-center text-center relative min-h-[130px] p-4">
+                <main className="flex-1 min-h-[calc(100vh-150px)] px-4 md:px-6 lg:px-8 max-w-[1400px] mx-auto w-full py-3 md:py-4">
+                    <div className="relative rounded-xl overflow-hidden shadow-lg border-2 border-white mb-3">
+                        <div className="bg-gradient-to-b from-[#e0f2fe] to-[#f0f9ff] flex flex-col items-center justify-center text-center relative min-h-[96px] p-3">
                             <div className="max-w-4xl p-2">
-                                <h1 className="font-black text-slate-900 tracking-tight text-3xl md:text-4xl leading-tight mb-1">Welcome, Adventurer!</h1>
-                                <p className="text-slate-700 leading-tight font-medium text-base md:text-2xl">
+                                <h1 className="font-black text-slate-900 tracking-tight text-2xl md:text-3xl leading-tight mb-1">Welcome, Adventurer!</h1>
+                                <p className="text-slate-700 leading-tight font-medium text-sm md:text-lg">
                                     Tackle grammar challenges, earn cool accessories, and watch your pets evolve. Ready to start?
                                 </p>
                             </div>
                         </div>
                     </div>
 
-                    <div className="grid grid-cols-1 lg:grid-cols-12 gap-10">
-                        <div className="lg:col-span-7 space-y-5">
-                            <div className="bg-white p-6 rounded-xl shadow-sm border border-slate-200">
+                    <div className="grid grid-cols-1 lg:grid-cols-12 gap-5">
+                        <div className="lg:col-span-7 flex flex-col gap-3 h-full">
+                            <div className="bg-white p-5 rounded-xl shadow-sm border border-slate-200">
                                 <div className="flex items-center gap-2 mb-2">
                                     <span className="material-symbols-outlined text-primary text-xl">badge</span>
-                                    <h3 className="text-3xl font-bold">Your Hero Name</h3>
+                                    <h3 className="text-lg font-bold">Your name</h3>
                                 </div>
-                                <div className="max-w-md">
+                                <div className="w-full">
                                     <label className="sr-only" htmlFor="playerNameInput">Enter your hero name</label>
                                     <input
                                         id="playerNameInput"
@@ -229,7 +317,7 @@ export default function Home() {
                                                 handleStartAdventure();
                                             }
                                         }}
-                                        className={`w-full h-12 px-4 rounded-lg border-2 bg-slate-50 focus:border-primary focus:ring-2 focus:ring-primary/10 transition-all outline-none text-base font-bold ${nameError ? "border-rose-400" : "border-slate-100"}`}
+                                        className={`w-full h-10 px-3 rounded-lg border-2 bg-slate-50 focus:border-primary focus:ring-2 focus:ring-primary/10 transition-all outline-none text-sm font-bold ${nameError ? "border-rose-400" : "border-slate-100"}`}
                                         placeholder="Enter your hero name"
                                         type="text"
                                     />
@@ -237,12 +325,37 @@ export default function Home() {
                                 </div>
                             </div>
 
-                            <div className="bg-white p-6 rounded-xl shadow-sm border border-slate-200">
-                                <div className="flex items-center gap-3 mb-6">
-                                    <span className="material-symbols-outlined text-primary text-xl">diversity_1</span>
-                                    <h3 className="text-3xl font-bold">Your Companion</h3>
+                            <div className="bg-white p-6 rounded-xl shadow-sm border border-slate-200 flex-1">
+                                <div className="flex items-center gap-2 mb-3">
+                                    <span className="material-symbols-outlined text-primary text-xl">face_6</span>
+                                    <h3 className="text-xl font-bold">Your Hero</h3>
                                 </div>
-                                <div className="grid grid-cols-3 gap-4">
+                                <div className="grid grid-cols-4 md:grid-cols-8 gap-2 w-fit mx-auto justify-items-center">
+                                    {heroes.map((hero) => {
+                                        const isSelected = selectedHeroId === hero.id;
+                                        return (
+                                            <PetOptionCard
+                                                key={hero.id}
+                                                pet={{ name: hero.name, image: hero.image }}
+                                                isSelected={isSelected}
+                                                showLabel
+                                                onSelect={() => {
+                                                    setSelectedHeroId(hero.id);
+                                                    setHeroError("");
+                                                }}
+                                            />
+                                        );
+                                    })}
+                                </div>
+                                <ValidationMessage id="heroValidationMessage" message={heroError} />
+                            </div>
+
+                            <div className="bg-white p-6 rounded-xl shadow-sm border border-slate-200 flex-1">
+                                <div className="flex items-center gap-2 mb-3">
+                                    <span className="material-symbols-outlined text-primary text-xl">diversity_1</span>
+                                    <h3 className="text-xl font-bold">Your Companion</h3>
+                                </div>
+                                <div className="grid grid-cols-4 md:grid-cols-8 gap-2 w-fit mx-auto justify-items-center">
                                     {pets.map((pet) => {
                                         const isSelected = selectedPetName === pet.name;
                                         return (
@@ -250,6 +363,7 @@ export default function Home() {
                                                 key={pet.name}
                                                 pet={pet}
                                                 isSelected={isSelected}
+                                                showLabel
                                                 onSelect={() => {
                                                     setSelectedPetName(pet.name);
                                                     setPetError("");
@@ -262,39 +376,46 @@ export default function Home() {
                             </div>
                         </div>
 
-                        <div className="lg:col-span-5 flex flex-col gap-3">
-                            <div className="flex-1 min-h-[580px] bg-white p-6 rounded-lg border-2 border-primary shadow-[0_0_0_2px_rgba(37,157,244,0.2),0_0_18px_rgba(37,157,244,0.35)]">
+                        <div className="lg:col-span-5 flex flex-col gap-2 h-full">
+                            <div className="flex-1 min-h-[460px] bg-white p-4 rounded-lg border-2 border-primary shadow-[0_0_0_2px_rgba(37,157,244,0.2),0_0_18px_rgba(37,157,244,0.35)]">
                                 <div className="flex flex-col items-center text-center">
-                                    <h3 className="text-primary text-base font-black uppercase tracking-widest mb-4">Your New Friend</h3>
-                                    <div className="w-52 h-52 rounded-full bg-primary/10 mb-3 flex items-center justify-center relative">
+                                    <h3 className="text-primary text-sm font-black uppercase tracking-widest mb-2">Your New Friend</h3>
+                                    <div className="w-40 h-40 rounded-full bg-primary/10 mb-2 flex items-center justify-center relative">
                                         <img
                                             alt=""
-                                            className="w-48 h-48 object-cover rounded-full shadow-lg border-2 border-white"
+                                            className="w-36 h-36 object-cover rounded-full shadow-lg border-2 border-white"
                                             src={selectedPet?.image ?? pets[1].image}
                                         />
-                                        <div className="absolute -bottom-2 bg-yellow-400 text-yellow-900 font-bold px-4 py-1 rounded-full shadow-md text-sm border-2 border-white">
+                                        <div className="absolute bottom-1 right-1 w-14 h-14 rounded-full bg-white p-[2px] shadow-md border border-primary/20">
+                                            <img
+                                                alt=""
+                                                className="w-full h-full object-cover rounded-full"
+                                                src={selectedHero?.image ?? heroes[0].image}
+                                            />
+                                        </div>
+                                        <div className="absolute -bottom-2 bg-yellow-400 text-yellow-900 font-bold px-3 py-1 rounded-full shadow-md text-xs border-2 border-white">
                                             Level 1
                                         </div>
                                     </div>
-                                    <h4 className="text-4xl font-black text-slate-900 mb-1">{selectedPet?.name ?? "Choose a companion"}</h4>
-                                    <p className="text-slate-500 text-sm leading-tight mb-4">
+                                    <h4 className="text-2xl font-black text-slate-900 mb-1">{selectedPet?.name ?? "Choose a companion"}</h4>
+                                    <p className="text-slate-500 text-xs leading-tight mb-2">
                                         "{selectedPet?.quote ?? "Pick your pet to begin this adventure together!"}"
                                     </p>
                                     <p className="sr-only" aria-live="polite">{liveValidationMessage}</p>
 
-                                    <div className="w-full space-y-3">
-                                        <div className="flex justify-between text-sm font-bold text-slate-400 uppercase">
+                                    <div className="w-full space-y-2">
+                                        <div className="flex justify-between text-xs font-bold text-slate-400 uppercase">
                                             <span>{selectedPet?.characteristic ?? "Mood"}</span>
                                             <span>{selectedPet?.moodScore ?? 100}%</span>
                                         </div>
-                                        <div className="w-full bg-slate-100 h-3 rounded-full overflow-hidden">
+                                        <div className="w-full bg-slate-100 h-2.5 rounded-full overflow-hidden">
                                             <div className="bg-green-500 h-full" style={{ width: `${selectedPet?.moodScore ?? 100}%` }} />
                                         </div>
                                     </div>
 
-                                    <div className="w-full mt-5 p-3 rounded-lg bg-primary/5 border border-primary/20 text-left">
+                                    <div className="w-full mt-3 p-2.5 rounded-lg bg-primary/5 border border-primary/20 text-left">
                                         <p className="text-xs font-black uppercase tracking-widest text-primary mb-1">Next Milestone</p>
-                                        <p className="text-xl font-bold text-slate-800">Complete 1 challenge to unlock a new pet accessory.</p>
+                                        <p className="text-sm font-bold text-slate-800">Complete 1 challenge to unlock a new pet accessory.</p>
                                     </div>
                                 </div>
                             </div>
@@ -305,7 +426,7 @@ export default function Home() {
                     </div>
                 </main>
 
-                <footer className="border-t border-slate-200 py-2 px-4 md:px-8 bg-slate-50 mt-2">
+                <footer className="border-t border-slate-200 py-1.5 px-4 md:px-8 bg-slate-50 mt-1">
                     <div className="max-w-7xl mx-auto flex items-center justify-center gap-1">
                         <p className="text-slate-500 text-xs leading-none">© 2026 Grammar Paws Adventure. All rights reserved.</p>
                     </div>
