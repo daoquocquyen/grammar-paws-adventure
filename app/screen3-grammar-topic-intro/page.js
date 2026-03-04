@@ -3,8 +3,8 @@
 import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
 import HeaderBlock from "../../src/components/HeaderBlock";
-import { getPlayerLevelInfo } from "../../src/lib/playerLevel";
 import { DEFAULT_COMPANION_AVATAR } from "../../src/lib/avatarDefaults";
+import { getPlayerLevelInfo } from "../../src/lib/playerLevel";
 
 const profileStorageKey = "gpa_player_profile_v1";
 const playerProgressKey = "gpa_player_progress_v1";
