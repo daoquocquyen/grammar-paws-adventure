@@ -143,6 +143,28 @@ const petCheerfulMessages = {
     "Smiling Turtle": "Slow and steady smiles—together we’ll master every grammar challenge!",
 };
 
+const heroColorThemes = {
+    "hero-girl-1": "#f0c0c0",
+    "hero-boy-1": "#b0d0e0",
+    "hero-girl-2": "#d0c0f0",
+    "hero-boy-2": "#b0e0c0",
+    "hero-girl-3": "#b0e0d0",
+    "hero-boy-3": "#f0e0a0",
+    "hero-girl-4": "#f0a090",
+    "hero-boy-4": "#e0e090",
+};
+
+const petColorThemes = {
+    "Golden Retriever": "#b0d0e0",
+    "Calico Cat": "#f0c0c0",
+    "Fluffy Bunny": "#f0e0a0",
+    "Playful Hamster": "#c0e0c0",
+    "Cheerful Parakeet": "#d0c0f0",
+    "Jolly Goldfish": "#f0d0a0",
+    "Happy Bearded Dragon": "#f0a090",
+    "Smiling Turtle": "#b0e0d0",
+};
+
 const isValidProfileName = (value) => typeof value === "string" && value.trim().length > 0;
 
 const defaultProgressState = {
@@ -174,6 +196,26 @@ export default function Home() {
     const selectedPet = useMemo(
         () => pets.find((pet) => pet.name === selectedPetName) ?? null,
         [selectedPetName]
+    );
+
+    const selectedHeroTheme = useMemo(
+        () => heroColorThemes[selectedHero?.id] ?? heroColorThemes[heroes[0].id],
+        [selectedHero]
+    );
+
+    const selectedPetTheme = useMemo(
+        () => petColorThemes[selectedPet?.name] ?? petColorThemes[pets[1].name],
+        [selectedPet]
+    );
+
+    const selectedHeroThemeStyle = useMemo(
+        () => ({ backgroundColor: selectedHeroTheme, borderColor: selectedHeroTheme }),
+        [selectedHeroTheme]
+    );
+
+    const selectedPetThemeStyle = useMemo(
+        () => ({ backgroundColor: selectedPetTheme, borderColor: selectedPetTheme }),
+        [selectedPetTheme]
     );
 
     const persistPlayerProfile = (trimmedName, hero, pet) => {
@@ -427,14 +469,16 @@ export default function Home() {
                                     <h3 className="text-primary text-base font-black uppercase tracking-widest mb-4">Your Grammar Hero and Companion</h3>
                                     <div className="w-full flex-1 flex flex-col justify-between">
                                         <div className="w-full flex items-start justify-start gap-4">
-                                            <img
-                                                alt=""
-                                                className="w-32 h-32 object-cover rounded-full shadow-md border-2 border-white"
-                                                src={selectedHero?.image ?? heroes[0].image}
-                                            />
-                                            <div className="relative max-w-[62%] min-h-[140px] rounded-2xl bg-primary/10 border border-primary/20 px-6 py-5 text-left flex items-center shadow-md">
-                                                <span className="absolute -left-3 top-1/2 -translate-y-1/2 w-6 h-6 rounded-full bg-primary/10 border border-primary/20 shadow-sm" />
-                                                <span className="absolute -left-5 top-[58%] -translate-y-1/2 w-3 h-3 rounded-full bg-primary/10 border border-primary/20 shadow-sm" />
+                                            <div className="w-32 h-32 rounded-full border p-1 shadow-md" style={selectedHeroThemeStyle}>
+                                                <img
+                                                    alt=""
+                                                    className="w-full h-full object-cover rounded-full border-2 border-white"
+                                                    src={selectedHero?.image ?? heroes[0].image}
+                                                />
+                                            </div>
+                                            <div className="relative max-w-[62%] min-h-[140px] rounded-2xl border bg-transparent px-6 py-5 text-left flex items-center shadow-md" style={{ borderColor: selectedHeroTheme }}>
+                                                <span className="absolute -left-3 top-1/2 -translate-y-1/2 w-6 h-6 rounded-full border bg-transparent shadow-sm" style={{ borderColor: selectedHeroTheme }} />
+                                                <span className="absolute -left-5 top-[58%] -translate-y-1/2 w-3 h-3 rounded-full border bg-transparent shadow-sm" style={{ borderColor: selectedHeroTheme }} />
                                                 <p className="text-lg font-bold text-slate-800 leading-relaxed">
                                                     {selectedHero
                                                         ? heroCheerfulMessages[selectedHero.id]
@@ -455,20 +499,22 @@ export default function Home() {
                                         </div>
 
                                         <div className="w-full flex items-end justify-end gap-4">
-                                            <div className="relative max-w-[62%] min-h-[140px] rounded-2xl bg-emerald-50 border border-emerald-200 px-6 py-5 text-left flex items-center shadow-md">
-                                                <span className="absolute -right-3 top-1/2 -translate-y-1/2 w-6 h-6 rounded-full bg-emerald-50 border border-emerald-200 shadow-sm" />
-                                                <span className="absolute -right-5 top-[58%] -translate-y-1/2 w-3 h-3 rounded-full bg-emerald-50 border border-emerald-200 shadow-sm" />
+                                            <div className="relative max-w-[62%] min-h-[140px] rounded-2xl border bg-transparent px-6 py-5 text-left flex items-center shadow-md" style={{ borderColor: selectedPetTheme }}>
+                                                <span className="absolute -right-3 top-1/2 -translate-y-1/2 w-6 h-6 rounded-full border bg-transparent shadow-sm" style={{ borderColor: selectedPetTheme }} />
+                                                <span className="absolute -right-5 top-[58%] -translate-y-1/2 w-3 h-3 rounded-full border bg-transparent shadow-sm" style={{ borderColor: selectedPetTheme }} />
                                                 <p className="text-lg font-bold text-slate-800 leading-relaxed">
                                                     {selectedPet
                                                         ? petCheerfulMessages[selectedPet.name]
                                                         : "I’m your companion—let’s smile, learn, and conquer grammar together!"}
                                                 </p>
                                             </div>
-                                            <img
-                                                alt=""
-                                                className="w-32 h-32 object-cover rounded-full shadow-md border-2 border-white"
-                                                src={selectedPet?.image ?? pets[1].image}
-                                            />
+                                            <div className="w-32 h-32 rounded-full border p-1 shadow-md" style={selectedPetThemeStyle}>
+                                                <img
+                                                    alt=""
+                                                    className="w-full h-full object-cover rounded-full border-2 border-white"
+                                                    src={selectedPet?.image ?? pets[1].image}
+                                                />
+                                            </div>
                                         </div>
                                     </div>
                                     <p className="sr-only" aria-live="polite">{liveValidationMessage}</p>

@@ -59,3 +59,4 @@ GPT-5.3-Codex
 - 2026-03-04: Corrected hero catalog to true 3D avatar assets with explicit 3 male + 3 female kid hero lineup.
 - 2026-03-04: Refined Screen 1 preview panel to “Your Grammar Hero and Companion” with larger hero/pet avatars, supportive hero/pet-specific dialog bubbles (rounded curl tails + shadow), removed mood/milestone UI, and added a centered dashed connector badge (“Ready for Grammar Mission!”).
 - 2026-03-04: Moved name/hero/companion validation text into each card header as single-line messages with reserved space to prevent onboarding layout shift when validation appears.
+- 2026-03-04: Updated hero/pet preview theming to use exact sampled avatar background colors; dialog bubbles switched to transparent fill with matching colored borders and curl-tail outlines.

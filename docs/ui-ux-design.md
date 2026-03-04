@@ -81,12 +81,14 @@ Current navigation issue:
   - Current JS hydrates onboarding fields from `gpa_player_profile_v1`.
   - `Start Adventure` validates name + hero + companion selection before routing.
   - Preview panel updates avatar and dialog copy based on selected hero and companion.
+  - Preview dialog borders and curl-tail outlines dynamically match the selected hero/pet avatar background color.
 - CTA hierarchy:
   - Primary: `Start Adventure`.
   - Secondary actions are visual only in current implementation.
 - State handling:
   - Inline validation states for name/hero/companion with ARIA-live feedback.
   - Name, hero, and companion validation messages are rendered in each card header (single-line) with reserved space so card/panel height remains stable before and after validation.
+  - Hero and companion dialog bubbles use transparent fills with color-matched borders (outline-first speech style).
   - Legacy mood bar and next-milestone card are removed from the Screen 1 preview panel.
 
 ## Screen 2: World Map / Topic Selection
