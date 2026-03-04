@@ -5,7 +5,6 @@ import { useEffect, useMemo, useState } from "react";
 import HeaderBlock from "../src/components/HeaderBlock";
 import PetOptionCard from "../src/components/PetOptionCard";
 import PrimaryButton from "../src/components/PrimaryButton";
-import ValidationMessage from "../src/components/ValidationMessage";
 import { validateOnboardingInput } from "../src/lib/onboardingValidation";
 
 const screen1ProfileKey = "gpa_player_profile_v1";
@@ -314,9 +313,18 @@ export default function Home() {
                     <div className="grid grid-cols-1 lg:grid-cols-12 gap-5">
                         <div className="lg:col-span-7 flex flex-col gap-3 h-full">
                             <div className="bg-white p-5 rounded-xl shadow-sm border border-slate-200">
-                                <div className="flex items-center gap-2 mb-2">
-                                    <span className="material-symbols-outlined text-primary text-xl">badge</span>
-                                    <h3 className="text-lg font-bold">Your name</h3>
+                                <div className="flex items-start justify-between gap-3 mb-2">
+                                    <div className="flex items-center gap-2">
+                                        <span className="material-symbols-outlined text-primary text-xl">badge</span>
+                                        <h3 className="text-lg font-bold">Your name</h3>
+                                    </div>
+                                    <p
+                                        id="nameValidationMessage"
+                                        className={`text-xs font-semibold text-rose-600 leading-tight text-right whitespace-nowrap ${nameError ? "" : "invisible"}`}
+                                        aria-live="polite"
+                                    >
+                                        {nameError || "Please enter your name so your pet can cheer for you!"}
+                                    </p>
                                 </div>
                                 <div className="w-full">
                                     <label className="sr-only" htmlFor="playerNameInput">Enter your hero name</label>
@@ -343,14 +351,22 @@ export default function Home() {
                                         placeholder="Enter your hero name"
                                         type="text"
                                     />
-                                    <ValidationMessage id="nameValidationMessage" message={nameError} />
                                 </div>
                             </div>
 
                             <div className="bg-white p-6 rounded-xl shadow-sm border border-slate-200 flex-1">
-                                <div className="flex items-center gap-2 mb-3">
-                                    <span className="material-symbols-outlined text-primary text-xl">face_6</span>
-                                    <h3 className="text-xl font-bold">Your Hero</h3>
+                                <div className="flex items-start justify-between gap-3 mb-3">
+                                    <div className="flex items-center gap-2">
+                                        <span className="material-symbols-outlined text-primary text-xl">face_6</span>
+                                        <h3 className="text-xl font-bold">Your Hero</h3>
+                                    </div>
+                                    <p
+                                        id="heroValidationMessage"
+                                        className={`text-xs font-semibold text-rose-600 leading-tight text-right whitespace-nowrap ${heroError ? "" : "invisible"}`}
+                                        aria-live="polite"
+                                    >
+                                        {heroError || "Please choose one 3D hero before you start."}
+                                    </p>
                                 </div>
                                 <div className="grid grid-cols-4 md:grid-cols-8 gap-2 w-fit mx-auto justify-items-center">
                                     {heroes.map((hero) => {
@@ -369,13 +385,21 @@ export default function Home() {
                                         );
                                     })}
                                 </div>
-                                <ValidationMessage id="heroValidationMessage" message={heroError} />
                             </div>
 
                             <div className="bg-white p-6 rounded-xl shadow-sm border border-slate-200 flex-1">
-                                <div className="flex items-center gap-2 mb-3">
-                                    <span className="material-symbols-outlined text-primary text-xl">diversity_1</span>
-                                    <h3 className="text-xl font-bold">Your Companion</h3>
+                                <div className="flex items-start justify-between gap-3 mb-3">
+                                    <div className="flex items-center gap-2">
+                                        <span className="material-symbols-outlined text-primary text-xl">diversity_1</span>
+                                        <h3 className="text-xl font-bold">Your Companion</h3>
+                                    </div>
+                                    <p
+                                        id="petValidationMessage"
+                                        className={`text-xs font-semibold text-rose-600 leading-tight text-right whitespace-nowrap ${petError ? "" : "invisible"}`}
+                                        aria-live="polite"
+                                    >
+                                        {petError || "Please choose one companion before you start."}
+                                    </p>
                                 </div>
                                 <div className="grid grid-cols-4 md:grid-cols-8 gap-2 w-fit mx-auto justify-items-center">
                                     {pets.map((pet) => {
@@ -394,7 +418,6 @@ export default function Home() {
                                         );
                                     })}
                                 </div>
-                                <ValidationMessage id="petValidationMessage" message={petError} />
                             </div>
                         </div>
 

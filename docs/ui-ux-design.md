@@ -86,6 +86,7 @@ Current navigation issue:
   - Secondary actions are visual only in current implementation.
 - State handling:
   - Inline validation states for name/hero/companion with ARIA-live feedback.
+  - Name, hero, and companion validation messages are rendered in each card header (single-line) with reserved space so card/panel height remains stable before and after validation.
   - Legacy mood bar and next-milestone card are removed from the Screen 1 preview panel.
 
 ## Screen 2: World Map / Topic Selection
