@@ -1,0 +1,1 @@
+export const DEFAULT_COMPANION_AVATAR = "/companions/golden-retriever.png";

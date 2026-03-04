@@ -338,7 +338,12 @@ export default function Home() {
     return (
         <div className="relative flex min-h-screen w-full flex-col overflow-x-hidden">
             <div className="layout-container flex h-full grow flex-col">
-                <HeaderBlock />
+                <HeaderBlock
+                    showIcon
+                    showTitle
+                    showSubtitle
+                    showProfile={false}
+                />
 
                 <main className="flex-1 min-h-[calc(100vh-150px)] px-4 md:px-6 lg:px-8 max-w-[1400px] mx-auto w-full py-3 md:py-4">
                     <div className="relative rounded-xl overflow-hidden shadow-lg border-2 border-white mb-3">

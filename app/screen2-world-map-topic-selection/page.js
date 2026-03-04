@@ -4,21 +4,13 @@ import { useRouter } from "next/navigation";
 import { useEffect, useMemo, useRef, useState } from "react";
 import HeaderBlock from "../../src/components/HeaderBlock";
 import { getPlayerLevelInfo } from "../../src/lib/playerLevel";
+import { DEFAULT_COMPANION_AVATAR } from "../../src/lib/avatarDefaults";
 
 const profileStorageKey = "gpa_player_profile_v1";
 const playerProgressKey = "gpa_player_progress_v1";
 const selectedTopicStorageKey = "gpa_selected_topic_v1";
 
-const petAvatarByName = {
-    "Brave Puppy": "https://lh3.googleusercontent.com/aida-public/AB6AXuC8UfnI-4ZD6WEiN5gXUwP6EMRX8mNxLA9lGZ-YGKsdeGIk3_z0ChWxvjCrlNqwdcRcIKhpf8cbPISdsBtzfR8ZWbQLVLIB3hMDemAxSYWw_y4NW3ORCs0G_OOf1VMb0Ohrjwb84k4ocpIXuMQ5Kugzcsr8FyeyWl-MWUFSwrE5_U_ArLy3y0ASzoi7bAL2jCMtsYqFsoLW3v5f5hCDNNQXiiTMcEn5moNywZMVUmPowbyKNzSpFejqiHpOjSKx5qq22mJLQE20Nlmn",
-    "Wise Kitten": "https://lh3.googleusercontent.com/aida-public/AB6AXuB5E1yagRgTQDhzkkiH1Z2CFZOL6i2dCszN8wKwrkeSPODDca-qhj_TxgvSsIytjeJuqHg8am8KFJuSxK-BI6XbzHMivZnxQhdVeYrP5lIC1lXuVDSLE1HGOopsI461dIZPO-sSSlob8ku513pA2DVZqBZd8Gg6TFyeGWTq_hYRpHTEIUQGfkLhJ1bplVqJeWQ7Hr8zJI7jdFH-07PxPO9crdCPHRasfWFtdr2s13S4E2hJNaOslEXeEEhs0ooN4211MMcSFSsHHQuH",
-    "Swift Bunny": "https://lh3.googleusercontent.com/aida-public/AB6AXuBmx66OJYOOhrLcMEF9rs4_vmdVbAy8khc5VWVTgQUhCDz9HHcP5ZjRid_jTSIi4P7iSRATxBB67mNbPWnElulY7iGXcpxh2S-IQ8LTTWNMk8Gbp8XMCdN4df7qqvE4edbpCIjc347_Ibv6GyuLJO6t3QCHSt4iGFQ19jgvg0vzZq4EW1ibIhv--_LQegdyf9pw-AYhsqmt5MUfy1JQfWU3m-fnTUUPzHuvJacNm4FwnROdAv2_1wM2TLB2a5CyEmV0DEn6MO5aM4Fa",
-    "Happy Hamster": "https://lh3.googleusercontent.com/aida-public/AB6AXuBJ5l3I0e6UIAujP1swxyelIDciALjoKFoCygY-EW7QoSpnoajHDEsFBXr6xy6eAW1ddDsNpb0B2WLgo19m_Foe_3BMsUIzQLTd9Adz9vZAJMU0Bz2IMjUSEp03P6_MpHz1OyWhoWr62FGytj2DTo5S18AoGyADFdcey47VuH_7ptbli7bbx86xstDJEvfv6tDsuBt9oNVCsCglpcJIH185hG9xcCbD_syhGUdU3ijf7Xsmy7iu0-VFcJkVHN5Gl5MWJ9WArOx009VO",
-    "Steady Turtle": "https://lh3.googleusercontent.com/aida-public/AB6AXuCWVNsQrrHlzjhXt6-JawZXqs8hMsLHZXaCr1K-SeNmCrhfJrhs71q3QFdcZ99isFQ5HxsrNpP3s_2Y4ID1DTlEJ5m-UOLkhChZTWE3V4jn33vzK-C_dSHOqrjcvw38p62g3u9rQHydnKPNRZoMFQCYANpoYJNweDZqxNT3TMVobDJj5orTLsz8hpTgNrW9onS77Dp6lhu76oEDqWATFced9fJDhxOaCPinxeik57KCGKrQOUnRN8Zm9zLxEwCNieSHJ8v-QdHwgMx2",
-    "Magic Dragon": "https://lh3.googleusercontent.com/aida-public/AB6AXuAblbJmRXR3T20lYkFMbjW7V2nawLnAVPYrazc27WtJ0Ls9bEv3NqcPaIcycgvrkkPR3aR36ufzZ2VU9oH7SbI8xcWe71WOpmLjosPJK0uAzfDefFBQIs9s8Ps5XU02S58g7naEzlaeP2OO8ITuCGHMuy1eUmWX_axPdMG0TdN5Y4MGpBXKd4NihhjS7CoW8ZFZNVPbZ1avtEGuPMqnMs2waECZaOupHvsARJMBhdZX-EXxiA2baHgCXj4ohbO5jb_uDLsp-uq08XWC",
-};
-
-const defaultAvatar = petAvatarByName["Brave Puppy"];
+const defaultAvatar = DEFAULT_COMPANION_AVATAR;
 
 const defaultProgressState = {
     completedTopics: [],
@@ -292,9 +284,10 @@ const getActionLabel = (status) => {
 export default function Screen2TopicSelectionPage() {
     const router = useRouter();
     const [headerName, setHeaderName] = useState("Adventurer");
-    const [headerPetText, setHeaderPetText] = useState("Choose your first topic");
+    const [headerSecondaryText, setHeaderSecondaryText] = useState("Choose your first topic");
     const [selectedPetName, setSelectedPetName] = useState("");
     const [headerAvatar, setHeaderAvatar] = useState(defaultAvatar);
+    const [companionAvatar, setCompanionAvatar] = useState(defaultAvatar);
     const [headerLevelLabel, setHeaderLevelLabel] = useState("Level 1 • Explorer");
     const [mapTitle] = useState("Grammar World Map");
     const [startMessage, setStartMessage] = useState("");
@@ -354,8 +347,9 @@ export default function Screen2TopicSelectionPage() {
                 if (typeof profile?.petName === "string" && profile.petName.trim()) {
                     const restoredPetName = profile.petName.trim();
                     setSelectedPetName(restoredPetName);
-                    setHeaderPetText(`${restoredPetName} companion`);
-                    setHeaderAvatar(petAvatarByName[restoredPetName] ?? defaultAvatar);
+                    setHeaderSecondaryText(`${restoredPetName} companion`);
+                    const restoredPetImage = typeof profile?.petImage === "string" ? profile.petImage.trim() : "";
+                    setCompanionAvatar(restoredPetImage || defaultAvatar);
                 }
 
                 if (
@@ -363,7 +357,15 @@ export default function Screen2TopicSelectionPage() {
                     && typeof profile?.petImage === "string"
                     && profile.petImage.trim()
                 ) {
-                    setHeaderAvatar(profile.petImage.trim());
+                    setCompanionAvatar(profile.petImage.trim());
+                }
+
+                if (typeof profile?.heroName === "string" && profile.heroName.trim()) {
+                    setHeaderSecondaryText(profile.heroName.trim());
+                }
+
+                if (typeof profile?.heroImage === "string" && profile.heroImage.trim()) {
+                    setHeaderAvatar(profile.heroImage.trim());
                 }
             } catch (error) {
                 console.error("Failed to parse player profile", error);
@@ -522,8 +524,11 @@ export default function Screen2TopicSelectionPage() {
             <HeaderBlock
                 subtitle={headerLevelLabel}
                 showProfile
+                showProfileName
+                showProfileSecondaryText
+                showProfileAvatar
                 profileName={headerName}
-                profilePetText={headerPetText}
+                profileSecondaryText={headerSecondaryText}
                 profileAvatar={headerAvatar}
                 profileAvatarAlt="Player avatar"
             />
@@ -545,7 +550,7 @@ export default function Screen2TopicSelectionPage() {
                         />
                     </div>
                     <div className="mt-2 size-[190px] overflow-hidden rounded-full border-4 border-white bg-slate-200 shadow-md">
-                        <img className="h-full w-full object-cover" src={headerAvatar} alt="Companion avatar" />
+                        <img className="h-full w-full object-cover" src={companionAvatar} alt="Companion avatar" />
                     </div>
                 </section>
 

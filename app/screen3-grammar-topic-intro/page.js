@@ -4,14 +4,14 @@ import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
 import HeaderBlock from "../../src/components/HeaderBlock";
 import { getPlayerLevelInfo } from "../../src/lib/playerLevel";
+import { DEFAULT_COMPANION_AVATAR } from "../../src/lib/avatarDefaults";
 
 const profileStorageKey = "gpa_player_profile_v1";
 const playerProgressKey = "gpa_player_progress_v1";
 const selectedTopicStorageKey = "gpa_selected_topic_v1";
 const voiceSettingsKey = "gpa_voice_settings_v1";
 
-const defaultAvatar =
-    "https://lh3.googleusercontent.com/aida-public/AB6AXuCLzcyBcB1kXBKC87wVxPydRH8Z6etHELsVc2a1F90LjG3faXsG9lcV1nj4uPhMSLAcvG1K9WOjsOJUuFf9vn8cBvgVinFbMVfVQ4ZsvoqR4VsFMMOjU7W5ziFsCOdbm7y1Hzdi2OKt3DanVq7pUtiZPHqlA4Mp83miQek9iHzud_HcCndkFiA08inxZL51ILoGwd7eaPfnNDpGQDJ2JVcaceXxCStVVVV0SO1cUgoyLzo3h93o1VTGgpLm4BvSOg96jdnpWU7crOjd";
+const defaultAvatar = DEFAULT_COMPANION_AVATAR;
 
 const topics = {
     verbs: {
@@ -174,8 +174,9 @@ const renderHighlightedExample = (exampleText, highlightWords = []) => {
 
 export default function Screen3TopicIntroPage() {
     const [headerName, setHeaderName] = useState("Adventurer");
-    const [headerPetText, setHeaderPetText] = useState("Choose your first topic");
+    const [headerSecondaryText, setHeaderSecondaryText] = useState("Choose your first topic");
     const [headerAvatar, setHeaderAvatar] = useState(defaultAvatar);
+    const [companionAvatar, setCompanionAvatar] = useState(defaultAvatar);
     const [headerLevelLabel, setHeaderLevelLabel] = useState("Level 1 • Explorer");
 
     const [selectedTopicKey, setSelectedTopicKey] = useState("verbs");
@@ -219,10 +220,15 @@ export default function Screen3TopicIntroPage() {
                     setHeaderName(profile.name.trim());
                 }
                 if (typeof profile?.petName === "string" && profile.petName.trim()) {
-                    setHeaderPetText(`${profile.petName.trim()} companion`);
+                    setHeaderSecondaryText(`${profile.petName.trim()} companion`);
                 }
-                if (typeof profile?.petImage === "string" && profile.petImage.trim()) {
-                    setHeaderAvatar(profile.petImage.trim());
+                if (typeof profile?.heroName === "string" && profile.heroName.trim()) {
+                    setHeaderSecondaryText(profile.heroName.trim());
+                }
+                const restoredPetImage = typeof profile?.petImage === "string" ? profile.petImage.trim() : "";
+                setCompanionAvatar(restoredPetImage || defaultAvatar);
+                if (typeof profile?.heroImage === "string" && profile.heroImage.trim()) {
+                    setHeaderAvatar(profile.heroImage.trim());
                 }
             } catch (error) {
                 console.error("Failed to parse player profile", error);
@@ -296,8 +302,11 @@ export default function Screen3TopicIntroPage() {
             <HeaderBlock
                 subtitle={headerLevelLabel}
                 showProfile
+                showProfileName
+                showProfileSecondaryText
+                showProfileAvatar
                 profileName={headerName}
-                profilePetText={headerPetText}
+                profileSecondaryText={headerSecondaryText}
                 profileAvatar={headerAvatar}
                 profileAvatarAlt="Player avatar"
             />
@@ -364,8 +373,8 @@ export default function Screen3TopicIntroPage() {
                                 <div className="size-[190px] overflow-hidden rounded-full border-4 border-white bg-slate-200 shadow-md">
                                     <img
                                         className="h-full w-full object-cover"
-                                        src={headerAvatar}
-                                        alt={`${headerPetText} avatar`}
+                                        src={companionAvatar}
+                                        alt={`${headerSecondaryText} avatar`}
                                     />
                                 </div>
                                 <div className="absolute -bottom-1 -right-1 flex items-center">
