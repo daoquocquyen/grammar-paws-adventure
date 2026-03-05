@@ -14,6 +14,26 @@ const buildAttempts = (questionIdsByAttempt) =>
     }));
 
 describe("Story 2.2 unit", () => {
+    it("creates topic-matched challenge questions with varying content", () => {
+        const nounsBank = createTopicQuestionBank("nouns", ["common"]);
+        const verbsBank = createTopicQuestionBank("verbs", ["ing-ending"]);
+
+        expect(nounsBank).toHaveLength(6);
+        expect(verbsBank).toHaveLength(6);
+        expect(nounsBank.every((question) => question.topicKey === "nouns")).toBe(true);
+        expect(verbsBank.every((question) => question.topicKey === "verbs")).toBe(true);
+
+        const nounsPrompts = new Set(nounsBank.map((question) => question.prompt));
+        const nounsCorrectAnswers = new Set(nounsBank.map((question) => question.correctAnswer));
+        expect(nounsPrompts).toEqual(new Set(["Nouns: choose the common noun."]));
+        expect(nounsCorrectAnswers.size).toBeGreaterThan(1);
+        expect(verbsBank[0].prompt).toContain("Verbs");
+        expect(nounsBank[0].prompt).not.toBe(verbsBank[0].prompt);
+        expect(nounsBank[0].whyCorrect).toContain(`"${nounsBank[0].correctAnswer}"`);
+        expect(nounsBank[0].whyWrong).toContain(`"${nounsBank[0].correctAnswer}"`);
+        expect(nounsBank[0].whyWrong).toContain("The correct answer is");
+    });
+
     it("selects questions across multiple aspects before repeating", () => {
         const questionBank = createTopicQuestionBank("verbs", ["ing-ending", "auxiliary", "time-marker"]);
         const selection = selectChallengeQuestions({

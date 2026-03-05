@@ -1,4 +1,4 @@
-import { cleanup, render, screen } from "@testing-library/react";
+import { cleanup, fireEvent, render, screen } from "@testing-library/react";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
 vi.mock("next/link", () => ({
@@ -44,7 +44,7 @@ describe("Story 2.2 integration", () => {
 
         render(<ChallengePage />);
 
-        const cooldownMetadata = screen.getByText(/Cooldown window:/i);
+        const cooldownMetadata = screen.getByTestId("challenge-selection-metadata");
         const selectedQuestionIds = (cooldownMetadata.getAttribute("data-selected-question-ids") ?? "").split(",").filter(Boolean);
 
         expect(cooldownMetadata).toHaveAttribute("data-question-count", "9");
@@ -55,5 +55,19 @@ describe("Story 2.2 integration", () => {
         expect(selectedQuestionIds).not.toContain("nouns::common::q2");
         expect(selectedQuestionIds).not.toContain("nouns::proper::q2");
         expect(selectedQuestionIds).not.toContain("nouns::plurality::q2");
+    });
+
+    it("changes the rendered sentence after moving to next question", () => {
+        window.localStorage.setItem("gpa_selected_topic_v1", "nouns");
+
+        render(<ChallengePage />);
+
+        const firstSentence = screen.getByTestId("challenge-question-sentence").textContent;
+
+        fireEvent.click(screen.getByTestId("challenge-answer-option-0"));
+        fireEvent.click(screen.getByRole("button", { name: /Next Question/i }));
+
+        const secondSentence = screen.getByTestId("challenge-question-sentence").textContent;
+        expect(secondSentence).not.toBe(firstSentence);
     });
 });

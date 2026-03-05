@@ -11,7 +11,7 @@ test.describe("Story 2.2 acceptance", () => {
 
         await page.goto("/challenge");
 
-        const metadata = page.getByText(/Cooldown window:/i);
+        const metadata = page.getByTestId("challenge-selection-metadata");
         await expect(metadata).toHaveAttribute("data-question-count", "9");
 
         const firstQuestionIds = ((await metadata.getAttribute("data-selected-question-ids")) ?? "")
@@ -20,7 +20,7 @@ test.describe("Story 2.2 acceptance", () => {
 
         await page.reload();
 
-        const secondMetadata = page.getByText(/Cooldown window:/i);
+        const secondMetadata = page.getByTestId("challenge-selection-metadata");
         const secondQuestionIds = ((await secondMetadata.getAttribute("data-selected-question-ids")) ?? "")
             .split(",")
             .filter(Boolean);
