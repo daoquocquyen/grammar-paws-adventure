@@ -16,7 +16,7 @@
 | F-00A | Player state persistence + returning session restore | Planned | `src/ui/stitch/screen1-home-start-journey.html`, `src/ui/stitch/screen2-world-map-topic-selection.html`, `TBD` | Must persist and restore name, selected pet, topic progress, unlocked/equipped accessories from localStorage to avoid redo next day. |
 | F-01 | World Map / Topic Selection | Partial-High | `app/world-map/page.js`, `src/components/HeaderBlock.js`, `src/lib/playerLevel.js`, `src/ui/stitch/screen2-world-map-topic-selection.html` | Canonical React route is `/world-map` (legacy `/screen2-world-map-topic-selection` redirected), includes shared header reuse, profile hydration, intro-first start-topic routing, easy-to-hard ordering, dynamic topic states (`done`/`ongoing`/`locked`), pet-dependent topic icons, progress-derived level badge, and a one-row horizontal 4-card carousel with edge chevrons plus drag/keyboard navigation. |
 | F-02 | Grammar Topic Intro + voice controls | Partial-High | `app/topic-intro/page.js`, `src/components/HeaderBlock.js`, `src/ui/stitch/screen3-grammar-topic-intro.html` | Canonical React route is `/topic-intro` (legacy `/screen3-grammar-topic-intro` redirected), implementing anchored intro composition, shared header reuse, dynamic aspect-card rendering, loading/error/content states, and single speaker on/off voice control. |
-| F-03 | Challenge screen | Prototype | `src/ui/stitch/screen4-game-challenge.html` | Static UI example; challenge engine and scoring logic not wired. |
+| F-03 | Challenge screen | Partial | `app/challenge/page.js`, `app/screen4-game-challenge/page.js`, `src/ui/stitch/screen4-game-challenge.html` | React route `/challenge` exists with compatibility redirect from `/screen4-game-challenge`; full challenge engine and scoring logic remain pending. |
 | F-04 | Results + pass/fail feedback | Planned | `TBD` | Required by PRD/FR, screen file not present. |
 | F-05 | Reward selection (1 of 3) | Planned | `TBD` | Required by PRD/FR, screen file not present. |
 | F-06 | Pet home/customization | Planned | `TBD` | Required by PRD/FR, screen file not present. |
@@ -36,14 +36,13 @@
 - Naming mismatch:
   - Planned/status naming: `screen4-challenge-screen.html`
   - Existing file: `screen4-game-challenge.html`
-- Screen 3 CTA currently links to non-existing `./screen4-challenge-screen.html`.
+- Screen 3 CTA now routes to `/challenge`; full challenge gameplay logic is still pending.
 - `_bmad-output/implementation-artifacts/stitch-import-status.md` does not include updated screen 3/4 import confirmation.
 - No canonical storage schema file currently maps persisted profile/progress/accessory keys and version migration behavior.
 
 ## Next Mapping Maintenance Actions
 - [ ] Migrate Screen 2 behavior from `src/ui/stitch` into `app/world-map/page.js`.
-- [ ] Define remaining migration sequence for screen 4 into Next.js route.
-- [ ] Resolve screen 4 filename/link mismatch and update all references.
+- [ ] Expand `/challenge` from route shell into full gameplay engine (question rendering, scoring, feedback, progression).
 - [ ] Update `stitch-import-status.md` for current screen inventory.
 - [ ] Define canonical localStorage schema for `name`, `selectedPet`, progress state, and accessory unlock/equip state (versioned key strategy).
 - [ ] Add planned target file names for screens 5-9 after design freeze.
@@ -61,4 +60,5 @@
 - `app/page.js`
 - `app/world-map/page.js`
 - `app/topic-intro/page.js`
+- `app/challenge/page.js`
 - `src/lib/playerLevel.js`

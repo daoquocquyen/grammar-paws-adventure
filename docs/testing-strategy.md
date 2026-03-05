@@ -7,20 +7,26 @@
 - Baseline validation includes staged automated checks plus manual browser flow checks.
 
 ## Required Story Test Execution Order
-For every developed story, execute tests in this order to reduce iteration time and token cost:
+For every developed story, execute tests in this order:
 1. Implement story code.
 2. Create/update unit, integration, and acceptance tests for changed behavior.
 3. Print a manual test checklist in the story implementation artifact before running manual validation.
-4. Run **build + unit tests only** first (`npm run dev-story:validate`) and fix issues quickly.
-5. Execute manual test checklist and record outcomes.
-6. Run integration + acceptance/E2E tests **only when explicitly requested after manual checks** (`npm run dev-story:post-manual`).
+4. Include the same manual test checklist in the final dev-story user handoff message under a "Manual Test Steps" section.
+5. Run `npm run dev-story:validate` (`build + unit`) and fix issues quickly.
+6. Execute manual test checklist and record outcomes.
+7. Run integration tests (`npm run test:integration`).
+8. Run acceptance/E2E tests (`npm run test:acceptance` or `npm run test:e2e`).
 
-## Dev-Story Validation Policy (Token/Time Optimized)
-- Default for `/dev-story`: `build` then `unit` only.
-- Integration and E2E are intentionally deferred until user requests post-manual regression.
+### Explicit Deferral Exception
+- Integration and/or acceptance tests may be deferred only when the user explicitly requests deferral.
+- Any deferral must be recorded in the story artifact `Dev Agent Record -> Completion Notes` with reason and pending command.
+
+## Dev-Story Validation Policy
+- Default for `/dev-story`: complete all test levels for changed behavior (`build + unit + integration + acceptance`).
+- Deferral is opt-in only via explicit user request and must be documented in the story artifact.
 - Script shortcuts:
   - `npm run dev-story:validate` → `build + unit`
-  - `npm run dev-story:post-manual` → `integration + e2e`
+  - `npm run dev-story:post-manual` → `integration + e2e` (optional convenience command)
 
 ## Test Levels and Scope
 
@@ -75,7 +81,7 @@ Focus on user outcomes:
 - [ ] Corrupt/missing persisted data degrades safely to first-time flow without crash.
 - [ ] Screen 3 loads topic data and toggles loading/error/content states correctly.
 - [ ] Voice speaker toggle (on/off) functions or degrades safely.
-- [ ] Screen 3 "Start Challenge" link resolves to an existing file (currently failing; fix required).
+- [ ] Screen 3 `Start Challenge` routes to `/challenge` and remains visually labeled as `Start Challenge`.
 - [ ] Screen 4 displays challenge UI and profile hydration safely.
 
 ## Automation TBDs

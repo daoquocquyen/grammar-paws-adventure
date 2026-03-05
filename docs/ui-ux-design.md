@@ -63,8 +63,9 @@ Planning artifacts were used only to identify intended behavior and mark gaps.
 3. **Grammar Topic Intro**: selected topic loads, aspects/examples displayed, voice narration controls available.
 4. **Game Challenge**: child answers question with progress context and supportive helper copy.
 
-Current navigation issue:
-- Screen 3 "Start Challenge" links to `./screen4-challenge-screen.html`, but existing file is `screen4-game-challenge.html`.
+Current navigation status:
+- Screen 3 `Start Challenge` now routes to `/challenge` in the Next.js app.
+- Legacy compatibility route `/screen4-game-challenge` redirects to `/challenge`.
 
 ## Screen-Level Specs
 
@@ -137,6 +138,7 @@ Current navigation issue:
   - Secondary: `Back to Map`.
 - State handling:
   - Explicit loading, error, and content states are implemented.
+  - Primary CTA keeps a simple visible label (`Start Challenge`) while computed question count is preserved in metadata (`data-question-count`).
 
 ### Current Visual Layout (Screen 3)
 - Main topic header block stays in a stable top position while aspect grid grows below.
@@ -203,7 +205,7 @@ Current navigation issue:
   - Use pet companion voice as support, not distraction.
 
 ## Open UX Gaps and Next Design Decisions
-- [ ] Resolve screen 3 -> screen 4 link/filename mismatch.
+- [ ] Expand `/challenge` from route shell to full interactive challenge gameplay.
 - [ ] Define and implement results/retry/reward screens (not in current `src/ui/stitch`).
 - [ ] Finalize onboarding validation UX (name required, pet required).
 - [ ] Decide final challenge answer interaction model (single submit vs auto-check).
