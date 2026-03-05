@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
 import HeaderBlock from "../../src/components/HeaderBlock";
 import { DEFAULT_COMPANION_AVATAR } from "../../src/lib/avatarDefaults";
+import { getChallengeQuestionCount } from "../../src/lib/challengeQuestionCount";
 import { getPlayerLevelInfo } from "../../src/lib/playerLevel";
 
 const profileStorageKey = "gpa_player_profile_v1";
@@ -187,6 +188,10 @@ export default function Screen3TopicIntroPage() {
     const [voiceMuted, setVoiceMuted] = useState(false);
 
     const topic = useMemo(() => topics[selectedTopicKey] ?? null, [selectedTopicKey]);
+    const challengeQuestionCount = useMemo(
+        () => getChallengeQuestionCount(topic?.aspects?.length ?? 0),
+        [topic]
+    );
 
     const speakTopicIntro = (topicData) => {
         if (!topicData || !voiceSupported || voiceMuted) {
@@ -408,6 +413,10 @@ export default function Screen3TopicIntroPage() {
                         <div className="mt-12 flex flex-wrap items-center justify-center gap-3">
                             <button
                                 type="button"
+                                onClick={() => {
+                                    window.location.href = "/challenge";
+                                }}
+                                data-question-count={challengeQuestionCount}
                                 className="inline-flex items-center gap-2 rounded-full bg-primary px-9 py-3.5 text-lg font-black text-white shadow-lg shadow-primary/25"
                             >
                                 Start Challenge
