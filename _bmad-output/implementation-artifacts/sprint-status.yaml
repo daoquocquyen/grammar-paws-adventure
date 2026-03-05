@@ -53,14 +53,16 @@ development_status:
   epic-2: in-progress
   2-1-challenge-question-count-formula: review
   2-2-diverse-question-selection-with-cooldown: review
-  2-3-immediate-correctness-and-explanation-feedback: backlog
+  2-3-guided-feedback-and-explanation-states: ready-for-dev
   2-4-challenge-voice-replay-and-safe-fallback: backlog
+  2-5-performance-indicators-and-answer-micro-interactions: ready-for-dev
   epic-2-retrospective: optional
 
   epic-3: backlog
-  3-1-score-calculation-and-pass-threshold: backlog
-  3-2-fail-path-supportive-retry-experience: backlog
-  3-3-pass-path-continue-to-reward: backlog
+  3-1-xp-and-pass-threshold-calculation: ready-for-dev
+  3-2-two-attempt-guided-retry-and-assisted-resolution: ready-for-dev
+  3-3-continue-flow-after-correct-or-assisted-acknowledge: ready-for-dev
+  3-4-streak-and-persistence-bonus-awards: ready-for-dev
   epic-3-retrospective: optional
 
   epic-4: backlog

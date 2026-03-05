@@ -80,6 +80,31 @@ flowchart LR
   - Evolution/dashboard
 - Domain entities and rules defined in functional requirements, pending code implementation.
 
+## Challenge Runtime State Model (Planned MVP)
+- Question lifecycle state machine:
+  - `loading_question` -> `ready` -> `selecting`
+  - `correct_first` or `wrong_first`
+  - `guided_retry` -> `selecting`
+  - `correct_second` or `wrong_second`
+  - `assisted` -> `await_acknowledge` -> `post_answer`
+  - `award_xp` -> `update_progress` -> next question or level complete
+- Attempt constraints:
+  - Maximum two independent attempts per question.
+  - Third stage is assisted resolution only (no free-form guessing loop).
+- Feedback contract:
+  - Pre-answer hero message is hint-only (non-revealing).
+  - Post-answer hero message is explanation-oriented and includes correct-answer reasoning when needed.
+  - Pet copy is emotional encouragement and never punitive.
+- UI indicator model:
+  - `first_try_correct` -> `⭐`
+  - `second_try_correct` -> `☆`
+  - `assisted_resolution` -> `✓`
+- Scoring model:
+  - Base XP: first try 10, second try 6, assisted 3, skip 0.
+  - Streak bonuses and persistence bonus computed at run-end and merged into progress update.
+- Persistence additions:
+  - `gpa_player_progress_v1` should store per-question outcome class and streak context required for bonus computation.
+
 ## Migration Status
 - ✅ Next.js app scaffold created (`package.json`, `app/layout.js`, `app/globals.css`, `app/page.js`).
 - ✅ Screen 1 onboarding ported to React route `/` with validation + pet selection behavior.

@@ -147,21 +147,39 @@ Current navigation status:
 - Example copy supports word-level blue emphasis for targeted grammar terms.
 
 ## Screen 4: Game Challenge
-- UX goal: present one clear question with immediate encouragement.
+- UX goal: teach grammar through guided correction while preserving confidence.
 - Key components:
-  - Progress header (question index + percent complete).
-  - Question prompt with voice replay icon.
-  - Answer option buttons.
-  - Sidebar helper panel and feedback card.
-  - Mobile sticky feedback/next panel.
+  - Top progress zone:
+    - Question progress counter (`current/total`).
+    - Glowing progress bar.
+    - Per-question performance indicators (`⭐`, `☆`, `✓`).
+  - Center challenge zone:
+    - Single sentence with one blank.
+    - 2-3 answer options max (level-dependent).
+  - Bottom coaching zone:
+    - Pet avatar bubble (effort-focused encouragement).
+    - Hero avatar bubble (hint pre-answer, explanation post-answer).
+  - Primary actions:
+    - `Try Again` in guided retry context.
+    - `Continue` after correct or assisted acknowledgment.
 - Interaction behavior:
   - Profile hydration from `gpa_player_profile_v1`.
-  - Challenge logic (selection, scoring, next-question updates) is not implemented yet.
+  - Guided attempt model:
+    - Attempt 1: full options.
+    - Attempt 2: previously chosen incorrect option disabled.
+    - Assisted stage: explanation + answer reveal + learner acknowledgment gate.
+  - Hero explanation appears with short delay (400-600ms) after answer input.
+  - Wrong-option interaction uses light shake and disable behavior.
+  - Correct-option interaction uses soft glow; companion can animate celebration.
 - CTA hierarchy:
-  - Primary: `Next Question` (desktop and mobile variants).
-  - Secondary: answer option selection.
+  - Primary: `Try Again` / `Continue` (state-based).
+  - Secondary: answer option selection/drag.
 - State handling:
-  - Feedback panel is static example content; no dynamic correct/incorrect transition logic.
+  - `ready`: hint only, no answer reveal.
+  - `wrong_first`: guiding explanation, no reveal.
+  - `correct_first`: success feedback + full XP quality.
+  - `correct_second`: success feedback + partial XP quality.
+  - `assisted`: reveal with calm reasoning + `I understand` gate.
 
 ## Responsive Behavior
 - Mobile:

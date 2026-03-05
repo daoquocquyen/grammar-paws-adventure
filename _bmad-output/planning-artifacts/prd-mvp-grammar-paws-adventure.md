@@ -66,15 +66,23 @@ Grammar Paws Adventure is a kid-first web game for an 11-year-old non-native Eng
 - Number of questions depends on topic aspect count.
 - Default formula: questions = clamp(aspect_count * 3, min 6, max 15).
 - Question selection must vary across replays using anti-repeat logic.
+- Answer options must be capped at 3 for MVP (2 for early levels, up to 3 for mid levels).
+- Drag interactions must use single-word drag only.
 
 ### FR-03 Answer Evaluation + Explanation
-- After each answer, show whether answer is correct.
-- Show short child-friendly explanation for correct and incorrect choices.
-- Keep tone encouraging and playful.
+- Challenge must use 2 independent attempts plus 1 assisted resolution stage.
+- Attempt 1: all options available; if incorrect, enter guided retry.
+- Attempt 2 (guided retry): previously selected incorrect option is disabled; hero gives concept guidance without revealing answer.
+- Assisted stage: hero gives step-by-step explanation, reveals correct answer with reasoning, and waits for learner acknowledgment.
+- Before answer submission, hero gives hint-oriented guidance (word-function question style) and must not reveal the answer.
+- After answer submission, hero gives explanation-style feedback including why the selected answer fits or not.
+- Feedback language must stay encouraging and playful and must avoid punitive labels (e.g., no "Wrong" labels or red failure counters).
+- Hero explanation should appear after a short delay (400-600ms) following answer interaction.
 
 ### FR-04 Pass/Fail Rule
 - Passing score is >=80% correct.
-- On fail, provide supportive retry and targeted hints.
+- Retry model must be finite (no unlimited retries): 2 attempts + assisted resolution.
+- "Continue" action appears after first-try correct, second-try correct, or assisted acknowledgment.
 
 ### FR-05 Voice Narration
 - Pet voice reads topic intro and each question.
@@ -85,10 +93,20 @@ Grammar Paws Adventure is a kid-first web game for an 11-year-old non-native Eng
 - Pass grants reward selection (1 of 3 accessories).
 - Track topic completion and mastery progress.
 - Every 2 completed topics can trigger evolution milestone.
+- Base XP per question: first-try correct = 10, second-try correct = 6, assisted resolution = 3, skip = 0.
+- Streak bonus: 3 first-try correct = +5 XP; 5 first-try correct = +10 XP.
+- End-of-level bonuses:
+  - 70%+ first-try accuracy = +20 XP.
+  - Corrected 3+ mistakes = +10 XP persistence bonus.
+- XP messaging must remain supportive and short.
 
 ### FR-07 Progress Dashboard
 - Show completed topics, attempts, mastery trend, and streak summary.
 - Parent-friendly summary view in simple language.
+- Challenge performance indicators should show learning quality:
+  - ⭐ first-try correct
+  - ☆ second-try correct
+  - ✓ assisted learning
 
 ## 8) Success Metrics
 - Topic completion rate/week

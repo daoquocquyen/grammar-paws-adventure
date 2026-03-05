@@ -39,7 +39,7 @@ I want to choose my 3D hero avatar from 8 kid avatars (4 male and 4 female) and 
 so that my learning journey feels personal from the first screen.
 
 ## Epic 2: Challenge Engine and Explanations
-Goal: Core challenge loop works with deterministic rules and immediate learning feedback.
+Goal: Core challenge loop uses guided correction, supportive feedback, and clear performance indicators.
 
 ### Story 2.1: Challenge Question Count Formula
 As the system,
@@ -51,33 +51,43 @@ As a learner,
 I want varied questions across attempts,
 so that retries feel fresh and useful.
 
-### Story 2.3: Immediate Correctness and Explanation Feedback
+### Story 2.3: Guided Feedback and Explanation States
 As a learner,
-I want explanation after every answer,
-so that I understand why choices are right or wrong.
+I want hints before answer and explanation after answer,
+so that I understand reasoning without blind guessing.
 
 ### Story 2.4: Challenge Voice Replay and Safe Fallback
 As a learner,
 I want replay voice where available and non-blocking text fallback where unavailable,
 so that gameplay always continues.
 
+### Story 2.5: Performance Indicators and Answer Micro-Interactions
+As a learner,
+I want clear positive indicators and gentle motion feedback,
+so that I can track learning quality without feeling punished.
+
 ## Epic 3: Results Pass Rule and Retry Loop
-Goal: Clear progress outcome with supportive fail/retry and pass continuation.
+Goal: Progress outcome is based on quality attempts, guided retry stages, and fair XP rewards.
 
-### Story 3.1: Score Calculation and Pass Threshold
+### Story 3.1: XP and Pass Threshold Calculation
 As the system,
-I want pass/fail computed at >= 80%,
-so that progression is consistent and fair.
+I want pass/fail and XP computed from attempt quality,
+so that progression rewards learning effort and correctness.
 
-### Story 3.2: Fail Path Supportive Retry Experience
+### Story 3.2: Two-Attempt Guided Retry and Assisted Resolution
 As a learner,
-I want encouraging retry guidance when I fail,
-so that I can improve without frustration.
+I want a limited retry flow with guided support and assisted resolution,
+so that I can recover from mistakes without frustration loops.
 
-### Story 3.3: Pass Path Continue to Reward
+### Story 3.3: Continue Flow After Correct or Assisted Acknowledge
 As a learner,
-I want successful completion to continue to reward selection,
-so that effort feels meaningful.
+I want to continue only after success or "I understand" confirmation,
+so that I complete each question with closure.
+
+### Story 3.4: Streak and Persistence Bonus Awards
+As a learner,
+I want streak and persistence bonuses,
+so that consistent effort and correction are both rewarded.
 
 ## Epic 4: Rewards and Pet Customization
 Goal: Rewards are earned and visibly applied to the learner's pet.
