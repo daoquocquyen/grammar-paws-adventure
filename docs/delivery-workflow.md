@@ -18,9 +18,15 @@
 1. Implement story functionality.
 2. Create/update unit, integration, and acceptance tests for story changes.
 3. Print manual test steps in the implementation artifact.
-4. Run build + unit tests only (`npm run dev-story:validate`) and fix failures.
-5. Execute manual test checklist and record results.
-6. Run integration tests + acceptance tests (`npm run dev-story:post-manual`) only when explicitly requested after manual checks.
+4. Print the same manual test steps in the final dev-story completion message.
+5. Run build + unit tests (`npm run dev-story:validate`) and fix failures.
+6. Execute manual test checklist and record results.
+7. Run integration tests (`npm run test:integration`).
+8. Run acceptance tests (`npm run test:acceptance`).
+
+### Deferral Exception
+- Integration and/or acceptance may be deferred only on explicit user request.
+- Deferral must be documented in the story artifact with reason and pending command(s).
 
 ### Next.js Runtime (Primary for migrated screens)
 - Install dependencies: `npm install`
@@ -46,7 +52,8 @@
 - [ ] Security baseline checklist reviewed.
 - [ ] Unit tests executed and passing.
 - [ ] Manual regression checklist executed.
-- [ ] Integration + acceptance tests executed after manual checks (on explicit request).
+- [ ] Integration + acceptance tests executed after manual checks.
+- [ ] Any deferred test level has explicit user approval and documented follow-up command.
 - [ ] `TBD` items added where implementation detail is unknown.
 
 ## Commit Message Convention (Required)
@@ -82,10 +89,11 @@ Minimum quality bar:
 1. Update planning + docs context for changed behavior.
 2. Run Next.js build + unit tests (`npm run dev-story:validate`).
 3. Print and execute manual browser smoke tests.
-4. On explicit request, run integration and acceptance tests (`npm run dev-story:post-manual`) after manual checks pass.
-5. Resolve all blocking checklist items.
-6. Tag release notes manually (`TBD` tag strategy).
-7. Publish static files to chosen hosting target (`TBD` platform).
+4. Run integration and acceptance tests after manual checks pass.
+5. If user explicitly requests deferral, document the deferral and pending commands in the story artifact.
+6. Resolve all blocking checklist items.
+7. Tag release notes manually (`TBD` tag strategy).
+8. Publish static files to chosen hosting target (`TBD` platform).
 
 ## Workflow TBDs
 - Branch naming policy: TBD.

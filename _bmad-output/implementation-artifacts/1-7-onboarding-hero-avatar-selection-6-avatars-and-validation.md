@@ -1,16 +1,16 @@
-# Story 1.7: Onboarding 3D Hero Avatar Selection (6 Avatars) and Validation
+# Story 1.7: Onboarding 3D Hero Avatar Selection (8 Avatars) and Validation
 
 Status: done
 
 ## Story
 
 As a child learner,
-I want to choose my 3D hero avatar from 6 kid avatars (3 male and 3 female) and also choose my pet avatar,
+I want to choose my 3D hero avatar from 8 kid avatars (4 male and 4 female) and also choose my pet avatar,
 so that my learning journey feels personal from the first screen.
 
 ## Acceptance Criteria
 
-1. Given the learner is on Screen 1, the onboarding UI shows exactly 6 selectable 3D hero avatars with balanced presentation (3 male, 3 female).
+1. Given the learner is on Screen 1, the onboarding UI shows exactly 8 selectable 3D hero avatars with balanced presentation (4 male, 4 female).
 2. Given the learner clicks `Start Adventure` without selecting a hero avatar, inline validation is shown and navigation is blocked.
 3. Given the learner clicks `Start Adventure` without selecting a pet avatar, inline validation is shown and navigation is blocked.
 4. Given learner name + hero avatar + pet avatar are selected, profile is persisted and app routes to `/world-map`.
@@ -20,7 +20,7 @@ so that my learning journey feels personal from the first screen.
 ## Tasks / Subtasks
 
 - [x] Update onboarding validation logic to require hero avatar selection
-- [x] Add 3D hero avatar selection UI (6 options) to Screen 1
+- [x] Add 3D hero avatar selection UI (8 options) to Screen 1
 - [x] Persist selected hero avatar in `gpa_player_profile_v1`
 - [x] Hydrate previously selected hero avatar on return to Screen 1
 - [x] Extend unit, integration, and acceptance tests for hero-required flow
@@ -54,9 +54,9 @@ GPT-5.3-Codex
 
 ### Change Log
 - 2026-03-04: Story 1.7 created and implementation started.
-- 2026-03-04: Implemented 3D hero avatar selection (6 avatars), added hero-required validation, and persisted hero metadata in profile payload.
+- 2026-03-04: Implemented 3D hero avatar selection (8 avatars), added hero-required validation, and persisted hero metadata in profile payload.
 - 2026-03-04: Verified with `npm run test:unit`, `npm run test:integration`, and `npm run test:acceptance` (all passing).
-- 2026-03-04: Corrected hero catalog to true 3D avatar assets with explicit 3 male + 3 female kid hero lineup.
+- 2026-03-04: Corrected hero catalog to true 3D avatar assets with explicit 4 male + 4 female kid hero lineup.
 - 2026-03-04: Refined Screen 1 preview panel to “Your Grammar Hero and Companion” with larger hero/pet avatars, supportive hero/pet-specific dialog bubbles (rounded curl tails + shadow), removed mood/milestone UI, and added a centered dashed connector badge (“Ready for Grammar Mission!”).
 - 2026-03-04: Moved name/hero/companion validation text into each card header as single-line messages with reserved space to prevent onboarding layout shift when validation appears.
 - 2026-03-04: Updated hero/pet preview theming to use exact sampled avatar background colors; dialog bubbles switched to transparent fill with matching colored borders and curl-tail outlines.

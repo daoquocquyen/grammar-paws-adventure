@@ -28,9 +28,14 @@ As a learner,
 I want intro content with replay and mute support,
 so that I can understand the topic in a friendly way.
 
-### Story 1.7: Onboarding 3D Hero Avatar Selection (6 Avatars) and Validation
+### Story 1.6: React Reusable UI Components and Screen 1 Refactor
+As a developer,
+I want Screen 1 React UI split into reusable components,
+so that future screens can share consistent UI and reduce duplicated code.
+
+### Story 1.7: Onboarding 3D Hero Avatar Selection (8 Avatars) and Validation
 As a child learner,
-I want to choose my 3D hero avatar from 6 kid avatars (3 male and 3 female) and also choose my pet avatar,
+I want to choose my 3D hero avatar from 8 kid avatars (4 male and 4 female) and also choose my pet avatar,
 so that my learning journey feels personal from the first screen.
 
 ## Epic 2: Challenge Engine and Explanations

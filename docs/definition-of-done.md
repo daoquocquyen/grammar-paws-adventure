@@ -3,7 +3,7 @@
 ## Story-Level DoD (S1-S5)
 
 ### S1: Foundation + Topic Intro
-- [ ] Child can enter name, choose pet, and start journey in one flow.
+- [ ] Child can enter name, choose one hero avatar and one pet avatar, and start journey in one flow.
 - [ ] Name + selected pet are persisted and restored on next visit without requiring re-entry.
 - [ ] Returning session can continue from saved progress context without onboarding reset.
 - [ ] Topic selection always routes to topic intro first.
@@ -49,6 +49,7 @@
 - [ ] Unit tests pass before manual testing begins.
 - [ ] Manual testing checklist passes before running integration and acceptance tests.
 - [ ] Integration and acceptance tests pass after manual validation.
+- [ ] If integration/acceptance tests are deferred, explicit user approval and pending commands are documented in the story artifact.
 - [ ] Accessibility basics checked (focus visibility, labels, contrast, tap size).
 - [ ] Route and storage key changes are backward-safe or migration-documented.
 - [ ] Copy follows kid-friendly, non-shaming tone.

@@ -264,9 +264,9 @@
     <action>Determine how to run tests for this repo (infer test framework from project structure)</action>
     <action>Run build + unit tests only first to validate fast feedback loop</action>
     <action>Execute manual test steps and record outcomes in Dev Agent Record → Completion Notes</action>
-    <action>DEFER integration tests until user explicitly requests post-manual regression</action>
-    <action>DEFER end-to-end/acceptance tests until user explicitly requests post-manual regression</action>
-    <action>Add a completion note stating deferred integration/e2e status and pending command: `npm run dev-story:post-manual`</action>
+    <action>Run integration tests after manual validation and fix any failures</action>
+    <action>Run end-to-end/acceptance tests after integration tests and fix any failures</action>
+    <action if="user explicitly requests deferral for integration or acceptance">Record deferral reason and pending command in Dev Agent Record → Completion Notes</action>
     <action>Run linting and code quality checks if configured in project</action>
     <action>Validate implementation meets ALL story acceptance criteria; enforce quantitative thresholds explicitly</action>
     <action if="regression tests fail">STOP and fix before continuing - identify breaking changes immediately</action>
@@ -327,7 +327,7 @@
   <step n="9" goal="Story completion and mark for review" tag="sprint-status">
     <action>Verify ALL tasks and subtasks are marked [x] (re-scan the story document now)</action>
     <action>Run build + unit validation suite (do not skip)</action>
-    <action>Confirm Dev Agent Record notes whether integration/e2e were deferred pending explicit user request</action>
+    <action>Confirm integration and acceptance tests passed, OR explicit user-approved deferral is documented with pending command(s)</action>
     <action>Confirm File List includes every changed file</action>
     <action>Execute enhanced definition-of-done validation</action>
     <action>Update the story Status to: "review"</action>
@@ -337,8 +337,8 @@
       - All tasks/subtasks marked complete with [x]
       - Implementation satisfies every Acceptance Criterion
       - Unit tests for core functionality added/updated
-      - Integration tests for component interactions added when required (execution may be deferred to post-manual request)
-      - End-to-end tests for critical flows added when story demands them (execution may be deferred to post-manual request)
+      - Integration tests for component interactions added and executed when required (unless explicit user-approved deferral is documented)
+      - End-to-end tests for critical flows added and executed when story demands them (unless explicit user-approved deferral is documented)
       - Build + unit tests pass (no immediate regressions, new tests successful)
       - Code quality checks pass (linting, static analysis if configured)
       - File List includes every new/modified/deleted file (relative paths)
@@ -378,6 +378,7 @@
   <step n="10" goal="Completion communication and user support">
     <action>Execute the enhanced definition-of-done checklist using the validation framework</action>
     <action>Prepare a concise summary in Dev Agent Record → Completion Notes</action>
+    <action>Print a dedicated "Manual Test Steps" checklist tailored to the implemented story in the final user communication</action>
 
     <action>Communicate to {user_name} that story implementation is complete and ready for review</action>
     <action>Summarize key accomplishments: story ID, story key, title, key changes made, tests added, files modified</action>

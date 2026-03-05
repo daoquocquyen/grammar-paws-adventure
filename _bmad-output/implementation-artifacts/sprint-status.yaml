@@ -50,8 +50,8 @@ development_status:
   1-7-onboarding-hero-avatar-selection-6-avatars-and-validation: done
   epic-1-retrospective: optional
 
-  epic-2: backlog
-  2-1-challenge-question-count-formula: backlog
+  epic-2: in-progress
+  2-1-challenge-question-count-formula: review
   2-2-diverse-question-selection-with-cooldown: backlog
   2-3-immediate-correctness-and-explanation-feedback: backlog
   2-4-challenge-voice-replay-and-safe-fallback: backlog

@@ -51,7 +51,7 @@ Grammar Paws Adventure is a kid-first web game for an 11-year-old non-native Eng
 ### FR-00 Home / Start Journey Onboarding
 - First screen must be child-friendly and simple.
 - Must include player name input.
-- Must allow choosing one 3D hero avatar from 6 kid avatars (3 male, 3 female) before starting.
+- Must allow choosing one 3D hero avatar from 8 kid avatars (4 male, 4 female) before starting.
 - Must allow choosing one preferred pet avatar before starting.
 - Must include a short game introduction.
 - Must provide Start Adventure action that routes to topic selection.

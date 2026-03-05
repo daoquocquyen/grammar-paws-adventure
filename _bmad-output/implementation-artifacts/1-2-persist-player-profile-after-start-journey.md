@@ -50,7 +50,9 @@ so that the learner does not lose identity on refresh.
 - Avoid introducing new dependencies or redesigning UI.
 
 ### Testing Requirements
-- Project currently has no automated test framework.
+- Automated test framework is available:
+  - Unit + integration: Vitest (`npm run test` / `npm run test:unit` / `npm run test:integration`)
+  - Acceptance (E2E): Playwright (`npm run test:acceptance`)
 - Required checks for this story:
   - `npm run build` succeeds.
   - Valid onboarding persists profile and navigates successfully.

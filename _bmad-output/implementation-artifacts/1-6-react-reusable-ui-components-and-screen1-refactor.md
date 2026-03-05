@@ -50,8 +50,9 @@ so that future screens can share consistent UI and reduce duplicated code.
 - Prefer small, focused components with clear props.
 
 ### Testing
-- No automated test harness yet; required checks:
+- Automated test harness is available; required checks:
   - `npm run build` passes
+  - `npm run test:unit` passes
   - Name/pet validation still blocks invalid start
   - Successful path still routes to `/world-map`
 
