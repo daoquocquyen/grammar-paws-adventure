@@ -34,7 +34,10 @@
 - Open: `http://localhost:3000/`
 - Migrated routes:
   - `/` (React Screen 1)
-  - `/screen2-world-map-topic-selection` (temporary React shell)
+  - `/world-map`
+  - `/topic-intro`
+  - `/challenge`
+- Legacy route compatibility is handled by redirects in `next.config.mjs`.
 
 ### Practical Local Preview (Manual)
 - `python3 -m http.server 5173`

@@ -65,7 +65,7 @@ Planning artifacts were used only to identify intended behavior and mark gaps.
 
 Current navigation status:
 - Screen 3 `Start Challenge` now routes to `/challenge` in the Next.js app.
-- Legacy compatibility route `/screen4-game-challenge` redirects to `/challenge`.
+- Legacy compatibility route `/screen4-game-challenge` redirects to `/challenge` via `next.config.mjs`.
 
 ## Screen-Level Specs
 

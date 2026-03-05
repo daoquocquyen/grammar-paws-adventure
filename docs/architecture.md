@@ -84,7 +84,7 @@ flowchart LR
 - ✅ Next.js app scaffold created (`package.json`, `app/layout.js`, `app/globals.css`, `app/page.js`).
 - ✅ Screen 1 onboarding ported to React route `/` with validation + pet selection behavior.
 - ✅ Canonical clean routes enabled for migrated screens: `/world-map` and `/topic-intro`.
-- ✅ Backward compatibility redirects from legacy paths `/screen2-world-map-topic-selection` -> `/world-map` and `/screen3-grammar-topic-intro` -> `/topic-intro`.
+- ✅ Backward compatibility redirects are configured in `next.config.mjs` for legacy paths `/screen2-world-map-topic-selection` -> `/world-map`, `/screen3-grammar-topic-intro` -> `/topic-intro`, and `/screen4-game-challenge` -> `/challenge`.
 - 🟡 Screen 2 behavior is implemented directly in `app/world-map/page.js` while legacy Stitch source remains for migration traceability.
 - 🟡 Screens 3-4 remain legacy static HTML and are pending migration.
 

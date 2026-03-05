@@ -56,7 +56,8 @@ so that each challenge has age-appropriate length.
 
 ### Project Structure Notes
 - Current challenge shell is legacy in `src/ui/stitch/screen4-game-challenge.html`.
-- Active React routes for this story are `app/topic-intro/page.js`, `app/screen3-grammar-topic-intro/page.js`, and `app/challenge/page.js`.
+- Active React routes for this story are `app/topic-intro/page.js` and `app/challenge/page.js`.
+- Legacy `/screen3-grammar-topic-intro` and `/screen4-game-challenge` paths are handled via config redirects.
 
 ### References
 - `docs/project-context.md`
@@ -98,9 +99,7 @@ GPT-5.3-Codex
 - _bmad-output/implementation-artifacts/sprint-status.yaml
 - src/lib/challengeQuestionCount.js
 - app/topic-intro/page.js
-- app/screen3-grammar-topic-intro/page.js
 - app/challenge/page.js
-- app/screen4-game-challenge/page.js
 - tests/unit/story-2-1-challenge-question-count-formula.unit.test.js
 - tests/integration/story-2-1-challenge-question-count-formula.integration.test.jsx
 - tests/acceptance/story-2-1-challenge-question-count-formula.acceptance.spec.js
