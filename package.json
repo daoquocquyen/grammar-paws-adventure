@@ -11,7 +11,7 @@
         "test": "vitest run",
         "test:watch": "vitest",
         "test:e2e": "playwright test",
-        "test:acceptance": "playwright test tests/acceptance/onboarding.spec.js",
+        "test:acceptance": "playwright test tests/acceptance",
         "dev-story:validate": "npm run build && npm run test:unit",
         "dev-story:post-manual": "npm run test:integration && npm run test:e2e",
         "test:all": "npm run build && npm run test && npm run test:e2e"
