@@ -104,7 +104,6 @@ export const getHeroFeedbackText = ({
     selectedAnswer,
     correctAnswer,
     isRetrySelectionActive,
-    isExplanationVisible,
 }) => {
     const safeHint = toSafeString(question?.hint) || "choose the option that matches the grammar clue.";
     const safeCorrectReason =
@@ -113,10 +112,6 @@ export const getHeroFeedbackText = ({
         "Great choice. That answer matches the sentence rule.";
     const safeSelected = toSafeString(selectedAnswer);
     const safeCorrect = toSafeString(correctAnswer) || "the correct option";
-
-    if (!isExplanationVisible && phase !== CHALLENGE_PHASES.READY) {
-        return "Let me think for a moment...";
-    }
 
     if (phase === CHALLENGE_PHASES.READY) {
         if (isRetrySelectionActive) {
