@@ -1,6 +1,6 @@
 # Story 2.3: Guided Feedback and Explanation States
 
-Status: review
+Status: done
 
 ## Story
 
@@ -14,13 +14,13 @@ so that I understand reasoning without blind guessing.
 2. After first incorrect attempt, hero explanation states why selected option does not fit, restates what sentence needs, and asks a guiding question without revealing the answer.
 3. After a correct attempt, hero explanation states why the selected answer is correct using short child-friendly reasoning.
 4. After second incorrect attempt, challenge enters coached assisted mode where hero explains step-by-step reasoning, but does not auto-complete or auto-award XP.
-5. If learner answers correctly in coached assisted mode, challenge requires learner acknowledgment (`I understand`) before progression.
+5. If learner answers correctly in coached assisted mode, challenge requires learner acknowledgment (`Next`) before progression.
 6. If learner answers incorrectly in coached assisted mode, challenge marks the question as failed (`skipped`, no XP) and advances to the next question.
 7. Hero explanation appears after answer interaction with a delay between 400 and 600 milliseconds.
 8. Pet avatar messages are supportive and effort-focused across ready/correct/retry/assisted states, and must not use punitive wording.
 9. Primary action behavior is state-based:
-   - unresolved or resolved question states: `Continue`
-   - assisted acknowledgment state (after coached correct): `I understand`
+   - unresolved or resolved question states: `Next`
+   - assisted acknowledgment state (after coached correct): `Next`
 10. Automated tests cover pre-answer hint behavior, first-wrong non-reveal explanation, coached assisted behavior, and explanation-delay behavior.
 
 ## Tasks / Subtasks
@@ -111,3 +111,5 @@ GPT-5 Codex
 - 2026-03-05: Story created as implementation-ready (`ready-for-dev`) from approved sprint change proposal.
 - 2026-03-05: Implemented guided feedback state machine, delayed hero explanations, supportive pet messaging, and full validation coverage; status moved to `review`.
 - 2026-03-06: Updated coached assisted behavior to avoid second-wrong auto-resolution and added third-wrong skip path (0 XP).
+- 2026-03-06: Senior review pass confirmed guided-feedback AC coverage remains complete after regression sweep.
+- 2026-03-06: Standardized challenge primary action label to `Next` across all phases and synced test/doc expectations.

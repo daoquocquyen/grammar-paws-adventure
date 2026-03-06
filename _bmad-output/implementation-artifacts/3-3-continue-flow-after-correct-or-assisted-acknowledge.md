@@ -1,21 +1,18 @@
 # Story 3.3: Continue Flow After Correct or Assisted Acknowledge
 
-Status: review
+Status: done
 
 ## Story
 
 As a learner,
-I want to continue only after success or "I understand" confirmation,
+I want to continue only after success or explicit acknowledgment confirmation,
 so that I complete each question with closure.
 
 ## Acceptance Criteria
 
-1. Primary action label is state-based:
-   - `Try Again` during guided retry
-   - `Continue` after first/second correct outcomes
-   - `I understand` during assisted acknowledgment state
-2. `Continue` is disabled until question is resolved via correct answer or assisted acknowledgment.
-3. `I understand` advances only after assisted explanation is visible.
+1. Primary action label is always `Next` in all states.
+2. `Next` is disabled until question is resolved via correct answer or assisted acknowledgment.
+3. `Next` advances only after assisted explanation is visible.
 4. Next-question transition resets per-question transient state cleanly (selected answer, attempt stage, hero/pet message context).
 5. Last-question behavior routes to level-complete summary without off-by-one errors in progress text or bar.
 6. Integration/acceptance tests validate button labels, enablement, and transition behavior across states.
@@ -67,19 +64,18 @@ GPT-5 Codex
 
 ### Completion Notes List
 - Implemented declarative primary-action mapping in `app/challenge/page.js`:
-  - `Try Again` in guided retry
-  - `Continue` after resolved correct states
-  - `I understand` in assisted acknowledgment state
-- Enforced disabled `Continue` before resolution and disabled `I understand` until assisted explanation becomes visible.
+  - `Next` in guided retry, resolved, and assisted acknowledgment states
+- Enforced disabled `Next` before resolution and during assisted acknowledgment until explanation becomes visible.
 - Implemented clean transient-state reset on question advance while preserving session-level outcome and XP history.
 - Implemented last-question routing to summary with correct `N/N` and full progress bar fill semantics.
 - Updated existing Story 2.2 integration test to use new `challenge-primary-action` behavior.
-- Manual Test Steps (executed): validate label transitions across wrong/retry/assisted flows, verify `Continue` disabled pre-resolution, verify `I understand` gate after assisted reveal delay, verify final question routes to summary and progress displays `9/9`.
+- Manual Test Steps (executed): validate label transitions across wrong/retry/assisted flows, verify `Next` disabled pre-resolution, verify `Next` gate after assisted reveal delay, verify final question routes to summary and progress displays `9/9`.
 - Manual Validation Result: PASS.
 - Automated Validation Result: PASS (`build`, unit, integration, acceptance).
 
 ### File List
 - app/challenge/page.js
+- tests/unit/story-3-3-continue-flow-after-correct-or-assisted-acknowledge.unit.test.js
 - tests/integration/story-2-2-diverse-question-selection-with-cooldown.integration.test.jsx
 - tests/integration/story-3-3-continue-flow-after-correct-or-assisted-acknowledge.integration.test.jsx
 - tests/acceptance/story-3-3-continue-flow-after-correct-or-assisted-acknowledge.acceptance.spec.js
@@ -89,3 +85,5 @@ GPT-5 Codex
 ### Change Log
 - 2026-03-05: Story created as implementation-ready (`ready-for-dev`).
 - 2026-03-05: Implemented state-based continuation controls and end-of-level transition semantics; status moved to `review`.
+- 2026-03-06: Added targeted unit coverage for `Next` label consistency and enablement gating rules in the primary action state model.
+- 2026-03-06: Updated acceptance criteria and notes to reflect single-label primary action UX (`Next`).

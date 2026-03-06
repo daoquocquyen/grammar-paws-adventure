@@ -1,6 +1,6 @@
 # Story 2.5: Performance Indicators and Answer Micro-Interactions
 
-Status: review
+Status: done
 
 ## Story
 
@@ -87,7 +87,7 @@ GPT-5 Codex
 - Removed punitive UI labels and replaced phase badge text with non-punitive labels (`Ready`, `Guided Retry`, `Great Work`, `Coach Help`).
 - Implemented answer micro-interaction classes (`gpa-answer-selected`, `gpa-answer-shake`, `gpa-answer-correct-glow`) and added CSS animations in `app/globals.css`.
 - Implemented guided-retry disabled-option behavior and preserved progress semantics (`1/N` with empty fill at first question, full fill on last question).
-- Manual Test Steps (executed): trigger first wrong answer, verify wrong-state feedback and `Try Again`, verify wrong option disabled on retry, select correct retry answer, verify indicator row updates to `☆`, confirm no `Wrong`/punitive labels in challenge UI.
+- Manual Test Steps (executed): trigger first wrong answer, verify wrong-state feedback and `Next`, verify wrong option disabled on retry, select correct retry answer, verify indicator row updates to `☆`, confirm no `Wrong`/punitive labels in challenge UI.
 - Manual Validation Result: PASS.
 - Automated Validation Result: PASS (`build`, unit, integration, acceptance).
 
@@ -104,3 +104,5 @@ GPT-5 Codex
 ### Change Log
 - 2026-03-05: Story created as implementation-ready (`ready-for-dev`).
 - 2026-03-05: Implemented indicator model and child-friendly answer micro-interactions with full test coverage; status moved to `review`.
+- 2026-03-06: Senior review pass confirmed indicator/micro-interaction behavior and test coverage are still compliant.
+- 2026-03-06: Updated challenge CTA references to single-label `Next` behavior for consistency.
