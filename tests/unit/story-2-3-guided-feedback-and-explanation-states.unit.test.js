@@ -25,7 +25,7 @@ describe("Story 2.3 unit", () => {
             isExplanationVisible: true,
         });
 
-        expect(feedback).toContain("does not fit");
+        expect(feedback).toContain("This sentence needs");
         expect(feedback).not.toContain("\"is\"");
     });
 

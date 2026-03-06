@@ -126,9 +126,7 @@ export const getHeroFeedbackText = ({
     }
 
     if (phase === CHALLENGE_PHASES.WRONG_FIRST) {
-        return `"${
-            safeSelected || "That option"
-        }" does not fit this sentence. This sentence needs ${safeHint} Which option matches that clue?`;
+        return `This sentence needs ${safeHint} Which option matches that clue?`;
     }
 
     if (phase === CHALLENGE_PHASES.CORRECT_FIRST || phase === CHALLENGE_PHASES.CORRECT_SECOND) {
@@ -138,7 +136,19 @@ export const getHeroFeedbackText = ({
     return `Let's solve it step by step. First, read the clue carefully. Then match the grammar rule. The correct answer is "${safeCorrect}".`;
 };
 
-export const getPetFeedbackText = ({ phase, hasResolvedQuestion }) => {
+export const getPetFeedbackText = ({ phase, hasResolvedQuestion, outcomeClass }) => {
+    if (outcomeClass === OUTCOME_CLASSES.FIRST_TRY_CORRECT) {
+        return "Amazing focus. +10 XP!";
+    }
+
+    if (outcomeClass === OUTCOME_CLASSES.SECOND_TRY_CORRECT) {
+        return "Nice fix. +6 XP!";
+    }
+
+    if (outcomeClass === OUTCOME_CLASSES.ASSISTED) {
+        return "Great effort. +3 XP!";
+    }
+
     if (phase === CHALLENGE_PHASES.WRONG_FIRST) {
         return "Nice effort! Use the clue and try one more time.";
     }

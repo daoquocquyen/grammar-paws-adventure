@@ -25,7 +25,6 @@ import {
     getOutcomeClassFromPhase,
     getPetFeedbackText,
     getPrimaryActionState,
-    getXpMessageForOutcome,
     OUTCOME_CLASSES,
     resolvePhaseFromAttempt,
 } from "../../src/lib/challengeStateModel";
@@ -130,6 +129,7 @@ export default function ChallengePage() {
     const [dropTargetActive, setDropTargetActive] = useState(false);
     const [bouncedBackOption, setBouncedBackOption] = useState("");
     const [forcedRightmostOption, setForcedRightmostOption] = useState("");
+    const [hiddenAnswerPanelOption, setHiddenAnswerPanelOption] = useState("");
     const [blankWrongFeedback, setBlankWrongFeedback] = useState(false);
     const [transitioningBounceOption, setTransitioningBounceOption] = useState("");
     const [draggingOption, setDraggingOption] = useState("");
@@ -324,13 +324,17 @@ export default function ChallengePage() {
     }, [currentQuestion]);
 
     const displayedAnswerOptions = useMemo(() => {
+        const safeHiddenOption = toSafeString(hiddenAnswerPanelOption);
+        const visibleOptions = safeHiddenOption
+            ? answerOptions.filter((optionValue) => optionValue !== safeHiddenOption)
+            : answerOptions;
         const safeForcedOption = toSafeString(forcedRightmostOption);
-        if (!safeForcedOption || !answerOptions.includes(safeForcedOption)) {
-            return answerOptions;
+        if (!safeForcedOption || !visibleOptions.includes(safeForcedOption)) {
+            return visibleOptions;
         }
 
-        return [...answerOptions.filter((optionValue) => optionValue !== safeForcedOption), safeForcedOption];
-    }, [answerOptions, forcedRightmostOption]);
+        return [...visibleOptions.filter((optionValue) => optionValue !== safeForcedOption), safeForcedOption];
+    }, [answerOptions, forcedRightmostOption, hiddenAnswerPanelOption]);
 
     const correctAnswer = useMemo(
         () =>
@@ -400,8 +404,8 @@ export default function ChallengePage() {
     );
 
     const petMessage = useMemo(
-        () => getPetFeedbackText({ phase, hasResolvedQuestion }),
-        [phase, hasResolvedQuestion]
+        () => getPetFeedbackText({ phase, hasResolvedQuestion, outcomeClass: currentOutcome }),
+        [phase, hasResolvedQuestion, currentOutcome]
     );
 
     const clearExplanationTimer = () => {
@@ -426,6 +430,7 @@ export default function ChallengePage() {
         setDropTargetActive(false);
         setBouncedBackOption("");
         setForcedRightmostOption("");
+        setHiddenAnswerPanelOption("");
         setBlankWrongFeedback(false);
         setTransitioningBounceOption("");
         setDraggingOption("");
@@ -485,7 +490,7 @@ export default function ChallengePage() {
             };
         });
 
-        setQuestionXpMessage(getXpMessageForOutcome(outcomeClass));
+        setQuestionXpMessage("");
     };
 
     const triggerBounceBack = (answerValue, dragMeta = null) => {
@@ -615,6 +620,7 @@ export default function ChallengePage() {
                 setRecentWrongOption("");
                 setIsRetrySelectionActive(false);
                 setDisabledRetryOption("");
+                setHiddenAnswerPanelOption(source === "drag" ? answerValue : "");
                 const assistedOutcomeClass = getOutcomeClassFromPhase(CHALLENGE_PHASES.AWAIT_ACKNOWLEDGE);
                 recordOutcomeIfMissing(assistedOutcomeClass);
                 setExplanationDelay({
@@ -629,6 +635,7 @@ export default function ChallengePage() {
             setRecentWrongOption(answerValue);
             setIsRetrySelectionActive(false);
             setDisabledRetryOption("");
+            setHiddenAnswerPanelOption("");
             setQuestionXpMessage("");
             if (source === "drag") {
                 triggerBounceBack(answerValue, dragMeta);
@@ -667,6 +674,7 @@ export default function ChallengePage() {
             setPhase(nextPhase);
             setIsRetrySelectionActive(false);
             setDisabledRetryOption("");
+            setHiddenAnswerPanelOption(source === "drag" ? answerValue : "");
             const outcomeClass = getOutcomeClassFromPhase(nextPhase);
             recordOutcomeIfMissing(outcomeClass);
             setExplanationDelay({ nextPhaseAfterDelay: null, revealCorrectAnswer: false });
@@ -681,6 +689,7 @@ export default function ChallengePage() {
             setPhase(CHALLENGE_PHASES.WRONG_FIRST);
             setIsRetrySelectionActive(true);
             setDisabledRetryOption(answerValue);
+            setHiddenAnswerPanelOption("");
             if (source === "drag") {
                 triggerBounceBack(answerValue, dragMeta);
             }
@@ -695,6 +704,7 @@ export default function ChallengePage() {
         setPhase(CHALLENGE_PHASES.ASSISTED);
         setIsRetrySelectionActive(false);
         setDisabledRetryOption("");
+        setHiddenAnswerPanelOption("");
         if (source === "drag") {
             triggerBounceBack(answerValue, dragMeta);
         }

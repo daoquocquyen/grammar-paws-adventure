@@ -38,6 +38,14 @@ describe("Story 2.5 integration", () => {
 
         expect(firstWrongButton).toHaveAttribute("data-option-state", "wrong");
 
+        await waitFor(() => {
+            const buttons = within(screen.getByTestId("challenge-answer-options")).getAllByRole("button");
+            const enabledCorrectButton = buttons.find(
+                (button) => !button.disabled && (button.textContent || "").trim().toLowerCase() === correctAnswer
+            );
+            expect(enabledCorrectButton).toBeDefined();
+        });
+
         const retryButtons = within(screen.getByTestId("challenge-answer-options")).getAllByRole("button");
         const correctButton = retryButtons.find(
             (button) => !button.disabled && (button.textContent || "").trim().toLowerCase() === correctAnswer
@@ -49,9 +57,13 @@ describe("Story 2.5 integration", () => {
         fireEvent.click(correctButton);
         await waitFor(() => expect(primaryAction).toHaveTextContent("Continue"));
         await waitFor(() => expect(primaryAction).toBeEnabled());
+        await waitFor(() =>
+            expect(screen.getByTestId("challenge-pet-message")).toHaveTextContent("+6 XP! You fixed it!")
+        );
 
         expect(correctButton).toHaveAttribute("data-option-state", "correct");
         expect(screen.getByTestId("challenge-indicator-0")).toHaveAttribute("data-indicator-type", "HOLLOW_STAR");
+        expect(screen.queryByTestId("challenge-xp-message")).not.toBeInTheDocument();
 
         expect(screen.queryByText(/Wrong/i)).not.toBeInTheDocument();
     });
@@ -118,6 +130,59 @@ describe("Story 2.5 integration", () => {
         expect((optionButtonsAfterDrop[optionButtonsAfterDrop.length - 1].textContent || "").trim()).toBe(
             wrongButtonText
         );
+
+        rectSpy.mockRestore();
+    });
+
+    it("keeps dragged correct option in the blank and removes it from answer options", async () => {
+        render(<ChallengePage />);
+
+        const metadata = screen.getByTestId("challenge-selection-metadata");
+        const correctAnswer = (metadata.getAttribute("data-current-correct-answer") || "").trim().toLowerCase();
+
+        const initialButtons = within(screen.getByTestId("challenge-answer-options")).getAllByRole("button");
+        const initialOptionCount = initialButtons.length;
+        const correctButton = initialButtons.find(
+            (button) => (button.textContent || "").trim().toLowerCase() === correctAnswer
+        );
+        if (!correctButton) {
+            throw new Error("Missing correct option for drag test");
+        }
+
+        const blank = screen.getByTestId("challenge-blank");
+        const rectSpy = vi.spyOn(blank, "getBoundingClientRect").mockReturnValue({
+            x: 100,
+            y: 100,
+            width: 220,
+            height: 80,
+            top: 100,
+            left: 100,
+            right: 320,
+            bottom: 180,
+            toJSON: () => ({}),
+        });
+
+        fireEvent.mouseDown(correctButton, {
+            button: 0,
+            clientX: 10,
+            clientY: 10,
+        });
+        fireEvent.mouseMove(window, {
+            clientX: 140,
+            clientY: 130,
+        });
+        fireEvent.mouseUp(window, {
+            clientX: 140,
+            clientY: 130,
+        });
+
+        await waitFor(() => expect(blank).toHaveAttribute("data-blank-state", "filled-correct"));
+        expect(blank).toHaveTextContent(correctAnswer);
+
+        const optionButtonsAfterDrop = within(screen.getByTestId("challenge-answer-options")).getAllByRole("button");
+        const renderedOptionsText = optionButtonsAfterDrop.map((button) => (button.textContent || "").trim().toLowerCase());
+        expect(renderedOptionsText).not.toContain(correctAnswer);
+        expect(optionButtonsAfterDrop).toHaveLength(initialOptionCount - 1);
 
         rectSpy.mockRestore();
     });
