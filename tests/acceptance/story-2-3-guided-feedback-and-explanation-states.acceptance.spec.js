@@ -1,4 +1,5 @@
 import { expect, test } from "@playwright/test";
+import { dragOptionToBlank } from "./challengeDragHelpers";
 
 test.describe("Story 2.3 acceptance", () => {
     test("supports guided retry and locks question after third wrong attempt", async ({ page }) => {
@@ -29,7 +30,7 @@ test.describe("Story 2.3 acceptance", () => {
             throw new Error("Could not find first wrong option");
         }
 
-        await optionButtons.nth(firstWrongIndex).click();
+        await dragOptionToBlank(page, optionButtons.nth(firstWrongIndex));
 
         const primaryAction = page.getByTestId("challenge-primary-action");
         await expect(primaryAction).toContainText("Next");
@@ -56,7 +57,7 @@ test.describe("Story 2.3 acceptance", () => {
             throw new Error("Could not find second wrong option");
         }
 
-        await optionButtons.nth(secondWrongIndex).click();
+        await dragOptionToBlank(page, optionButtons.nth(secondWrongIndex));
 
         await expect(primaryAction).toContainText("Next");
         await expect(primaryAction).toBeDisabled();
@@ -64,7 +65,7 @@ test.describe("Story 2.3 acceptance", () => {
 
         await expect.poll(findEnabledWrongIndex).not.toBe(-1);
         const thirdWrongIndex = await findEnabledWrongIndex();
-        await optionButtons.nth(thirdWrongIndex).click();
+        await dragOptionToBlank(page, optionButtons.nth(thirdWrongIndex));
 
         await expect(page.getByTestId("challenge-pet-message")).toContainText("tap next", {
             ignoreCase: true,

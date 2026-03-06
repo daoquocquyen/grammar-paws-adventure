@@ -237,4 +237,28 @@ describe("Story 2.5 integration", () => {
 
         rectSpy.mockRestore();
     });
+
+    it("does not check answer when option is pointer-clicked without dragging", () => {
+        render(<ChallengePage />);
+
+        const metadata = screen.getByTestId("challenge-selection-metadata");
+        const correctAnswer = (metadata.getAttribute("data-current-correct-answer") || "").trim().toLowerCase();
+        const optionButtons = within(screen.getByTestId("challenge-answer-options")).getAllByRole("button");
+        const wrongButton = optionButtons.find(
+            (button) => (button.textContent || "").trim().toLowerCase() !== correctAnswer
+        );
+        if (!wrongButton) {
+            throw new Error("Missing wrong option for click-without-drag test");
+        }
+
+        fireEvent.click(wrongButton, { detail: 1 });
+
+        const primaryAction = screen.getByTestId("challenge-primary-action");
+        const blank = screen.getByTestId("challenge-blank");
+        expect(primaryAction).toHaveAttribute("data-phase", "ready");
+        expect(primaryAction).toBeDisabled();
+        expect(blank).toHaveAttribute("data-blank-state", "idle");
+        expect(wrongButton).toHaveAttribute("data-option-state", "idle");
+        expect(wrongButton).toBeEnabled();
+    });
 });

@@ -1181,11 +1181,12 @@ export default function ChallengePage() {
                                             handleAnswerMouseDown(event, optionValue, isRetryDisabled);
                                         }}
                                         onDragStart={preventNativeDragStart}
-                                        onClick={() => {
-                                            if (suppressClickRef.current) {
+                                        onClick={(event) => {
+                                            if (suppressClickRef.current || event.detail !== 0) {
                                                 return;
                                             }
-                                            handleSelectAnswer(optionValue);
+                                            // Keep keyboard activation accessible, but ignore pointer/tap clicks.
+                                            handleSelectAnswer(optionValue, "keyboard");
                                         }}
                                         aria-pressed={isSelected ? "true" : "false"}
                                         aria-disabled={!isAnswerSelectionEnabled || isRetryDisabled ? "true" : "false"}

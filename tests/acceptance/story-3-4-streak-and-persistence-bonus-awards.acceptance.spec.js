@@ -1,6 +1,7 @@
 import { expect, test } from "@playwright/test";
+import { dragOptionToBlank } from "./challengeDragHelpers";
 
-const clickCurrentCorrectAnswer = async (page) => {
+const dragCurrentCorrectAnswer = async (page) => {
     const metadata = page.getByTestId("challenge-selection-metadata");
     const correctAnswer = ((await metadata.getAttribute("data-current-correct-answer")) || "").trim();
     const optionButtons = page.getByTestId("challenge-answer-options").getByRole("button");
@@ -10,7 +11,7 @@ const clickCurrentCorrectAnswer = async (page) => {
         const option = optionButtons.nth(index);
         const optionText = ((await option.textContent()) || "").trim();
         if (optionText.toLowerCase() === correctAnswer.toLowerCase()) {
-            await option.click();
+            await dragOptionToBlank(page, option);
             return;
         }
     }
@@ -32,7 +33,7 @@ test.describe("Story 3.4 acceptance", () => {
         const primaryAction = page.getByTestId("challenge-primary-action");
 
         for (let index = 0; index < 9; index += 1) {
-            await clickCurrentCorrectAnswer(page);
+            await dragCurrentCorrectAnswer(page);
             await expect(primaryAction).toBeEnabled();
             await primaryAction.click();
         }

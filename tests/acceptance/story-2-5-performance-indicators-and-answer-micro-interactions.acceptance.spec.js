@@ -1,4 +1,5 @@
 import { expect, test } from "@playwright/test";
+import { dragOptionToBlank } from "./challengeDragHelpers";
 
 test.describe("Story 2.5 acceptance", () => {
     test("shows indicator mapping and non-punitive micro-interaction states", async ({ page }) => {
@@ -29,15 +30,19 @@ test.describe("Story 2.5 acceptance", () => {
             throw new Error("Could not find wrong option");
         }
 
-        await optionButtons.nth(firstWrongIndex).click();
+        const firstWrongText = ((await optionButtons.nth(firstWrongIndex).textContent()) || "").trim();
+        await dragOptionToBlank(page, optionButtons.nth(firstWrongIndex));
 
         const primaryAction = page.getByTestId("challenge-primary-action");
         await expect(primaryAction).toContainText("Next");
         await expect(primaryAction).toBeDisabled();
 
-        await expect(optionButtons.nth(firstWrongIndex)).toHaveAttribute("data-option-state", "wrong");
-
-        await expect(optionButtons.nth(firstWrongIndex)).toBeDisabled();
+        const wrongOptionAfterDrop = page.getByTestId("challenge-answer-options").getByRole("button", {
+            name: firstWrongText,
+            exact: true,
+        });
+        await expect(wrongOptionAfterDrop).toHaveAttribute("data-option-state", "wrong");
+        await expect(wrongOptionAfterDrop).toBeDisabled();
 
         const findEnabledCorrectIndex = async () => {
             for (let index = 0; index < optionCount; index += 1) {
@@ -58,7 +63,7 @@ test.describe("Story 2.5 acceptance", () => {
             throw new Error("Could not find enabled correct option");
         }
 
-        await optionButtons.nth(correctIndex).click();
+        await dragOptionToBlank(page, optionButtons.nth(correctIndex));
         await expect(primaryAction).toContainText("Next");
         await expect(primaryAction).toBeEnabled();
 
