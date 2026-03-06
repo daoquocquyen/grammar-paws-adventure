@@ -603,7 +603,7 @@ export default function ChallengePage() {
             phase === CHALLENGE_PHASES.READY ||
             phase === CHALLENGE_PHASES.WRONG_FIRST ||
             phase === CHALLENGE_PHASES.ASSISTED;
-        if (!isQuestionContentAvailable || showSummary || !canAnswerNow || !isExplanationVisible) {
+        if (!isQuestionContentAvailable || showSummary || hasResolvedQuestion || !canAnswerNow || !isExplanationVisible) {
             return;
         }
 
@@ -637,12 +637,20 @@ export default function ChallengePage() {
             setDisabledRetryOption("");
             setHiddenAnswerPanelOption("");
             setQuestionXpMessage("");
-            setAttemptCount((previousCount) => Math.min(3, previousCount + 1));
+            setAttemptCount(3);
             if (source === "drag") {
                 triggerBounceBack(answerValue, dragMeta);
             }
+            setQuestionOutcomes((previousOutcomes) => {
+                if (previousOutcomes[currentQuestionIndex]) {
+                    return previousOutcomes;
+                }
+                return {
+                    ...previousOutcomes,
+                    [currentQuestionIndex]: OUTCOME_CLASSES.SKIPPED,
+                };
+            });
             setPhase(CHALLENGE_PHASES.ASSISTED);
-            setExplanationDelay({ nextPhaseAfterDelay: null, revealCorrectAnswer: false });
             return;
         }
 
@@ -999,6 +1007,7 @@ export default function ChallengePage() {
     const isAnswerSelectionEnabled =
         isQuestionContentAvailable &&
         !showSummary &&
+        !hasResolvedQuestion &&
         (phase === CHALLENGE_PHASES.READY || phase === CHALLENGE_PHASES.WRONG_FIRST || phase === CHALLENGE_PHASES.ASSISTED) &&
         isExplanationVisible;
 

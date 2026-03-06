@@ -81,17 +81,9 @@ export const getIndicatorGlyph = (indicatorType) => {
 };
 
 export const getPrimaryActionState = ({
-    phase,
     isExplanationVisible,
     hasResolvedQuestion,
 }) => {
-    if (phase === CHALLENGE_PHASES.ASSISTED || phase === CHALLENGE_PHASES.AWAIT_ACKNOWLEDGE) {
-        return {
-            label: "Next",
-            enabled: phase === CHALLENGE_PHASES.AWAIT_ACKNOWLEDGE && Boolean(isExplanationVisible),
-        };
-    }
-
     return {
         label: "Next",
         enabled: Boolean(hasResolvedQuestion && isExplanationVisible),
@@ -142,6 +134,10 @@ export const getPetFeedbackText = ({ phase, hasResolvedQuestion, outcomeClass, a
 
     if (outcomeClass === OUTCOME_CLASSES.ASSISTED) {
         return "Great effort. +3 XP!";
+    }
+
+    if (outcomeClass === OUTCOME_CLASSES.SKIPPED) {
+        return "Nice try! Tap Next and we will keep learning.";
     }
 
     if (phase === CHALLENGE_PHASES.WRONG_FIRST) {

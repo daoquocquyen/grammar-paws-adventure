@@ -17,7 +17,7 @@ describe("Story 3.2 integration", () => {
         cleanup();
     });
 
-    it("enforces two-attempt flow with disabled retry option and coached third-attempt retry state", async () => {
+    it("enforces two-attempt flow and locks question after coached third wrong", async () => {
         render(<ChallengePage />);
 
         const metadata = screen.getByTestId("challenge-selection-metadata");
@@ -77,10 +77,13 @@ describe("Story 3.2 integration", () => {
         fireEvent.click(thirdWrongButton);
         await waitFor(() =>
             expect(screen.getByTestId("challenge-pet-message").textContent?.toLowerCase() || "").toContain(
-                "try again"
+                "tap next"
             )
         );
         expect(screen.getByTestId("challenge-progress-text")).toHaveTextContent("1/9");
         expect(screen.getByTestId("challenge-indicator-0")).toHaveAttribute("data-indicator-type", "EMPTY");
+        expect(primaryAction).toBeEnabled();
+        const lockedButtons = within(screen.getByTestId("challenge-answer-options")).getAllByRole("button");
+        lockedButtons.forEach((button) => expect(button).toBeDisabled());
     });
 });

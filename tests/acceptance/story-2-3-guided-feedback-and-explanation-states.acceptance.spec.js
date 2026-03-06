@@ -1,7 +1,7 @@
 import { expect, test } from "@playwright/test";
 
 test.describe("Story 2.3 acceptance", () => {
-    test("supports guided retry and coached retry without auto-resolution on second or third wrong", async ({ page }) => {
+    test("supports guided retry and locks question after third wrong attempt", async ({ page }) => {
         await page.goto("/");
 
         await page.evaluate(() => {
@@ -66,9 +66,14 @@ test.describe("Story 2.3 acceptance", () => {
         const thirdWrongIndex = await findEnabledWrongIndex();
         await optionButtons.nth(thirdWrongIndex).click();
 
-        await expect(page.getByTestId("challenge-pet-message")).toContainText("try again", {
+        await expect(page.getByTestId("challenge-pet-message")).toContainText("tap next", {
             ignoreCase: true,
         });
         await expect(page.getByTestId("challenge-progress-text")).toHaveText("1/9");
+        await expect(primaryAction).toBeEnabled();
+        const optionCountAfterThirdWrong = await optionButtons.count();
+        for (let index = 0; index < optionCountAfterThirdWrong; index += 1) {
+            await expect(optionButtons.nth(index)).toBeDisabled();
+        }
     });
 });

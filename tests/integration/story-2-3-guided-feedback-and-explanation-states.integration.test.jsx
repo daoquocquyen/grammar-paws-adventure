@@ -17,7 +17,7 @@ describe("Story 2.3 integration", () => {
         cleanup();
     });
 
-    it("runs hint -> guided retry -> coached retry without auto-resolution on second or third wrong", async () => {
+    it("runs hint -> guided retry -> third wrong locks question and enables next", async () => {
         render(<ChallengePage />);
 
         expect(screen.getByTestId("challenge-hero-message").textContent).toContain("Hint");
@@ -86,9 +86,12 @@ describe("Story 2.3 integration", () => {
 
         await waitFor(() =>
             expect(screen.getByTestId("challenge-pet-message").textContent?.toLowerCase() || "").toContain(
-                "try again"
+                "tap next"
             )
         );
         expect(screen.getByTestId("challenge-progress-text")).toHaveTextContent("1/9");
+        expect(primaryAction).toBeEnabled();
+        const lockedButtons = within(screen.getByTestId("challenge-answer-options")).getAllByRole("button");
+        lockedButtons.forEach((button) => expect(button).toBeDisabled());
     });
 });
