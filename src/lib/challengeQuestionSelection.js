@@ -576,20 +576,50 @@ const buildQuestionFromBlueprint = ({ topicKey, aspectId, questionOrdinal, bluep
 
     const correctAnswer = toSafeString(blueprint.correctPool[poolIndex]) || "answer";
     const distractorPool = Array.isArray(blueprint.distractorPool) ? blueprint.distractorPool : [];
+    const safePoolLength = Math.max(1, distractorPool.length);
+    const aspectOffset = toSafeString(aspectId).length;
 
-    let distractor =
-        toSafeString(
-            distractorPool[(safeOrdinal - 1 + toSafeString(aspectId).length) % Math.max(1, distractorPool.length)]
-        ) || "option";
-    if (distractor.toLowerCase() === correctAnswer.toLowerCase()) {
-        const alternative = distractorPool.find(
-            (candidate) => toSafeString(candidate).toLowerCase() !== correctAnswer.toLowerCase()
-        );
-        distractor = toSafeString(alternative) || `not ${correctAnswer}`;
-    }
+    const pickUniqueDistractor = (startIndex, blockedValues) => {
+        for (let offset = 0; offset < safePoolLength; offset += 1) {
+            const poolValue = toSafeString(distractorPool[(startIndex + offset) % safePoolLength]);
+            if (!poolValue) {
+                continue;
+            }
+
+            const normalizedValue = poolValue.toLowerCase();
+            if (blockedValues.has(normalizedValue)) {
+                continue;
+            }
+
+            return poolValue;
+        }
+
+        return "";
+    };
+
+    const blockedValues = new Set([correctAnswer.toLowerCase()]);
+    let distractor = pickUniqueDistractor(safeOrdinal - 1 + aspectOffset, blockedValues) || "option";
+    blockedValues.add(distractor.toLowerCase());
+    let secondaryDistractor =
+        pickUniqueDistractor(safeOrdinal + aspectOffset + 2, blockedValues) || `${distractor} choice`;
+    blockedValues.add(secondaryDistractor.toLowerCase());
+    let tertiaryDistractor =
+        pickUniqueDistractor(safeOrdinal + aspectOffset + 4, blockedValues) || `${secondaryDistractor} 2`;
 
     const sentenceFrame = blueprint.sentenceFrames[frameIndex] ?? { before: "Choose the best answer", after: ":" };
-    const answerOptions = safeOrdinal % 2 === 0 ? [distractor, correctAnswer] : [correctAnswer, distractor];
+    if (secondaryDistractor.toLowerCase() === distractor.toLowerCase()) {
+        secondaryDistractor = `${secondaryDistractor} 2`;
+    }
+    if (
+        tertiaryDistractor.toLowerCase() === distractor.toLowerCase() ||
+        tertiaryDistractor.toLowerCase() === secondaryDistractor.toLowerCase()
+    ) {
+        tertiaryDistractor = `${tertiaryDistractor} 3`;
+    }
+    const answerOptions =
+        safeOrdinal % 2 === 0
+            ? [distractor, correctAnswer, secondaryDistractor, tertiaryDistractor]
+            : [correctAnswer, distractor, secondaryDistractor, tertiaryDistractor];
     const ruleExplanation =
         toSafeString(blueprint.ruleExplanation) ||
         toSafeString(blueprint.hint) ||

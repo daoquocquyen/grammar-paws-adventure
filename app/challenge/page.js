@@ -1,23 +1,44 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import HeaderBlock from "../../src/components/HeaderBlock";
 import { DEFAULT_COMPANION_AVATAR } from "../../src/lib/avatarDefaults";
-
 import {
     createTopicQuestionBank,
     RECENT_TOPIC_ATTEMPT_COOLDOWN,
     selectChallengeQuestions,
 } from "../../src/lib/challengeQuestionSelection";
+import {
+    CHALLENGE_PHASES,
+    EXPLANATION_DELAY_MS,
+    getHeroFeedbackText,
+    getIndicatorForOutcome,
+    getIndicatorGlyph,
+    getOutcomeClassFromPhase,
+    getPetFeedbackText,
+    getPrimaryActionState,
+    getXpMessageForOutcome,
+    OUTCOME_CLASSES,
+    resolvePhaseFromAttempt,
+} from "../../src/lib/challengeStateModel";
+import { calculateChallengeTotals } from "../../src/lib/challengeScoring";
 import { getPlayerLevelInfo } from "../../src/lib/playerLevel";
 
 const profileStorageKey = "gpa_player_profile_v1";
 const playerProgressKey = "gpa_player_progress_v1";
 const selectedTopicStorageKey = "gpa_selected_topic_v1";
 const topicAttemptHistoryKey = "gpa_topic_attempt_history_v1";
+
 const defaultAvatar = DEFAULT_COMPANION_AVATAR;
 const toSafeLower = (value) => (typeof value === "string" ? value.trim().toLowerCase() : "");
+const toSafeString = (value) => (typeof value === "string" ? value.trim() : "");
+
+const defaultProgressState = {
+    version: 1,
+    completedTopics: [],
+    topicProgress: {},
+};
 
 const topicAspectsByTopicKey = {
     verbs: ["ing-ending", "auxiliary", "time-marker"],
@@ -55,6 +76,24 @@ const saveTopicAttemptHistory = (historyByTopic) => {
     }
 };
 
+const extractTopicPercent = (progressValue) => {
+    if (typeof progressValue === "number" && Number.isFinite(progressValue)) {
+        return Math.max(0, Math.min(100, progressValue));
+    }
+
+    if (!progressValue || typeof progressValue !== "object") {
+        return 0;
+    }
+
+    const percent =
+        (typeof progressValue.percent === "number" && progressValue.percent) ||
+        (typeof progressValue.progress === "number" && progressValue.progress) ||
+        (typeof progressValue.completionPercent === "number" && progressValue.completionPercent) ||
+        0;
+
+    return Math.max(0, Math.min(100, percent));
+};
+
 export default function ChallengePage() {
     const [headerName, setHeaderName] = useState("Adventurer");
     const [headerSecondaryText, setHeaderSecondaryText] = useState("Ready for challenge");
@@ -65,11 +104,48 @@ export default function ChallengePage() {
     const [selectedTopicKey, setSelectedTopicKey] = useState("verbs");
     const [topicAttempts, setTopicAttempts] = useState([]);
     const [currentQuestionNumber, setCurrentQuestionNumber] = useState(0);
+
+    const [phase, setPhase] = useState(CHALLENGE_PHASES.READY);
+    const [attemptCount, setAttemptCount] = useState(0);
+    const [isRetrySelectionActive, setIsRetrySelectionActive] = useState(false);
     const [selectedAnswer, setSelectedAnswer] = useState("");
-    const [hasAnswered, setHasAnswered] = useState(false);
     const [answerIsCorrect, setAnswerIsCorrect] = useState(null);
-    const [draggedWord, setDraggedWord] = useState("");
+    const [disabledRetryOption, setDisabledRetryOption] = useState("");
+    const [recentWrongOption, setRecentWrongOption] = useState("");
+    const [isExplanationVisible, setIsExplanationVisible] = useState(true);
+    const [questionXpMessage, setQuestionXpMessage] = useState("");
+    const [showSummary, setShowSummary] = useState(false);
+    const [summaryPersisted, setSummaryPersisted] = useState(false);
+    const [questionOutcomes, setQuestionOutcomes] = useState({});
+    const [draggedAnswer, setDraggedAnswer] = useState("");
     const [dropTargetActive, setDropTargetActive] = useState(false);
+    const [bouncedBackOption, setBouncedBackOption] = useState("");
+    const [draggingOption, setDraggingOption] = useState("");
+    const [dragPreview, setDragPreview] = useState({
+        active: false,
+        x: 0,
+        y: 0,
+        value: "",
+    });
+
+    const explanationTimerRef = useRef(null);
+    const bounceBackTimerRef = useRef(null);
+    const blankDropZoneRef = useRef(null);
+    const dragGestureRef = useRef({
+        isPointerDown: false,
+        isDragging: false,
+        startX: 0,
+        startY: 0,
+        value: "",
+    });
+    const dragListenersRef = useRef({
+        move: null,
+        up: null,
+        cancel: null,
+        mouseMove: null,
+        mouseUp: null,
+    });
+    const suppressClickRef = useRef(false);
 
     const aspectIds = useMemo(
         () => topicAspectsByTopicKey[selectedTopicKey] ?? topicAspectsByTopicKey.verbs,
@@ -163,11 +239,39 @@ export default function ChallengePage() {
         saveTopicAttemptHistory(nextHistoryByTopic);
     }, [selectedTopicKey, selectedQuestionIds]);
 
+    useEffect(() => {
+        return () => {
+            if (explanationTimerRef.current) {
+                clearTimeout(explanationTimerRef.current);
+            }
+            if (bounceBackTimerRef.current) {
+                clearTimeout(bounceBackTimerRef.current);
+            }
+            if (dragListenersRef.current.move) {
+                window.removeEventListener("pointermove", dragListenersRef.current.move);
+                dragListenersRef.current.move = null;
+            }
+            if (dragListenersRef.current.up) {
+                window.removeEventListener("pointerup", dragListenersRef.current.up);
+                dragListenersRef.current.up = null;
+            }
+            if (dragListenersRef.current.cancel) {
+                window.removeEventListener("pointercancel", dragListenersRef.current.cancel);
+                dragListenersRef.current.cancel = null;
+            }
+            if (dragListenersRef.current.mouseMove) {
+                window.removeEventListener("mousemove", dragListenersRef.current.mouseMove);
+                dragListenersRef.current.mouseMove = null;
+            }
+            if (dragListenersRef.current.mouseUp) {
+                window.removeEventListener("mouseup", dragListenersRef.current.mouseUp);
+                dragListenersRef.current.mouseUp = null;
+            }
+        };
+    }, []);
+
     const progressDisplayTotal = questionCount;
-    const maxQuestionIndex = useMemo(
-        () => Math.max(0, progressDisplayTotal - 1),
-        [progressDisplayTotal]
-    );
+    const maxQuestionIndex = useMemo(() => Math.max(0, progressDisplayTotal - 1), [progressDisplayTotal]);
 
     const currentQuestionIndex = useMemo(
         () => Math.max(0, Math.min(maxQuestionIndex, currentQuestionNumber)),
@@ -178,21 +282,28 @@ export default function ChallengePage() {
         () => selectedQuestions[currentQuestionIndex] ?? null,
         [selectedQuestions, currentQuestionIndex]
     );
+
     const answerOptions = useMemo(() => {
         if (Array.isArray(currentQuestion?.options) && currentQuestion.options.length > 0) {
-            return currentQuestion.options.slice(0, 2);
+            return currentQuestion.options.slice(0, 4);
         }
-        return ["cat", "cats"];
+        return ["cat", "cats", "dog", "dogs"];
     }, [currentQuestion]);
+
     const correctAnswer = useMemo(
-        () => (typeof currentQuestion?.correctAnswer === "string" && currentQuestion.correctAnswer.trim()
-            ? currentQuestion.correctAnswer.trim()
-            : answerOptions[0]),
+        () =>
+            (typeof currentQuestion?.correctAnswer === "string" && currentQuestion.correctAnswer.trim()
+                ? currentQuestion.correctAnswer.trim()
+                : answerOptions[0]),
         [currentQuestion, answerOptions]
     );
+
     const currentQuestionPrefix = currentQuestion?.sentencePrefix ?? "The";
     const currentQuestionSuffix = currentQuestion?.sentenceSuffix ?? "is sleeping.";
     const isQuestionContentAvailable = progressDisplayTotal > 0 && currentQuestion !== null;
+
+    const currentOutcome = questionOutcomes[currentQuestionIndex] ?? null;
+    const hasResolvedQuestion = Boolean(currentOutcome);
 
     const challengeProgressPercent = useMemo(() => {
         if (progressDisplayTotal <= 0) {
@@ -207,117 +318,482 @@ export default function ChallengePage() {
         return Math.max(0, Math.min(100, normalizedProgress * 100));
     }, [currentQuestionIndex, progressDisplayTotal]);
 
-    const petMessage = useMemo(() => {
-        if (!hasAnswered) {
-            return "Play time! Pick the best answer and let's earn a win together.";
+    const indicatorStates = useMemo(
+        () =>
+            Array.from({ length: progressDisplayTotal }, (_, questionIndex) =>
+                getIndicatorForOutcome(questionOutcomes[questionIndex])
+            ),
+        [progressDisplayTotal, questionOutcomes]
+    );
+
+    const orderedOutcomes = useMemo(
+        () =>
+            Array.from({ length: progressDisplayTotal }, (_, index) => questionOutcomes[index] ?? OUTCOME_CLASSES.SKIPPED),
+        [progressDisplayTotal, questionOutcomes]
+    );
+
+    const challengeTotals = useMemo(() => calculateChallengeTotals(orderedOutcomes), [orderedOutcomes]);
+
+    const primaryAction = useMemo(
+        () =>
+            getPrimaryActionState({
+                phase,
+                isExplanationVisible,
+                hasResolvedQuestion,
+            }),
+        [phase, isExplanationVisible, hasResolvedQuestion]
+    );
+
+    const heroMessage = useMemo(
+        () =>
+            getHeroFeedbackText({
+                phase,
+                question: currentQuestion,
+                selectedAnswer,
+                correctAnswer,
+                isRetrySelectionActive,
+                isExplanationVisible,
+            }),
+        [phase, currentQuestion, selectedAnswer, correctAnswer, isRetrySelectionActive, isExplanationVisible]
+    );
+
+    const phaseBadgeLabel = useMemo(() => {
+        if (phase === CHALLENGE_PHASES.WRONG_FIRST) {
+            return "Guided Retry";
         }
 
-        if (answerIsCorrect) {
-            return "Pawesome! You got it right. Keep going, superstar.";
+        if (phase === CHALLENGE_PHASES.CORRECT_FIRST || phase === CHALLENGE_PHASES.CORRECT_SECOND) {
+            return "Great Work";
         }
 
-        return "Nice try! We can do this. Let's pick the next answer together.";
-    }, [hasAnswered, answerIsCorrect]);
-
-    const heroMessage = useMemo(() => {
-        if (!hasAnswered) {
-            return currentQuestion?.hint ?? "Hint: choose the option that matches the grammar rule.";
+        if (phase === CHALLENGE_PHASES.ASSISTED || phase === CHALLENGE_PHASES.AWAIT_ACKNOWLEDGE) {
+            return "Coach Help";
         }
 
-        if (answerIsCorrect) {
-            return currentQuestion?.whyCorrect ?? "Great choice. That answer follows the grammar rule in this sentence.";
+        return "Ready";
+    }, [phase]);
+
+    const petMessage = useMemo(
+        () => getPetFeedbackText({ phase, hasResolvedQuestion }),
+        [phase, hasResolvedQuestion]
+    );
+
+    const clearExplanationTimer = () => {
+        if (explanationTimerRef.current) {
+            clearTimeout(explanationTimerRef.current);
+            explanationTimerRef.current = null;
+        }
+    };
+
+    const resetQuestionTransientState = () => {
+        clearExplanationTimer();
+        setPhase(CHALLENGE_PHASES.READY);
+        setAttemptCount(0);
+        setIsRetrySelectionActive(false);
+        setSelectedAnswer("");
+        setAnswerIsCorrect(null);
+        setDisabledRetryOption("");
+        setRecentWrongOption("");
+        setIsExplanationVisible(true);
+        setQuestionXpMessage("");
+        setDraggedAnswer("");
+        setDropTargetActive(false);
+        setBouncedBackOption("");
+        setDraggingOption("");
+        setDragPreview({
+            active: false,
+            x: 0,
+            y: 0,
+            value: "",
+        });
+    };
+
+    const setExplanationDelay = ({ nextPhaseAfterDelay = null, revealCorrectAnswer = false }) => {
+        setIsExplanationVisible(false);
+        clearExplanationTimer();
+
+        explanationTimerRef.current = setTimeout(() => {
+            if (revealCorrectAnswer) {
+                setSelectedAnswer(correctAnswer);
+                setAnswerIsCorrect(true);
+            }
+
+            if (nextPhaseAfterDelay) {
+                setPhase(nextPhaseAfterDelay);
+            }
+
+            setIsExplanationVisible(true);
+        }, EXPLANATION_DELAY_MS);
+    };
+
+    const recordOutcomeIfMissing = (outcomeClass) => {
+        if (!outcomeClass) {
+            return;
         }
 
-        return currentQuestion?.whyWrong ?? "Not quite. Recheck the hint and pick the option that matches the grammar rule.";
-    }, [hasAnswered, answerIsCorrect, currentQuestion]);
+        setQuestionOutcomes((previousOutcomes) => {
+            if (previousOutcomes[currentQuestionIndex]) {
+                return previousOutcomes;
+            }
 
-    const resultBadge = useMemo(() => {
-        if (!hasAnswered) {
             return {
-                text: "Ready",
-                className: "bg-slate-500",
+                ...previousOutcomes,
+                [currentQuestionIndex]: outcomeClass,
             };
+        });
+
+        setQuestionXpMessage(getXpMessageForOutcome(outcomeClass));
+    };
+
+    const triggerBounceBack = (answerValue) => {
+        if (bounceBackTimerRef.current) {
+            clearTimeout(bounceBackTimerRef.current);
         }
 
-        if (answerIsCorrect) {
-            return {
-                text: "Correct!",
-                className: "bg-emerald-500",
-            };
+        setBouncedBackOption(answerValue);
+        setDraggedAnswer("");
+        setDropTargetActive(false);
+        setDraggingOption("");
+        setDragPreview({
+            active: false,
+            x: 0,
+            y: 0,
+            value: "",
+        });
+
+        bounceBackTimerRef.current = setTimeout(() => {
+            setBouncedBackOption("");
+        }, 340);
+    };
+
+    const handleSelectAnswer = (answerValue, source = "click") => {
+        const canAnswerNow =
+            phase === CHALLENGE_PHASES.READY || phase === CHALLENGE_PHASES.WRONG_FIRST;
+        if (!isQuestionContentAvailable || showSummary || !canAnswerNow || attemptCount >= 2) {
+            return;
         }
 
-        return {
-            text: "Try Again",
-            className: "bg-amber-500",
-        };
-    }, [hasAnswered, answerIsCorrect]);
-
-    const handleSelectAnswer = (answerValue) => {
-        if (hasAnswered || !isQuestionContentAvailable) {
+        if (isRetrySelectionActive && disabledRetryOption && answerValue === disabledRetryOption) {
             return;
         }
 
         const isCorrectChoice = toSafeLower(answerValue) === toSafeLower(correctAnswer);
-        setSelectedAnswer(answerValue);
-        setAnswerIsCorrect(isCorrectChoice);
-        setHasAnswered(true);
-    };
+        const nextPhase = resolvePhaseFromAttempt({
+            attemptCount,
+            isCorrect: isCorrectChoice,
+        });
 
-    const handleDragStart = (event, answerValue) => {
-        if (hasAnswered) {
+        if (isCorrectChoice) {
+            setSelectedAnswer(answerValue);
+            setAnswerIsCorrect(true);
+            setRecentWrongOption("");
+            setAttemptCount((previousCount) => Math.min(2, previousCount + 1));
+            setPhase(nextPhase);
+            setIsRetrySelectionActive(false);
+            setDisabledRetryOption("");
+            const outcomeClass = getOutcomeClassFromPhase(nextPhase);
+            recordOutcomeIfMissing(outcomeClass);
+            setExplanationDelay({ nextPhaseAfterDelay: null, revealCorrectAnswer: false });
             return;
         }
 
-        setDraggedWord(answerValue);
-        event.dataTransfer.setData("text/plain", answerValue);
-        event.dataTransfer.effectAllowed = "move";
-    };
-
-    const handleDragEnd = () => {
-        setDraggedWord("");
-        setDropTargetActive(false);
-    };
-
-    const handleBlankDragOver = (event) => {
-        if (hasAnswered) {
+        if (nextPhase === CHALLENGE_PHASES.WRONG_FIRST) {
+            setAnswerIsCorrect(false);
+            setSelectedAnswer("");
+            setRecentWrongOption(answerValue);
+            setAttemptCount((previousCount) => Math.min(2, previousCount + 1));
+            setPhase(CHALLENGE_PHASES.WRONG_FIRST);
+            setIsRetrySelectionActive(true);
+            setDisabledRetryOption(answerValue);
+            if (source === "drag") {
+                triggerBounceBack(answerValue);
+            }
+            setExplanationDelay({ nextPhaseAfterDelay: null, revealCorrectAnswer: false });
             return;
         }
 
+        setAnswerIsCorrect(false);
+        setSelectedAnswer("");
+        setRecentWrongOption(answerValue);
+        setAttemptCount((previousCount) => Math.min(2, previousCount + 1));
+        setPhase(CHALLENGE_PHASES.ASSISTED);
+        setIsRetrySelectionActive(false);
+        setDisabledRetryOption("");
+        if (source === "drag") {
+            triggerBounceBack(answerValue);
+        }
+        const assistedOutcomeClass = getOutcomeClassFromPhase(CHALLENGE_PHASES.AWAIT_ACKNOWLEDGE);
+        recordOutcomeIfMissing(assistedOutcomeClass);
+        setExplanationDelay({
+            nextPhaseAfterDelay: CHALLENGE_PHASES.AWAIT_ACKNOWLEDGE,
+            revealCorrectAnswer: true,
+        });
+    };
+
+    const detachDragListeners = () => {
+        if (dragListenersRef.current.move) {
+            window.removeEventListener("pointermove", dragListenersRef.current.move);
+            dragListenersRef.current.move = null;
+        }
+        if (dragListenersRef.current.up) {
+            window.removeEventListener("pointerup", dragListenersRef.current.up);
+            dragListenersRef.current.up = null;
+        }
+        if (dragListenersRef.current.cancel) {
+            window.removeEventListener("pointercancel", dragListenersRef.current.cancel);
+            dragListenersRef.current.cancel = null;
+        }
+        if (dragListenersRef.current.mouseMove) {
+            window.removeEventListener("mousemove", dragListenersRef.current.mouseMove);
+            dragListenersRef.current.mouseMove = null;
+        }
+        if (dragListenersRef.current.mouseUp) {
+            window.removeEventListener("mouseup", dragListenersRef.current.mouseUp);
+            dragListenersRef.current.mouseUp = null;
+        }
+    };
+
+    const isPointInsideBlank = (clientX, clientY) => {
+        const blankNode = blankDropZoneRef.current;
+        if (!blankNode) {
+            return false;
+        }
+
+        const rect = blankNode.getBoundingClientRect();
+        return (
+            clientX >= rect.left &&
+            clientX <= rect.right &&
+            clientY >= rect.top &&
+            clientY <= rect.bottom
+        );
+    };
+
+    const handleAnswerPointerDown = (event, answerValue, isRetryDisabled) => {
+        if (!isAnswerSelectionEnabled || isRetryDisabled || !answerValue) {
+            return;
+        }
+
+        if (event.pointerType === "mouse" && event.button != null && event.button !== 0) {
+            return;
+        }
+
+        dragGestureRef.current = {
+            isPointerDown: true,
+            isDragging: false,
+            startX: event.clientX,
+            startY: event.clientY,
+            value: answerValue,
+        };
+
+        detachDragListeners();
+
+        const onPointerMove = (moveEvent) => {
+            const activeGesture = dragGestureRef.current;
+            if (!activeGesture.isPointerDown) {
+                return;
+            }
+
+            const deltaX = moveEvent.clientX - activeGesture.startX;
+            const deltaY = moveEvent.clientY - activeGesture.startY;
+            const movementDistance = Math.hypot(deltaX, deltaY);
+
+            if (!activeGesture.isDragging && movementDistance >= 6) {
+                activeGesture.isDragging = true;
+                suppressClickRef.current = true;
+                setDraggedAnswer(activeGesture.value);
+                setDraggingOption(activeGesture.value);
+            }
+
+            if (!activeGesture.isDragging) {
+                return;
+            }
+
+            moveEvent.preventDefault();
+            setDragPreview({
+                active: true,
+                x: moveEvent.clientX,
+                y: moveEvent.clientY,
+                value: activeGesture.value,
+            });
+            setDropTargetActive(isPointInsideBlank(moveEvent.clientX, moveEvent.clientY));
+        };
+
+        const finishGesture = (endEvent) => {
+            const activeGesture = dragGestureRef.current;
+            if (!activeGesture.isPointerDown) {
+                return;
+            }
+            const isDragDrop = activeGesture.isPointerDown && activeGesture.isDragging;
+            const droppedAnswer = activeGesture.value;
+            const shouldDrop =
+                isDragDrop &&
+                isPointInsideBlank(endEvent.clientX, endEvent.clientY);
+
+            dragGestureRef.current = {
+                isPointerDown: false,
+                isDragging: false,
+                startX: 0,
+                startY: 0,
+                value: "",
+            };
+            detachDragListeners();
+
+            setDragPreview({
+                active: false,
+                x: 0,
+                y: 0,
+                value: "",
+            });
+            setDraggedAnswer("");
+            setDraggingOption("");
+            setDropTargetActive(false);
+
+            if (shouldDrop) {
+                handleSelectAnswer(droppedAnswer, "drag");
+            }
+
+            window.setTimeout(() => {
+                suppressClickRef.current = false;
+            }, 0);
+        };
+
+        dragListenersRef.current = {
+            move: onPointerMove,
+            up: finishGesture,
+            cancel: finishGesture,
+            mouseMove: null,
+            mouseUp: null,
+        };
+        const supportsPointerEvents = typeof window !== "undefined" && "PointerEvent" in window;
+
+        if (supportsPointerEvents) {
+            window.addEventListener("pointermove", onPointerMove, { passive: false });
+            window.addEventListener("pointerup", finishGesture);
+            window.addEventListener("pointercancel", finishGesture);
+        } else {
+            dragListenersRef.current.mouseMove = onPointerMove;
+            dragListenersRef.current.mouseUp = finishGesture;
+            window.addEventListener("mousemove", onPointerMove);
+            window.addEventListener("mouseup", finishGesture);
+        }
+    };
+
+    const preventNativeDragStart = (event) => {
         event.preventDefault();
-        setDropTargetActive(true);
     };
 
-    const handleBlankDragLeave = () => {
-        setDropTargetActive(false);
+    const preventNativeMouseDrag = (event) => {
+        if (event.button === 0) {
+            event.preventDefault();
+        }
     };
 
-    const handleBlankDrop = (event) => {
-        if (hasAnswered) {
+    const handleAnswerMouseDown = (event, answerValue, isRetryDisabled) => {
+        if (typeof window !== "undefined" && "PointerEvent" in window) {
             return;
         }
 
-        event.preventDefault();
-        const droppedWord = event.dataTransfer.getData("text/plain") || draggedWord;
-        if (droppedWord) {
-            handleSelectAnswer(droppedWord);
-        }
-
-        setDraggedWord("");
-        setDropTargetActive(false);
+        handleAnswerPointerDown(event, answerValue, isRetryDisabled);
     };
 
-    const handleNextQuestion = () => {
-        if (!hasAnswered || !isQuestionContentAvailable || currentQuestionIndex >= maxQuestionIndex) {
+    const advanceToNextQuestionOrSummary = () => {
+        if (currentQuestionIndex >= maxQuestionIndex) {
+            setShowSummary(true);
             return;
         }
 
         setCurrentQuestionNumber((previousQuestion) => Math.min(maxQuestionIndex, previousQuestion + 1));
-        setSelectedAnswer("");
-        setHasAnswered(false);
-        setAnswerIsCorrect(null);
-        setDraggedWord("");
-        setDropTargetActive(false);
+        resetQuestionTransientState();
     };
+
+    const handlePrimaryAction = () => {
+        if (!isQuestionContentAvailable || !primaryAction.enabled) {
+            return;
+        }
+
+        if (phase === CHALLENGE_PHASES.AWAIT_ACKNOWLEDGE || phase === CHALLENGE_PHASES.CORRECT_FIRST || phase === CHALLENGE_PHASES.CORRECT_SECOND) {
+            advanceToNextQuestionOrSummary();
+        }
+    };
+
+    useEffect(() => {
+        if (!showSummary || summaryPersisted) {
+            return;
+        }
+
+        try {
+            const progressRaw = localStorage.getItem(playerProgressKey);
+            const parsedProgress = progressRaw ? JSON.parse(progressRaw) : defaultProgressState;
+            const safeProgress = parsedProgress && typeof parsedProgress === "object"
+                ? parsedProgress
+                : defaultProgressState;
+
+            const existingTopicPercent = extractTopicPercent(safeProgress?.topicProgress?.[selectedTopicKey]);
+            const computedTopicPercent = Math.round(challengeTotals.summary.passRate * 100);
+            const nextTopicPercent = Math.max(existingTopicPercent, computedTopicPercent);
+
+            const existingCompletedTopics = Array.isArray(safeProgress.completedTopics)
+                ? safeProgress.completedTopics.filter((topicKey) => typeof topicKey === "string" && topicKey.trim())
+                : [];
+            const completedTopicSet = new Set(existingCompletedTopics.map((topicKey) => topicKey.trim()));
+
+            if (challengeTotals.summary.passed) {
+                completedTopicSet.add(selectedTopicKey);
+            }
+
+            const challengeSnapshot = {
+                topicKey: selectedTopicKey,
+                completedAt: new Date().toISOString(),
+                outcomes: orderedOutcomes,
+                score: {
+                    totalQuestions: challengeTotals.summary.totalQuestions,
+                    correctCount: challengeTotals.summary.correctCount,
+                    passRate: challengeTotals.summary.passRate,
+                    passed: challengeTotals.summary.passed,
+                },
+                xp: {
+                    base: challengeTotals.summary.baseXp,
+                    bonus: challengeTotals.totalBonusXp,
+                    total: challengeTotals.totalXp,
+                },
+            };
+
+            const challengeHistoryByTopic = safeProgress.challengeHistoryByTopic && typeof safeProgress.challengeHistoryByTopic === "object"
+                ? safeProgress.challengeHistoryByTopic
+                : {};
+            const previousTopicHistory = Array.isArray(challengeHistoryByTopic[selectedTopicKey])
+                ? challengeHistoryByTopic[selectedTopicKey]
+                : [];
+
+            const nextProgress = {
+                ...safeProgress,
+                completedTopics: Array.from(completedTopicSet),
+                topicProgress: {
+                    ...(safeProgress.topicProgress && typeof safeProgress.topicProgress === "object" ? safeProgress.topicProgress : {}),
+                    [selectedTopicKey]: nextTopicPercent,
+                },
+                latestChallenge: challengeSnapshot,
+                challengeHistoryByTopic: {
+                    ...challengeHistoryByTopic,
+                    [selectedTopicKey]: [...previousTopicHistory, challengeSnapshot].slice(-20),
+                },
+                totalXp: Math.max(0, Number(safeProgress.totalXp) || 0) + challengeTotals.totalXp,
+            };
+
+            localStorage.setItem(playerProgressKey, JSON.stringify(nextProgress));
+            const { level, title } = getPlayerLevelInfo(nextProgress);
+            setHeaderLevelLabel(`Level ${level} • ${title}`);
+            setSummaryPersisted(true);
+        } catch (error) {
+            console.error("Failed to persist challenge summary", error);
+        }
+    }, [showSummary, summaryPersisted, selectedTopicKey, challengeTotals, orderedOutcomes]);
+
+    const isAnswerSelectionEnabled =
+        isQuestionContentAvailable &&
+        !showSummary &&
+        (phase === CHALLENGE_PHASES.READY || phase === CHALLENGE_PHASES.WRONG_FIRST) &&
+        attemptCount < 2;
 
     return (
         <div className="relative flex min-h-screen w-full flex-col overflow-x-hidden bg-slate-100 text-slate-900">
@@ -339,129 +815,274 @@ export default function ChallengePage() {
                 profileAvatarAlt="Player avatar"
             />
 
-            <main className="relative z-10 mx-auto flex w-full max-w-7xl flex-1 flex-col px-4 py-6 md:py-8">
+            <main
+                className="relative z-10 mx-auto flex w-full max-w-7xl flex-1 flex-col px-4 py-6 md:py-8"
+                onDragStartCapture={preventNativeDragStart}
+                onDropCapture={preventNativeDragStart}
+            >
                 <section
                     className="rounded-[24px] border border-primary/15 bg-white/95 px-5 py-4 shadow-sm"
                     data-testid="challenge-selection-metadata"
                     data-question-count={questionCount}
                     data-selected-question-ids={selectedQuestionIds.join(",")}
                     data-recent-question-ids={Array.from(recentQuestionIds).join(",")}
+                    data-current-correct-answer={toSafeString(correctAnswer)}
                 >
                     <div className="flex items-center justify-between gap-3">
                         <div className="inline-flex items-center gap-2 text-[13px] font-black uppercase tracking-[0.14em] text-slate-600">
                             <span className="material-symbols-outlined text-primary text-base">tactic</span>
                             Challenge Progress
                         </div>
-                        <span className="rounded-full bg-primary/10 px-3 py-1 text-sm font-black text-primary">
+                        <span className="rounded-full bg-primary/10 px-3 py-1 text-sm font-black text-primary" data-testid="challenge-progress-text">
                             {progressDisplayTotal > 0 ? currentQuestionIndex + 1 : 0}/{progressDisplayTotal}
                         </span>
                     </div>
 
-                    <div className="mt-3 h-4 overflow-hidden rounded-full bg-slate-100">
+                    <div className="mt-3 h-4 overflow-hidden rounded-full bg-slate-100" data-testid="challenge-progress-bar-track">
                         <div
                             className="h-full rounded-full bg-primary shadow-[0_0_14px_rgba(56,189,248,0.6)] transition-all"
                             style={{ width: `${challengeProgressPercent}%` }}
+                            data-testid="challenge-progress-bar-fill"
                         />
                     </div>
 
-                </section>
-
-                <section className="mt-10 flex flex-col gap-6 md:flex-row md:items-center md:justify-between">
-                    <div className="flex items-center gap-3">
-                        <div className="size-[88px] overflow-hidden rounded-full border-4 border-white bg-slate-200 shadow-md">
-                            <img className="h-full w-full object-cover" src={companionAvatar} alt="Companion avatar" />
-                        </div>
-                        <div className="relative max-w-[230px] rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm font-semibold text-slate-700 shadow-sm">
-                            {petMessage}
-                            <span
-                                aria-hidden="true"
-                                className="absolute -left-1.5 top-1/2 size-3 -translate-y-1/2 rotate-45 border-l border-b border-slate-200 bg-white"
-                            />
-                        </div>
-                    </div>
-
-                    <div className="flex items-center gap-3 md:justify-end">
-                        <div className="relative max-w-[250px] rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm font-semibold text-slate-700 shadow-sm">
-                            {heroMessage}
-                            <span
-                                aria-hidden="true"
-                                className="absolute -right-1.5 top-1/2 size-3 -translate-y-1/2 rotate-45 border-t border-r border-slate-200 bg-white"
-                            />
-                        </div>
-                        <div className="flex flex-col items-end gap-2">
-                            <div className={`rounded-2xl px-4 py-2 text-lg font-black text-white shadow-sm ${resultBadge.className}`}>
-                                {resultBadge.text}
-                            </div>
-                            <div className="size-[88px] overflow-hidden rounded-full border-4 border-white bg-slate-200 shadow-md">
-                                <img className="h-full w-full object-cover" src={headerAvatar} alt="Hero avatar" />
-                            </div>
-                        </div>
+                    <div className="mt-3 flex flex-wrap items-center gap-2" data-testid="challenge-indicator-row" aria-label="Question quality indicators">
+                        {indicatorStates.map((indicatorType, index) => {
+                            const glyph = getIndicatorGlyph(indicatorType);
+                            const hasOutcome = Boolean(glyph);
+                            return (
+                                <span
+                                    key={`indicator-${index}`}
+                                    className={`inline-flex h-8 min-w-8 items-center justify-center rounded-full border text-sm font-black ${
+                                        hasOutcome
+                                            ? "border-primary/30 bg-primary/10 text-primary"
+                                            : "border-slate-200 bg-white text-slate-300"
+                                    }`}
+                                    data-testid={`challenge-indicator-${index}`}
+                                    data-indicator-type={indicatorType}
+                                >
+                                    {glyph || ""}
+                                </span>
+                            );
+                        })}
                     </div>
                 </section>
 
-                <section className="mx-auto mt-10 w-full max-w-3xl rounded-[34px] border-2 border-primary/25 bg-white px-8 py-10 text-center shadow-sm">
-                    <p className="mt-1 text-4xl font-black leading-tight text-slate-900" data-testid="challenge-question-sentence">
-                        {currentQuestionPrefix}{" "}
-                        <span
-                            onDragOver={handleBlankDragOver}
-                            onDragLeave={handleBlankDragLeave}
-                            onDrop={handleBlankDrop}
-                            className={`inline-flex min-w-[180px] items-center justify-center rounded-2xl border-2 px-6 py-1 transition ${selectedAnswer
-                                ? answerIsCorrect
-                                    ? "border-emerald-300 bg-emerald-50 text-emerald-700"
-                                    : "border-amber-300 bg-amber-50 text-amber-700"
-                                : dropTargetActive
-                                    ? "border-primary bg-primary/10 text-primary"
-                                    : "border-primary/30 bg-primary/5 text-primary"
-                                }`}
-                        >
-                            {selectedAnswer || "_______"}
-                        </span>{" "}
-                        {currentQuestionSuffix}
-                    </p>
-                </section>
+                {!showSummary && (
+                    <>
+                        <section className="mt-10 flex flex-col gap-6 md:flex-row md:items-center md:justify-between">
+                            <div className="flex items-center gap-3">
+                                <div className="size-[88px] overflow-hidden rounded-full border-4 border-white bg-slate-200 shadow-md">
+                                    <img className="h-full w-full object-cover" src={companionAvatar} alt="Companion avatar" />
+                                </div>
+                                <div className="relative max-w-[260px] rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm font-semibold text-slate-700 shadow-sm" data-testid="challenge-pet-message">
+                                    {petMessage}
+                                    <span
+                                        aria-hidden="true"
+                                        className="absolute -left-1.5 top-1/2 size-3 -translate-y-1/2 rotate-45 border-l border-b border-slate-200 bg-white"
+                                    />
+                                </div>
+                            </div>
 
-                <section className="mt-9 flex items-center justify-center gap-4" data-testid="challenge-answer-options">
-                    {answerOptions.map((optionValue, optionIndex) => (
-                        <button
-                            key={`${currentQuestion?.id ?? "fallback"}-${optionValue}-${optionIndex}`}
-                            type="button"
-                            draggable={!hasAnswered}
-                            onDragStart={(event) => handleDragStart(event, optionValue)}
-                            onDragEnd={handleDragEnd}
-                            onClick={() => handleSelectAnswer(optionValue)}
-                            aria-pressed={selectedAnswer === optionValue ? "true" : "false"}
-                            data-testid={`challenge-answer-option-${optionIndex}`}
-                            className={`min-w-[88px] rounded-2xl border px-6 py-3 text-2xl font-black shadow-sm transition md:text-3xl ${selectedAnswer === optionValue
-                                ? answerIsCorrect
-                                    ? "border-emerald-300 bg-emerald-50 text-emerald-700"
-                                    : "border-amber-300 bg-amber-50 text-amber-700"
-                                : "border-slate-200 bg-white text-slate-700"
-                                }`}
-                        >
-                            {optionValue}
-                        </button>
-                    ))}
-                </section>
+                            <div className="flex items-center gap-3 md:justify-end">
+                                <div className="relative max-w-[270px] rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm font-semibold text-slate-700 shadow-sm" data-testid="challenge-hero-message">
+                                    {heroMessage}
+                                    <span
+                                        aria-hidden="true"
+                                        className="absolute -right-1.5 top-1/2 size-3 -translate-y-1/2 rotate-45 border-t border-r border-slate-200 bg-white"
+                                    />
+                                </div>
+                                <div className="flex flex-col items-end gap-2">
+                                    <div className="rounded-2xl bg-primary/10 px-4 py-2 text-sm font-black text-primary shadow-sm" data-testid="challenge-phase-badge">
+                                        {phaseBadgeLabel}
+                                    </div>
+                                    <div className="size-[88px] overflow-hidden rounded-full border-4 border-white bg-slate-200 shadow-md">
+                                        <img className="h-full w-full object-cover" src={headerAvatar} alt="Hero avatar" />
+                                    </div>
+                                </div>
+                            </div>
+                        </section>
 
-                <section className="mt-auto flex items-center justify-between px-2 py-5">
-                    <Link href="/world-map" className="text-lg font-bold text-slate-500 hover:text-slate-700">
-                        Skip Challenge
-                    </Link>
-                    <button
-                        type="button"
-                        onClick={handleNextQuestion}
-                        disabled={!hasAnswered || !isQuestionContentAvailable || progressDisplayTotal <= 0 || currentQuestionIndex >= maxQuestionIndex}
-                        className={`inline-flex items-center gap-2 rounded-full px-8 py-3 text-lg font-black text-white shadow-lg transition ${!hasAnswered || !isQuestionContentAvailable || progressDisplayTotal <= 0 || currentQuestionIndex >= maxQuestionIndex
-                            ? "cursor-not-allowed bg-slate-400 shadow-slate-300"
-                            : "bg-primary shadow-primary/25"
-                            }`}
-                    >
-                        Next Question
-                        <span className="material-symbols-outlined text-base">arrow_forward</span>
-                    </button>
-                </section>
+                        <section className="mx-auto mt-10 w-full max-w-5xl rounded-[34px] border-2 border-primary/25 bg-white px-8 py-10 text-center shadow-sm md:px-10">
+                            <p className="mt-1 text-4xl font-black leading-tight text-slate-900 md:whitespace-nowrap" data-testid="challenge-question-sentence">
+                                {currentQuestionPrefix}{" "}
+                                <span
+                                    ref={blankDropZoneRef}
+                                    className={`inline-flex min-w-[180px] items-center justify-center rounded-2xl border-2 px-6 py-1 transition ${
+                                        selectedAnswer
+                                            ? answerIsCorrect
+                                                ? "border-emerald-300 bg-emerald-50 text-emerald-700"
+                                                : "border-amber-300 bg-amber-50 text-amber-700"
+                                            : dropTargetActive
+                                                ? "border-primary bg-primary/10 text-primary"
+                                                : "border-primary/30 bg-primary/5 text-primary"
+                                    }`}
+                                    data-testid="challenge-blank"
+                                >
+                                    {selectedAnswer || "_______"}
+                                </span>{" "}
+                                {currentQuestionSuffix}
+                            </p>
+                            {questionXpMessage && (
+                                <p className="mt-4 text-base font-black text-emerald-600" data-testid="challenge-xp-message">
+                                    {questionXpMessage}
+                                </p>
+                            )}
+                        </section>
+
+                        <section className="mt-9 flex flex-wrap items-center justify-center gap-4" data-testid="challenge-answer-options">
+                            {answerOptions.map((optionValue, optionIndex) => {
+                                const isSelected = selectedAnswer === optionValue;
+                                const isRetryDisabled = isRetrySelectionActive && disabledRetryOption === optionValue;
+                                const isWrongSelection = recentWrongOption === optionValue && !answerIsCorrect;
+                                const showCorrectGlow =
+                                    hasResolvedQuestion &&
+                                    toSafeLower(optionValue) === toSafeLower(correctAnswer) &&
+                                    (phase === CHALLENGE_PHASES.CORRECT_FIRST ||
+                                        phase === CHALLENGE_PHASES.CORRECT_SECOND ||
+                                        phase === CHALLENGE_PHASES.AWAIT_ACKNOWLEDGE);
+
+                                return (
+                                    <button
+                                        key={`${currentQuestion?.id ?? "fallback"}-${optionValue}-${optionIndex}`}
+                                        type="button"
+                                        draggable={false}
+                                        onPointerDown={(event) => handleAnswerPointerDown(event, optionValue, isRetryDisabled)}
+                                        onMouseDown={(event) => {
+                                            preventNativeMouseDrag(event);
+                                            handleAnswerMouseDown(event, optionValue, isRetryDisabled);
+                                        }}
+                                        onDragStart={preventNativeDragStart}
+                                        onClick={() => {
+                                            if (suppressClickRef.current) {
+                                                return;
+                                            }
+                                            handleSelectAnswer(optionValue);
+                                        }}
+                                        aria-pressed={isSelected ? "true" : "false"}
+                                        aria-disabled={!isAnswerSelectionEnabled || isRetryDisabled ? "true" : "false"}
+                                        disabled={!isAnswerSelectionEnabled || isRetryDisabled}
+                                        data-dragging={draggingOption === optionValue ? "true" : "false"}
+                                        data-testid={`challenge-answer-option-${optionIndex}`}
+                                        data-option-state={
+                                            bouncedBackOption === optionValue
+                                                ? "bounce-back"
+                                                : showCorrectGlow
+                                                ? "correct"
+                                                : isWrongSelection
+                                                    ? "wrong"
+                                                    : isRetryDisabled
+                                                        ? "disabled"
+                                                        : isSelected
+                                                            ? "selected"
+                                                            : "idle"
+                                        }
+                                        className={`min-w-[88px] rounded-2xl border px-6 py-3 text-2xl font-black shadow-sm transition md:text-3xl ${
+                                            isSelected
+                                                ? answerIsCorrect
+                                                    ? "border-emerald-300 bg-emerald-50 text-emerald-700 gpa-answer-selected"
+                                                    : "border-amber-300 bg-amber-50 text-amber-700 gpa-answer-selected"
+                                                : "border-slate-200 bg-white text-slate-700"
+                                        } ${isWrongSelection ? "gpa-answer-shake" : ""} ${
+                                            showCorrectGlow ? "gpa-answer-correct-glow" : ""
+                                        } ${bouncedBackOption === optionValue ? "gpa-answer-bounce-back" : ""} ${
+                                            isRetryDisabled ? "cursor-not-allowed" : ""
+                                        } ${
+                                            draggingOption === optionValue ? "gpa-answer-dragging" : ""
+                                        } ${
+                                            isAnswerSelectionEnabled && !isRetryDisabled ? "cursor-grab active:cursor-grabbing select-none touch-none gpa-answer-option" : "gpa-answer-option"
+                                        }`}
+                                    >
+                                        {optionValue}
+                                    </button>
+                                );
+                            })}
+                        </section>
+
+                        <section className="mt-auto flex items-center justify-between px-2 py-5">
+                            <Link href="/world-map" className="text-lg font-bold text-slate-500 hover:text-slate-700">
+                                Skip Challenge
+                            </Link>
+                            <button
+                                type="button"
+                                onClick={handlePrimaryAction}
+                                disabled={!primaryAction.enabled || !isQuestionContentAvailable}
+                                data-testid="challenge-primary-action"
+                                data-phase={phase}
+                                className={`inline-flex items-center gap-2 rounded-full px-8 py-3 text-lg font-black text-white shadow-lg transition ${
+                                    !primaryAction.enabled || !isQuestionContentAvailable
+                                        ? "cursor-not-allowed bg-slate-400 shadow-slate-300"
+                                        : "bg-primary shadow-primary/25"
+                                }`}
+                            >
+                                {primaryAction.label}
+                                <span className="material-symbols-outlined text-base">arrow_forward</span>
+                            </button>
+                        </section>
+                    </>
+                )}
+
+                {showSummary && (
+                    <section className="mx-auto mt-10 w-full max-w-3xl rounded-[30px] border border-primary/20 bg-white/95 px-6 py-7 shadow-sm" data-testid="challenge-summary">
+                        <h2 className="text-center text-3xl font-black text-slate-900">Level Complete</h2>
+                        <p className="mt-2 text-center text-sm font-semibold text-slate-600" data-testid="challenge-summary-pass-fail">
+                            {challengeTotals.summary.passed
+                                ? "Pass achieved! Great effort and focus."
+                                : "Keep practicing. You are getting stronger each round."}
+                        </p>
+
+                        <div className="mt-6 grid grid-cols-1 gap-3 rounded-2xl border border-slate-200 bg-slate-50 p-4 md:grid-cols-3">
+                            <div className="rounded-xl bg-white p-3 text-center">
+                                <p className="text-xs font-bold uppercase tracking-wide text-slate-500">Total XP</p>
+                                <p className="mt-1 text-3xl font-black text-primary" data-testid="challenge-summary-total-xp">{challengeTotals.totalXp}</p>
+                            </div>
+                            <div className="rounded-xl bg-white p-3 text-center">
+                                <p className="text-xs font-bold uppercase tracking-wide text-slate-500">Base XP</p>
+                                <p className="mt-1 text-3xl font-black text-emerald-600">{challengeTotals.summary.baseXp}</p>
+                            </div>
+                            <div className="rounded-xl bg-white p-3 text-center">
+                                <p className="text-xs font-bold uppercase tracking-wide text-slate-500">Bonus XP</p>
+                                <p className="mt-1 text-3xl font-black text-amber-500" data-testid="challenge-summary-bonus-xp">{challengeTotals.totalBonusXp}</p>
+                            </div>
+                        </div>
+
+                        <div className="mt-4 rounded-2xl border border-slate-200 bg-white p-4">
+                            <p className="text-sm font-black text-slate-700">Bonus Breakdown</p>
+                            <ul className="mt-2 space-y-2 text-sm text-slate-700" data-testid="challenge-summary-bonus-list">
+                                {challengeTotals.bonusItems.map((bonusItem) => (
+                                    <li key={bonusItem.key} className="rounded-xl bg-slate-50 px-3 py-2">
+                                        <span className="font-black text-slate-900">{bonusItem.label}</span>: +{bonusItem.xp} XP. {bonusItem.message}
+                                    </li>
+                                ))}
+                            </ul>
+                        </div>
+
+                        <div className="mt-4 rounded-2xl border border-slate-200 bg-white p-4 text-sm font-semibold text-slate-700">
+                            <p data-testid="challenge-summary-score">Score: {challengeTotals.summary.correctCount}/{challengeTotals.summary.totalQuestions} correct ({Math.round(challengeTotals.summary.passRate * 100)}%)</p>
+                            <p className="mt-1">First-try accuracy: {Math.round(challengeTotals.firstTryAccuracy * 100)}%</p>
+                            <p className="mt-1">Corrected mistakes: {challengeTotals.summary.correctedMistakeCount}</p>
+                        </div>
+
+                        <div className="mt-6 flex items-center justify-center gap-3">
+                            <Link href="/world-map" className="inline-flex items-center rounded-full bg-primary px-6 py-3 text-sm font-black text-white shadow-primary/25 shadow-lg">
+                                Back to Map
+                            </Link>
+                        </div>
+                    </section>
+                )}
             </main>
+            {dragPreview.active && (
+                <div
+                    className="gpa-drag-preview"
+                    data-testid="challenge-drag-preview"
+                    style={{
+                        left: `${dragPreview.x}px`,
+                        top: `${dragPreview.y}px`,
+                    }}
+                >
+                    {dragPreview.value}
+                </div>
+            )}
         </div>
     );
 }
