@@ -86,11 +86,14 @@ flowchart LR
   - `correct_first` or `wrong_first`
   - `guided_retry` -> `selecting`
   - `correct_second` or `wrong_second`
-  - `assisted` -> `await_acknowledge` -> `post_answer`
+  - `assisted` (coached retry)
+    - coached correct -> `await_acknowledge` -> `post_answer`
+    - coached wrong -> `post_answer` (`skipped`, no XP)
   - `award_xp` -> `update_progress` -> next question or level complete
 - Attempt constraints:
   - Maximum two independent attempts per question.
-  - Third stage is assisted resolution only (no free-form guessing loop).
+  - Second wrong does not auto-complete or auto-award XP.
+  - One coached retry is allowed in `assisted`; wrong coached retry advances with `skipped`.
 - Feedback contract:
   - Pre-answer hero message is hint-only (non-revealing).
   - Post-answer hero message is explanation-oriented and includes correct-answer reasoning when needed.

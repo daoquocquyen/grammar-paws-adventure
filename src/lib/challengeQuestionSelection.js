@@ -76,7 +76,7 @@ const QUESTION_BLUEPRINTS = {
             { before: "My friend", after: "won the spelling game." },
             { before: "We read a story by", after: "." },
         ],
-        correctPool: ["Ha Noi", "Mia", "Da Nang", "An", "Vietnam", "Liam"],
+        correctPool: ["Ha Noi", "Mia", "Da Nang", "An", "Leo", "Liam"],
         distractorPool: ["city", "girl", "beach", "friend", "country", "boy"],
     },
     "nouns::plurality": {

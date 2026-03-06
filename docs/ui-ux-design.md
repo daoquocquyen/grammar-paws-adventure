@@ -156,6 +156,7 @@ Current navigation status:
   - Center challenge zone:
     - Single sentence with one blank.
     - 4 answer options per question.
+    - Answer buttons stay centered in the options panel.
     - Wider question sentence container to keep common prompts on one line on desktop.
   - Bottom coaching zone:
     - Pet avatar bubble (effort-focused encouragement).
@@ -168,7 +169,10 @@ Current navigation status:
   - Guided attempt model:
     - Attempt 1: full options.
     - Attempt 2: previously chosen incorrect option disabled.
-    - Assisted stage: explanation + answer reveal + learner acknowledgment gate.
+    - After second wrong: enter coached stage with explanation and no auto-complete/XP award.
+    - Coached retry:
+      - correct answer -> assisted acknowledge path (`I understand`) then continue.
+      - wrong answer -> no XP, mark failed/skipped, auto-advance to next question.
   - Hero explanation appears with short delay (400-600ms) after answer input.
   - Wrong-option interaction uses light shake and disable behavior.
   - Correct-option interaction uses soft glow; companion can animate celebration.
@@ -180,7 +184,8 @@ Current navigation status:
   - `wrong_first`: guiding explanation, no reveal.
   - `correct_first`: success feedback + full XP quality.
   - `correct_second`: success feedback + partial XP quality.
-  - `assisted`: reveal with calm reasoning + `I understand` gate.
+  - `assisted`: coached retry stage with reasoning visible, but no auto-resolution.
+  - `await_acknowledge`: shown only after coached correct answer, then learner confirms with `I understand`.
 
 ## Responsive Behavior
 - Mobile:

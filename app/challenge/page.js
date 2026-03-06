@@ -2,8 +2,15 @@
 
 import Link from "next/link";
 import { useEffect, useMemo, useRef, useState } from "react";
+import CharacterSpeechBubble from "../../src/components/CharacterSpeechBubble";
 import HeaderBlock from "../../src/components/HeaderBlock";
 import { DEFAULT_COMPANION_AVATAR } from "../../src/lib/avatarDefaults";
+import {
+    DEFAULT_HERO_THEME_COLOR,
+    DEFAULT_PET_THEME_COLOR,
+    getHeroThemeColor,
+    getPetThemeColor,
+} from "../../src/lib/avatarBubbleThemes";
 import {
     createTopicQuestionBank,
     RECENT_TOPIC_ATTEMPT_COOLDOWN,
@@ -100,6 +107,8 @@ export default function ChallengePage() {
     const [headerAvatar, setHeaderAvatar] = useState(defaultAvatar);
     const [companionAvatar, setCompanionAvatar] = useState(defaultAvatar);
     const [headerLevelLabel, setHeaderLevelLabel] = useState("Level 1 • Explorer");
+    const [heroBubbleBorderColor, setHeroBubbleBorderColor] = useState(DEFAULT_HERO_THEME_COLOR);
+    const [petBubbleBorderColor, setPetBubbleBorderColor] = useState(DEFAULT_PET_THEME_COLOR);
 
     const [selectedTopicKey, setSelectedTopicKey] = useState("verbs");
     const [topicAttempts, setTopicAttempts] = useState([]);
@@ -120,23 +129,38 @@ export default function ChallengePage() {
     const [draggedAnswer, setDraggedAnswer] = useState("");
     const [dropTargetActive, setDropTargetActive] = useState(false);
     const [bouncedBackOption, setBouncedBackOption] = useState("");
+    const [forcedRightmostOption, setForcedRightmostOption] = useState("");
+    const [blankWrongFeedback, setBlankWrongFeedback] = useState(false);
+    const [transitioningBounceOption, setTransitioningBounceOption] = useState("");
     const [draggingOption, setDraggingOption] = useState("");
     const [dragPreview, setDragPreview] = useState({
         active: false,
         x: 0,
         y: 0,
         value: "",
+        width: 0,
+        height: 0,
+        fontSize: "",
+        borderRadius: "",
+        transitioning: false,
     });
 
     const explanationTimerRef = useRef(null);
     const bounceBackTimerRef = useRef(null);
+    const blankWrongFeedbackTimerRef = useRef(null);
+    const dragPreviewHideTimerRef = useRef(null);
     const blankDropZoneRef = useRef(null);
+    const answerOptionsContainerRef = useRef(null);
     const dragGestureRef = useRef({
         isPointerDown: false,
         isDragging: false,
         startX: 0,
         startY: 0,
         value: "",
+        previewWidth: 0,
+        previewHeight: 0,
+        previewFontSize: "",
+        previewBorderRadius: "",
     });
     const dragListenersRef = useRef({
         move: null,
@@ -181,6 +205,9 @@ export default function ChallengePage() {
                 if (typeof profile?.heroName === "string" && profile.heroName.trim()) {
                     setHeaderSecondaryText(profile.heroName.trim());
                 }
+
+                setHeroBubbleBorderColor(getHeroThemeColor(profile?.heroId, profile?.heroName));
+                setPetBubbleBorderColor(getPetThemeColor(profile?.petName));
 
                 if (typeof profile?.heroImage === "string" && profile.heroImage.trim()) {
                     setHeaderAvatar(profile.heroImage.trim());
@@ -247,6 +274,12 @@ export default function ChallengePage() {
             if (bounceBackTimerRef.current) {
                 clearTimeout(bounceBackTimerRef.current);
             }
+            if (blankWrongFeedbackTimerRef.current) {
+                clearTimeout(blankWrongFeedbackTimerRef.current);
+            }
+            if (dragPreviewHideTimerRef.current) {
+                clearTimeout(dragPreviewHideTimerRef.current);
+            }
             if (dragListenersRef.current.move) {
                 window.removeEventListener("pointermove", dragListenersRef.current.move);
                 dragListenersRef.current.move = null;
@@ -289,6 +322,15 @@ export default function ChallengePage() {
         }
         return ["cat", "cats", "dog", "dogs"];
     }, [currentQuestion]);
+
+    const displayedAnswerOptions = useMemo(() => {
+        const safeForcedOption = toSafeString(forcedRightmostOption);
+        if (!safeForcedOption || !answerOptions.includes(safeForcedOption)) {
+            return answerOptions;
+        }
+
+        return [...answerOptions.filter((optionValue) => optionValue !== safeForcedOption), safeForcedOption];
+    }, [answerOptions, forcedRightmostOption]);
 
     const correctAnswer = useMemo(
         () =>
@@ -357,22 +399,6 @@ export default function ChallengePage() {
         [phase, currentQuestion, selectedAnswer, correctAnswer, isRetrySelectionActive, isExplanationVisible]
     );
 
-    const phaseBadgeLabel = useMemo(() => {
-        if (phase === CHALLENGE_PHASES.WRONG_FIRST) {
-            return "Guided Retry";
-        }
-
-        if (phase === CHALLENGE_PHASES.CORRECT_FIRST || phase === CHALLENGE_PHASES.CORRECT_SECOND) {
-            return "Great Work";
-        }
-
-        if (phase === CHALLENGE_PHASES.ASSISTED || phase === CHALLENGE_PHASES.AWAIT_ACKNOWLEDGE) {
-            return "Coach Help";
-        }
-
-        return "Ready";
-    }, [phase]);
-
     const petMessage = useMemo(
         () => getPetFeedbackText({ phase, hasResolvedQuestion }),
         [phase, hasResolvedQuestion]
@@ -399,13 +425,30 @@ export default function ChallengePage() {
         setDraggedAnswer("");
         setDropTargetActive(false);
         setBouncedBackOption("");
+        setForcedRightmostOption("");
+        setBlankWrongFeedback(false);
+        setTransitioningBounceOption("");
         setDraggingOption("");
         setDragPreview({
             active: false,
             x: 0,
             y: 0,
             value: "",
+            width: 0,
+            height: 0,
+            fontSize: "",
+            borderRadius: "",
+            transitioning: false,
         });
+
+        if (blankWrongFeedbackTimerRef.current) {
+            clearTimeout(blankWrongFeedbackTimerRef.current);
+            blankWrongFeedbackTimerRef.current = null;
+        }
+        if (dragPreviewHideTimerRef.current) {
+            clearTimeout(dragPreviewHideTimerRef.current);
+            dragPreviewHideTimerRef.current = null;
+        }
     };
 
     const setExplanationDelay = ({ nextPhaseAfterDelay = null, revealCorrectAnswer = false }) => {
@@ -445,31 +488,164 @@ export default function ChallengePage() {
         setQuestionXpMessage(getXpMessageForOutcome(outcomeClass));
     };
 
-    const triggerBounceBack = (answerValue) => {
+    const triggerBounceBack = (answerValue, dragMeta = null) => {
         if (bounceBackTimerRef.current) {
             clearTimeout(bounceBackTimerRef.current);
         }
+        if (blankWrongFeedbackTimerRef.current) {
+            clearTimeout(blankWrongFeedbackTimerRef.current);
+        }
+        if (dragPreviewHideTimerRef.current) {
+            clearTimeout(dragPreviewHideTimerRef.current);
+        }
 
         setBouncedBackOption(answerValue);
+        setForcedRightmostOption(answerValue);
+        setBlankWrongFeedback(true);
         setDraggedAnswer("");
         setDropTargetActive(false);
         setDraggingOption("");
-        setDragPreview({
-            active: false,
-            x: 0,
-            y: 0,
-            value: "",
-        });
+
+        const hasDragMeta =
+            dragMeta &&
+            Number.isFinite(dragMeta.dropX) &&
+            Number.isFinite(dragMeta.dropY);
+
+        if (hasDragMeta) {
+            setTransitioningBounceOption(answerValue);
+            setDragPreview({
+                active: true,
+                x: dragMeta.dropX,
+                y: dragMeta.dropY,
+                value: answerValue,
+                width: dragMeta.previewWidth ?? 0,
+                height: dragMeta.previewHeight ?? 0,
+                fontSize: dragMeta.previewFontSize ?? "",
+                borderRadius: dragMeta.previewBorderRadius ?? "",
+                transitioning: false,
+            });
+
+            window.requestAnimationFrame(() => {
+                window.requestAnimationFrame(() => {
+                    const containerNode = answerOptionsContainerRef.current;
+                    if (!(containerNode instanceof HTMLElement)) {
+                        return;
+                    }
+
+                    const optionNodes = Array.from(containerNode.querySelectorAll("[data-option-value]"));
+                    const targetNode = optionNodes.find(
+                        (node) => node instanceof HTMLElement && node.getAttribute("data-option-value") === answerValue
+                    );
+                    if (!(targetNode instanceof HTMLElement)) {
+                        return;
+                    }
+
+                    const targetRect = targetNode.getBoundingClientRect();
+                    const targetStyle = window.getComputedStyle(targetNode);
+                    setDragPreview((previousPreview) => ({
+                        ...previousPreview,
+                        active: true,
+                        x: targetRect.left + targetRect.width / 2,
+                        y: targetRect.top + targetRect.height / 2,
+                        width: previousPreview.width || targetRect.width,
+                        height: previousPreview.height || targetRect.height,
+                        fontSize: previousPreview.fontSize || targetStyle.fontSize,
+                        borderRadius: previousPreview.borderRadius || targetStyle.borderRadius,
+                        transitioning: true,
+                    }));
+                });
+            });
+
+            dragPreviewHideTimerRef.current = setTimeout(() => {
+                setDragPreview({
+                    active: false,
+                    x: 0,
+                    y: 0,
+                    value: "",
+                    width: 0,
+                    height: 0,
+                    fontSize: "",
+                    borderRadius: "",
+                    transitioning: false,
+                });
+                setTransitioningBounceOption("");
+            }, 480);
+        } else {
+            setTransitioningBounceOption("");
+            setDragPreview({
+                active: false,
+                x: 0,
+                y: 0,
+                value: "",
+                width: 0,
+                height: 0,
+                fontSize: "",
+                borderRadius: "",
+                transitioning: false,
+            });
+        }
 
         bounceBackTimerRef.current = setTimeout(() => {
             setBouncedBackOption("");
-        }, 340);
+        }, 560);
+        blankWrongFeedbackTimerRef.current = setTimeout(() => {
+            setBlankWrongFeedback(false);
+        }, 380);
     };
 
-    const handleSelectAnswer = (answerValue, source = "click") => {
+    const handleSelectAnswer = (answerValue, source = "click", dragMeta = null) => {
         const canAnswerNow =
-            phase === CHALLENGE_PHASES.READY || phase === CHALLENGE_PHASES.WRONG_FIRST;
-        if (!isQuestionContentAvailable || showSummary || !canAnswerNow || attemptCount >= 2) {
+            phase === CHALLENGE_PHASES.READY ||
+            phase === CHALLENGE_PHASES.WRONG_FIRST ||
+            phase === CHALLENGE_PHASES.ASSISTED;
+        if (!isQuestionContentAvailable || showSummary || !canAnswerNow || !isExplanationVisible) {
+            return;
+        }
+
+        if (phase !== CHALLENGE_PHASES.ASSISTED && attemptCount >= 2) {
+            return;
+        }
+
+        if (phase === CHALLENGE_PHASES.ASSISTED) {
+            const isCorrectAfterCoaching = toSafeLower(answerValue) === toSafeLower(correctAnswer);
+
+            if (isCorrectAfterCoaching) {
+                setSelectedAnswer(answerValue);
+                setAnswerIsCorrect(true);
+                setRecentWrongOption("");
+                setIsRetrySelectionActive(false);
+                setDisabledRetryOption("");
+                const assistedOutcomeClass = getOutcomeClassFromPhase(CHALLENGE_PHASES.AWAIT_ACKNOWLEDGE);
+                recordOutcomeIfMissing(assistedOutcomeClass);
+                setExplanationDelay({
+                    nextPhaseAfterDelay: CHALLENGE_PHASES.AWAIT_ACKNOWLEDGE,
+                    revealCorrectAnswer: false,
+                });
+                return;
+            }
+
+            setAnswerIsCorrect(false);
+            setSelectedAnswer("");
+            setRecentWrongOption(answerValue);
+            setIsRetrySelectionActive(false);
+            setDisabledRetryOption("");
+            setQuestionXpMessage("");
+            if (source === "drag") {
+                triggerBounceBack(answerValue, dragMeta);
+            }
+            setQuestionOutcomes((previousOutcomes) => {
+                if (previousOutcomes[currentQuestionIndex]) {
+                    return previousOutcomes;
+                }
+                return {
+                    ...previousOutcomes,
+                    [currentQuestionIndex]: OUTCOME_CLASSES.SKIPPED,
+                };
+            });
+            const failAdvanceDelayMs = source === "drag" ? 620 : 220;
+            window.setTimeout(() => {
+                advanceToNextQuestionOrSummary();
+            }, failAdvanceDelayMs);
             return;
         }
 
@@ -506,7 +682,7 @@ export default function ChallengePage() {
             setIsRetrySelectionActive(true);
             setDisabledRetryOption(answerValue);
             if (source === "drag") {
-                triggerBounceBack(answerValue);
+                triggerBounceBack(answerValue, dragMeta);
             }
             setExplanationDelay({ nextPhaseAfterDelay: null, revealCorrectAnswer: false });
             return;
@@ -520,13 +696,11 @@ export default function ChallengePage() {
         setIsRetrySelectionActive(false);
         setDisabledRetryOption("");
         if (source === "drag") {
-            triggerBounceBack(answerValue);
+            triggerBounceBack(answerValue, dragMeta);
         }
-        const assistedOutcomeClass = getOutcomeClassFromPhase(CHALLENGE_PHASES.AWAIT_ACKNOWLEDGE);
-        recordOutcomeIfMissing(assistedOutcomeClass);
         setExplanationDelay({
-            nextPhaseAfterDelay: CHALLENGE_PHASES.AWAIT_ACKNOWLEDGE,
-            revealCorrectAnswer: true,
+            nextPhaseAfterDelay: null,
+            revealCorrectAnswer: false,
         });
     };
 
@@ -577,12 +751,20 @@ export default function ChallengePage() {
             return;
         }
 
+        const targetNode = event.currentTarget instanceof HTMLElement ? event.currentTarget : null;
+        const targetRect = targetNode?.getBoundingClientRect();
+        const targetStyle = targetNode ? window.getComputedStyle(targetNode) : null;
+
         dragGestureRef.current = {
             isPointerDown: true,
             isDragging: false,
             startX: event.clientX,
             startY: event.clientY,
             value: answerValue,
+            previewWidth: targetRect?.width ?? 0,
+            previewHeight: targetRect?.height ?? 0,
+            previewFontSize: targetStyle?.fontSize ?? "",
+            previewBorderRadius: targetStyle?.borderRadius ?? "",
         };
 
         detachDragListeners();
@@ -614,6 +796,10 @@ export default function ChallengePage() {
                 x: moveEvent.clientX,
                 y: moveEvent.clientY,
                 value: activeGesture.value,
+                width: activeGesture.previewWidth,
+                height: activeGesture.previewHeight,
+                fontSize: activeGesture.previewFontSize,
+                borderRadius: activeGesture.previewBorderRadius,
             });
             setDropTargetActive(isPointInsideBlank(moveEvent.clientX, moveEvent.clientY));
         };
@@ -623,6 +809,10 @@ export default function ChallengePage() {
             if (!activeGesture.isPointerDown) {
                 return;
             }
+            const endDeltaX = endEvent.clientX - activeGesture.startX;
+            const endDeltaY = endEvent.clientY - activeGesture.startY;
+            const endMovementDistance = Math.hypot(endDeltaX, endDeltaY);
+            const wasDragAttempt = activeGesture.isDragging || endMovementDistance >= 8;
             const isDragDrop = activeGesture.isPointerDown && activeGesture.isDragging;
             const droppedAnswer = activeGesture.value;
             const shouldDrop =
@@ -635,6 +825,10 @@ export default function ChallengePage() {
                 startX: 0,
                 startY: 0,
                 value: "",
+                previewWidth: 0,
+                previewHeight: 0,
+                previewFontSize: "",
+                previewBorderRadius: "",
             };
             detachDragListeners();
 
@@ -643,18 +837,31 @@ export default function ChallengePage() {
                 x: 0,
                 y: 0,
                 value: "",
+                width: 0,
+                height: 0,
+                fontSize: "",
+                borderRadius: "",
+                transitioning: false,
             });
             setDraggedAnswer("");
             setDraggingOption("");
             setDropTargetActive(false);
 
             if (shouldDrop) {
-                handleSelectAnswer(droppedAnswer, "drag");
+                handleSelectAnswer(droppedAnswer, "drag", {
+                    dropX: endEvent.clientX,
+                    dropY: endEvent.clientY,
+                    previewWidth: activeGesture.previewWidth,
+                    previewHeight: activeGesture.previewHeight,
+                    previewFontSize: activeGesture.previewFontSize,
+                    previewBorderRadius: activeGesture.previewBorderRadius,
+                });
             }
 
+            suppressClickRef.current = wasDragAttempt;
             window.setTimeout(() => {
                 suppressClickRef.current = false;
-            }, 0);
+            }, wasDragAttempt ? 80 : 0);
         };
 
         dragListenersRef.current = {
@@ -792,8 +999,8 @@ export default function ChallengePage() {
     const isAnswerSelectionEnabled =
         isQuestionContentAvailable &&
         !showSummary &&
-        (phase === CHALLENGE_PHASES.READY || phase === CHALLENGE_PHASES.WRONG_FIRST) &&
-        attemptCount < 2;
+        (phase === CHALLENGE_PHASES.READY || phase === CHALLENGE_PHASES.WRONG_FIRST || phase === CHALLENGE_PHASES.ASSISTED) &&
+        isExplanationVisible;
 
     return (
         <div className="relative flex min-h-screen w-full flex-col overflow-x-hidden bg-slate-100 text-slate-900">
@@ -875,36 +1082,35 @@ export default function ChallengePage() {
                                 <div className="size-[88px] overflow-hidden rounded-full border-4 border-white bg-slate-200 shadow-md">
                                     <img className="h-full w-full object-cover" src={companionAvatar} alt="Companion avatar" />
                                 </div>
-                                <div className="relative max-w-[260px] rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm font-semibold text-slate-700 shadow-sm" data-testid="challenge-pet-message">
-                                    {petMessage}
-                                    <span
-                                        aria-hidden="true"
-                                        className="absolute -left-1.5 top-1/2 size-3 -translate-y-1/2 rotate-45 border-l border-b border-slate-200 bg-white"
-                                    />
-                                </div>
+                                <CharacterSpeechBubble
+                                    message={petMessage}
+                                    tailSide="left"
+                                    borderColor={petBubbleBorderColor}
+                                    className="max-w-[320px] bg-white/90"
+                                    textClassName="text-base font-black text-slate-700 md:text-lg"
+                                    flashOnChange
+                                    testId="challenge-pet-message"
+                                />
                             </div>
 
                             <div className="flex items-center gap-3 md:justify-end">
-                                <div className="relative max-w-[270px] rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm font-semibold text-slate-700 shadow-sm" data-testid="challenge-hero-message">
-                                    {heroMessage}
-                                    <span
-                                        aria-hidden="true"
-                                        className="absolute -right-1.5 top-1/2 size-3 -translate-y-1/2 rotate-45 border-t border-r border-slate-200 bg-white"
-                                    />
-                                </div>
-                                <div className="flex flex-col items-end gap-2">
-                                    <div className="rounded-2xl bg-primary/10 px-4 py-2 text-sm font-black text-primary shadow-sm" data-testid="challenge-phase-badge">
-                                        {phaseBadgeLabel}
-                                    </div>
-                                    <div className="size-[88px] overflow-hidden rounded-full border-4 border-white bg-slate-200 shadow-md">
-                                        <img className="h-full w-full object-cover" src={headerAvatar} alt="Hero avatar" />
-                                    </div>
+                                <CharacterSpeechBubble
+                                    message={heroMessage}
+                                    tailSide="right"
+                                    borderColor={heroBubbleBorderColor}
+                                    className="w-[86vw] max-w-[340px] h-[210px] md:h-[184px] bg-white/90 flex items-center"
+                                    textClassName="text-base font-black text-slate-700 md:text-lg"
+                                    flashOnChange
+                                    testId="challenge-hero-message"
+                                />
+                                <div className="size-[88px] overflow-hidden rounded-full border-4 border-white bg-slate-200 shadow-md">
+                                    <img className="h-full w-full object-cover" src={headerAvatar} alt="Hero avatar" />
                                 </div>
                             </div>
                         </section>
 
-                        <section className="mx-auto mt-10 w-full max-w-5xl rounded-[34px] border-2 border-primary/25 bg-white px-8 py-10 text-center shadow-sm md:px-10">
-                            <p className="mt-1 text-4xl font-black leading-tight text-slate-900 md:whitespace-nowrap" data-testid="challenge-question-sentence">
+                        <section className="mx-auto mt-10 w-full max-w-5xl rounded-[34px] border-2 border-primary/25 bg-white px-8 py-6 text-center shadow-sm md:px-10 md:py-7">
+                            <p className="text-3xl font-black leading-tight text-slate-900 md:text-[2rem] md:whitespace-nowrap" data-testid="challenge-question-sentence">
                                 {currentQuestionPrefix}{" "}
                                 <span
                                     ref={blankDropZoneRef}
@@ -913,25 +1119,38 @@ export default function ChallengePage() {
                                             ? answerIsCorrect
                                                 ? "border-emerald-300 bg-emerald-50 text-emerald-700"
                                                 : "border-amber-300 bg-amber-50 text-amber-700"
+                                            : blankWrongFeedback
+                                                ? "border-rose-300 bg-rose-50 text-rose-700 gpa-blank-wrong"
                                             : dropTargetActive
                                                 ? "border-primary bg-primary/10 text-primary"
                                                 : "border-primary/30 bg-primary/5 text-primary"
                                     }`}
                                     data-testid="challenge-blank"
+                                    data-blank-state={
+                                        selectedAnswer
+                                            ? answerIsCorrect
+                                                ? "filled-correct"
+                                                : "filled-wrong"
+                                            : blankWrongFeedback
+                                                ? "wrong-feedback"
+                                                : dropTargetActive
+                                                    ? "drop-target"
+                                                    : "idle"
+                                    }
                                 >
                                     {selectedAnswer || "_______"}
                                 </span>{" "}
                                 {currentQuestionSuffix}
                             </p>
                             {questionXpMessage && (
-                                <p className="mt-4 text-base font-black text-emerald-600" data-testid="challenge-xp-message">
+                                <p className="mt-2 text-base font-black text-emerald-600" data-testid="challenge-xp-message">
                                     {questionXpMessage}
                                 </p>
                             )}
                         </section>
 
-                        <section className="mt-9 flex flex-wrap items-center justify-center gap-4" data-testid="challenge-answer-options">
-                            {answerOptions.map((optionValue, optionIndex) => {
+                        <section ref={answerOptionsContainerRef} className="mx-auto mt-9 flex w-full max-w-5xl flex-wrap items-center justify-center gap-3 md:gap-4" data-testid="challenge-answer-options">
+                            {displayedAnswerOptions.map((optionValue, optionIndex) => {
                                 const isSelected = selectedAnswer === optionValue;
                                 const isRetryDisabled = isRetrySelectionActive && disabledRetryOption === optionValue;
                                 const isWrongSelection = recentWrongOption === optionValue && !answerIsCorrect;
@@ -962,6 +1181,7 @@ export default function ChallengePage() {
                                         aria-pressed={isSelected ? "true" : "false"}
                                         aria-disabled={!isAnswerSelectionEnabled || isRetryDisabled ? "true" : "false"}
                                         disabled={!isAnswerSelectionEnabled || isRetryDisabled}
+                                        data-option-value={optionValue}
                                         data-dragging={draggingOption === optionValue ? "true" : "false"}
                                         data-testid={`challenge-answer-option-${optionIndex}`}
                                         data-option-state={
@@ -977,7 +1197,7 @@ export default function ChallengePage() {
                                                             ? "selected"
                                                             : "idle"
                                         }
-                                        className={`min-w-[88px] rounded-2xl border px-6 py-3 text-2xl font-black shadow-sm transition md:text-3xl ${
+                                        className={`inline-flex items-center justify-center whitespace-nowrap rounded-2xl border px-4 py-2 text-lg font-black shadow-sm transition md:px-5 md:text-xl ${
                                             isSelected
                                                 ? answerIsCorrect
                                                     ? "border-emerald-300 bg-emerald-50 text-emerald-700 gpa-answer-selected"
@@ -989,6 +1209,8 @@ export default function ChallengePage() {
                                             isRetryDisabled ? "cursor-not-allowed" : ""
                                         } ${
                                             draggingOption === optionValue ? "gpa-answer-dragging" : ""
+                                        } ${
+                                            transitioningBounceOption === optionValue ? "opacity-0" : ""
                                         } ${
                                             isAnswerSelectionEnabled && !isRetryDisabled ? "cursor-grab active:cursor-grabbing select-none touch-none gpa-answer-option" : "gpa-answer-option"
                                         }`}
@@ -1073,11 +1295,15 @@ export default function ChallengePage() {
             </main>
             {dragPreview.active && (
                 <div
-                    className="gpa-drag-preview"
+                    className={`gpa-drag-preview ${dragPreview.transitioning ? "gpa-drag-preview-transition" : ""}`}
                     data-testid="challenge-drag-preview"
                     style={{
                         left: `${dragPreview.x}px`,
                         top: `${dragPreview.y}px`,
+                        width: dragPreview.width > 0 ? `${dragPreview.width}px` : undefined,
+                        height: dragPreview.height > 0 ? `${dragPreview.height}px` : undefined,
+                        fontSize: dragPreview.fontSize || undefined,
+                        borderRadius: dragPreview.borderRadius || undefined,
                     }}
                 >
                     {dragPreview.value}

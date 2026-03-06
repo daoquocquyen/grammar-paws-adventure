@@ -2,9 +2,11 @@
 
 import { useRouter } from "next/navigation";
 import { useEffect, useMemo, useState } from "react";
+import CharacterSpeechBubble from "../src/components/CharacterSpeechBubble";
 import HeaderBlock from "../src/components/HeaderBlock";
 import PetOptionCard from "../src/components/PetOptionCard";
 import PrimaryButton from "../src/components/PrimaryButton";
+import { getHeroThemeColor, getPetThemeColor } from "../src/lib/avatarBubbleThemes";
 import { validateOnboardingInput } from "../src/lib/onboardingValidation";
 
 const screen1ProfileKey = "gpa_player_profile_v1";
@@ -143,28 +145,6 @@ const petCheerfulMessages = {
     "Smiling Turtle": "Slow and steady smiles—together we’ll master every grammar challenge!",
 };
 
-const heroColorThemes = {
-    "hero-girl-1": "#f0c0c0",
-    "hero-boy-1": "#b0d0e0",
-    "hero-girl-2": "#d0c0f0",
-    "hero-boy-2": "#b0e0c0",
-    "hero-girl-3": "#b0e0d0",
-    "hero-boy-3": "#f0e0a0",
-    "hero-girl-4": "#f0a090",
-    "hero-boy-4": "#e0e090",
-};
-
-const petColorThemes = {
-    "Golden Retriever": "#b0d0e0",
-    "Calico Cat": "#f0c0c0",
-    "Fluffy Bunny": "#f0e0a0",
-    "Playful Hamster": "#c0e0c0",
-    "Cheerful Parakeet": "#d0c0f0",
-    "Jolly Goldfish": "#f0d0a0",
-    "Happy Bearded Dragon": "#f0a090",
-    "Smiling Turtle": "#b0e0d0",
-};
-
 const isValidProfileName = (value) => typeof value === "string" && value.trim().length > 0;
 
 const defaultProgressState = {
@@ -199,12 +179,12 @@ export default function Home() {
     );
 
     const selectedHeroTheme = useMemo(
-        () => heroColorThemes[selectedHero?.id] ?? heroColorThemes[heroes[0].id],
+        () => getHeroThemeColor(selectedHero?.id, selectedHero?.name),
         [selectedHero]
     );
 
     const selectedPetTheme = useMemo(
-        () => petColorThemes[selectedPet?.name] ?? petColorThemes[pets[1].name],
+        () => getPetThemeColor(selectedPet?.name),
         [selectedPet]
     );
 
@@ -481,15 +461,16 @@ export default function Home() {
                                                     src={selectedHero?.image ?? heroes[0].image}
                                                 />
                                             </div>
-                                            <div className="relative max-w-[62%] min-h-[140px] rounded-2xl border bg-transparent px-6 py-5 text-left flex items-center shadow-md" style={{ borderColor: selectedHeroTheme }}>
-                                                <span className="absolute -left-3 top-1/2 -translate-y-1/2 w-6 h-6 rounded-full border bg-transparent shadow-sm" style={{ borderColor: selectedHeroTheme }} />
-                                                <span className="absolute -left-5 top-[58%] -translate-y-1/2 w-3 h-3 rounded-full border bg-transparent shadow-sm" style={{ borderColor: selectedHeroTheme }} />
-                                                <p className="text-lg font-bold text-slate-800 leading-relaxed">
-                                                    {selectedHero
+                                            <CharacterSpeechBubble
+                                                message={
+                                                    selectedHero
                                                         ? heroCheerfulMessages[selectedHero.id]
-                                                        : "I’m your Grammar Hero—let’s have fun and do our best together!"}
-                                                </p>
-                                            </div>
+                                                        : "I’m your Grammar Hero—let’s have fun and do our best together!"
+                                                }
+                                                tailSide="left"
+                                                borderColor={selectedHeroTheme}
+                                                className="max-w-[62%] min-h-[140px] flex items-center"
+                                            />
                                         </div>
 
                                         <div className="w-full flex items-center justify-center py-2">
@@ -504,15 +485,16 @@ export default function Home() {
                                         </div>
 
                                         <div className="w-full flex items-end justify-end gap-4">
-                                            <div className="relative max-w-[62%] min-h-[140px] rounded-2xl border bg-transparent px-6 py-5 text-left flex items-center shadow-md" style={{ borderColor: selectedPetTheme }}>
-                                                <span className="absolute -right-3 top-1/2 -translate-y-1/2 w-6 h-6 rounded-full border bg-transparent shadow-sm" style={{ borderColor: selectedPetTheme }} />
-                                                <span className="absolute -right-5 top-[58%] -translate-y-1/2 w-3 h-3 rounded-full border bg-transparent shadow-sm" style={{ borderColor: selectedPetTheme }} />
-                                                <p className="text-lg font-bold text-slate-800 leading-relaxed">
-                                                    {selectedPet
+                                            <CharacterSpeechBubble
+                                                message={
+                                                    selectedPet
                                                         ? petCheerfulMessages[selectedPet.name]
-                                                        : "I’m your companion—let’s smile, learn, and conquer grammar together!"}
-                                                </p>
-                                            </div>
+                                                        : "I’m your companion—let’s smile, learn, and conquer grammar together!"
+                                                }
+                                                tailSide="right"
+                                                borderColor={selectedPetTheme}
+                                                className="max-w-[62%] min-h-[140px] flex items-center"
+                                            />
                                             <div className="w-32 h-32 rounded-full border p-1 shadow-md" style={selectedPetThemeStyle}>
                                                 <img
                                                     alt=""
