@@ -120,4 +120,22 @@ describe("Story 2.2 unit", () => {
         const reusedRecentQuestions = selection.selectedQuestionIds.filter((questionId) => recentQuestionIds.has(questionId));
         expect(reusedRecentQuestions.length).toBeGreaterThan(0);
     });
+
+    it("keeps sentence frames aligned with correct answers to avoid meaning mismatches", () => {
+        const commonNouns = createTopicQuestionBank("nouns", ["common"]);
+        const properNouns = createTopicQuestionBank("nouns", ["proper"]);
+        const whenAdverbs = createTopicQuestionBank("adverbs", ["when"]);
+
+        expect(commonNouns.map((question) => question.correctAnswer)).toEqual([
+            "dog",
+            "teacher",
+            "library",
+            "dog",
+            "teacher",
+            "library",
+        ]);
+        expect(properNouns[2].correctAnswer).toBe("Liam");
+        expect(whenAdverbs[2].sentencePrefix).toBe("They visited us");
+        expect(whenAdverbs[2].correctAnswer).toBe("yesterday");
+    });
 });

@@ -76,7 +76,7 @@ const QUESTION_BLUEPRINTS = {
             { before: "My friend", after: "won the spelling game." },
             { before: "We read a story by", after: "." },
         ],
-        correctPool: ["Ha Noi", "Mia", "Da Nang", "An", "Leo", "Liam"],
+        correctPool: ["Ha Noi", "Mia", "Liam", "Da Nang", "An", "Leo"],
         distractorPool: ["city", "girl", "beach", "friend", "country", "boy"],
     },
     "nouns::plurality": {
@@ -193,8 +193,8 @@ const QUESTION_BLUEPRINTS = {
         incorrectFeedback: "Pick the word that tells when the action happens.",
         sentenceFrames: [
             { before: "We will practice", after: "." },
-            { before: "I finished my homework", after: "." },
-            { before: "They are visiting us", after: "." },
+            { before: "I finish my homework", after: "." },
+            { before: "They visited us", after: "." },
         ],
         correctPool: ["tomorrow", "today", "yesterday", "later", "tonight", "soon"],
         distractorPool: ["quickly", "outside", "teacher", "blue", "and", "book"],
@@ -571,8 +571,18 @@ const pickRoundRobinByAspect = (questions, pickCount, randomFn) => {
 
 const buildQuestionFromBlueprint = ({ topicKey, aspectId, questionOrdinal, blueprint }) => {
     const safeOrdinal = Math.max(1, Number.isFinite(questionOrdinal) ? Math.floor(questionOrdinal) : 1);
-    const poolIndex = (safeOrdinal - 1) % Math.max(1, blueprint.correctPool.length);
-    const frameIndex = (safeOrdinal - 1) % Math.max(1, blueprint.sentenceFrames.length);
+    // Keep answer-frame pairs semantically aligned. If a blueprint has fewer
+    // frames than answers, we cycle only over the aligned subset.
+    const pairedVariantCount = Math.max(
+        1,
+        Math.min(
+            Array.isArray(blueprint.correctPool) ? blueprint.correctPool.length : 1,
+            Array.isArray(blueprint.sentenceFrames) ? blueprint.sentenceFrames.length : 1
+        )
+    );
+    const pairIndex = (safeOrdinal - 1) % pairedVariantCount;
+    const poolIndex = pairIndex;
+    const frameIndex = pairIndex;
 
     const correctAnswer = toSafeString(blueprint.correctPool[poolIndex]) || "answer";
     const distractorPool = Array.isArray(blueprint.distractorPool) ? blueprint.distractorPool : [];
