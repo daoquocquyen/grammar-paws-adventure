@@ -146,6 +146,18 @@ const petCheerfulMessages = {
 };
 
 const isValidProfileName = (value) => typeof value === "string" && value.trim().length > 0;
+const safeParseJson = (rawValue, fallbackValue = null) => {
+    if (typeof rawValue !== "string" || !rawValue.trim()) {
+        return fallbackValue;
+    }
+
+    try {
+        const parsedValue = JSON.parse(rawValue);
+        return parsedValue ?? fallbackValue;
+    } catch {
+        return fallbackValue;
+    }
+};
 
 const defaultProgressState = {
     version: 1,
@@ -226,7 +238,7 @@ export default function Home() {
             if (!progressRaw) {
                 localStorage.setItem(playerProgressKey, JSON.stringify(defaultProgressState));
             } else {
-                const parsedProgress = JSON.parse(progressRaw);
+                const parsedProgress = safeParseJson(progressRaw);
                 if (!Array.isArray(parsedProgress?.completedTopics)) {
                     localStorage.setItem(playerProgressKey, JSON.stringify(defaultProgressState));
                 }
@@ -235,7 +247,7 @@ export default function Home() {
             if (!accessoriesRaw) {
                 localStorage.setItem(petAccessoriesKey, JSON.stringify(defaultAccessoriesState));
             } else {
-                const parsedAccessories = JSON.parse(accessoriesRaw);
+                const parsedAccessories = safeParseJson(accessoriesRaw);
                 if (!Array.isArray(parsedAccessories?.unlockedAccessoryIds)) {
                     localStorage.setItem(petAccessoriesKey, JSON.stringify(defaultAccessoriesState));
                 }

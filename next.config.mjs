@@ -13,6 +13,16 @@ const nextConfig = {
                 destination: "/topic-intro",
                 permanent: true,
             },
+            {
+                source: "/screen4-game-challenge",
+                destination: "/challenge",
+                permanent: true,
+            },
+            {
+                source: "/screen4-challenge-screen",
+                destination: "/challenge",
+                permanent: true,
+            },
         ];
     },
 };
