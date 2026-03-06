@@ -1,6 +1,6 @@
 # Story 3.4: Streak and Persistence Bonus Awards
 
-Status: ready-for-dev
+Status: review
 
 ## Story
 
@@ -23,18 +23,18 @@ so that consistent effort and correction are both rewarded.
 
 ## Tasks / Subtasks
 
-- [ ] Implement streak bonus calculator (AC: 1, 4, 7)
-  - [ ] Track consecutive first-try-correct streak windows
-  - [ ] Award configured streak XP thresholds
-- [ ] Implement end-of-level bonus calculator (AC: 2, 3, 4, 7)
-  - [ ] Compute first-try accuracy percentage
-  - [ ] Compute corrected-mistake count
-- [ ] Wire bonus display and award-once guard (AC: 5, 6, 8)
-  - [ ] Render bonus breakdown in summary
-  - [ ] Prevent duplicate applications from repeated clicks/renders
-- [ ] Add automated validation coverage (AC: 7, 8)
-  - [ ] Unit tests for all bonus branches and edge cases
-  - [ ] Integration tests for summary display and idempotent apply behavior
+- [x] Implement streak bonus calculator (AC: 1, 4, 7)
+  - [x] Track consecutive first-try-correct streak windows
+  - [x] Award configured streak XP thresholds
+- [x] Implement end-of-level bonus calculator (AC: 2, 3, 4, 7)
+  - [x] Compute first-try accuracy percentage
+  - [x] Compute corrected-mistake count
+- [x] Wire bonus display and award-once guard (AC: 5, 6, 8)
+  - [x] Render bonus breakdown in summary
+  - [x] Prevent duplicate applications from repeated clicks/renders
+- [x] Add automated validation coverage (AC: 7, 8)
+  - [x] Unit tests for all bonus branches and edge cases
+  - [x] Integration tests for summary display and idempotent apply behavior
 
 ## Dev Notes
 
@@ -63,13 +63,31 @@ so that consistent effort and correction are both rewarded.
 GPT-5 Codex
 
 ### Debug Log References
-- N/A (story creation only)
+- `npm run dev-story:validate`
+- `npm run test:integration`
+- `npm run test:acceptance`
 
 ### Completion Notes List
-- Story created with explicit streak and persistence bonus contracts and validation requirements.
+- Implemented streak and end-of-level bonus calculators in `src/lib/challengeScoring.js`:
+  - streak awards: +5 at 3 first-try chain, +10 at 5 first-try chain
+  - first-try accuracy bonus: +20 at `>=70%`
+  - persistence bonus: +10 at 3+ corrected mistakes
+- Wired summary bonus breakdown rendering and total XP aggregation in `app/challenge/page.js`.
+- Added persistence idempotency guard (`summaryPersisted`) so summary awards are saved once per run.
+- Added acceptance/integration coverage for bonus rendering and idempotent persistence behavior.
+- Manual Test Steps (executed): complete full challenge first-try, verify summary shows streak/accuracy/persistence lines, verify bonus XP (`35`) and total XP (`125`), verify rerender does not duplicate persisted total XP.
+- Manual Validation Result: PASS.
+- Automated Validation Result: PASS (`build`, unit, integration, acceptance).
 
 ### File List
+- app/challenge/page.js
+- src/lib/challengeScoring.js
+- tests/unit/story-3-4-streak-and-persistence-bonus-awards.unit.test.js
+- tests/integration/story-3-4-streak-and-persistence-bonus-awards.integration.test.jsx
+- tests/acceptance/story-3-4-streak-and-persistence-bonus-awards.acceptance.spec.js
 - _bmad-output/implementation-artifacts/3-4-streak-and-persistence-bonus-awards.md
+- _bmad-output/implementation-artifacts/sprint-status.yaml
 
 ### Change Log
 - 2026-03-05: Story created as implementation-ready (`ready-for-dev`).
+- 2026-03-05: Implemented streak/persistence/accuracy bonuses with one-time persistence and test coverage; status moved to `review`.

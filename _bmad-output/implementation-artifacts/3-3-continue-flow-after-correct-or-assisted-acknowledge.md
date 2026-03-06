@@ -1,6 +1,6 @@
 # Story 3.3: Continue Flow After Correct or Assisted Acknowledge
 
-Status: ready-for-dev
+Status: review
 
 ## Story
 
@@ -22,17 +22,17 @@ so that I complete each question with closure.
 
 ## Tasks / Subtasks
 
-- [ ] Implement primary action state mapping (AC: 1, 2, 3)
-  - [ ] Map challenge state to action label and enabled state
-  - [ ] Prevent premature continuation
-- [ ] Implement question-to-question reset behavior (AC: 4)
-  - [ ] Reset ephemeral state only
-  - [ ] Preserve session-level outcome history and XP aggregates
-- [ ] Validate end-of-level transition semantics (AC: 5)
-  - [ ] Confirm last-question routing and progress display consistency
-- [ ] Add automated validation coverage (AC: 6)
-  - [ ] Integration tests for label/enable transitions
-  - [ ] Acceptance flow checks through assisted acknowledgment
+- [x] Implement primary action state mapping (AC: 1, 2, 3)
+  - [x] Map challenge state to action label and enabled state
+  - [x] Prevent premature continuation
+- [x] Implement question-to-question reset behavior (AC: 4)
+  - [x] Reset ephemeral state only
+  - [x] Preserve session-level outcome history and XP aggregates
+- [x] Validate end-of-level transition semantics (AC: 5)
+  - [x] Confirm last-question routing and progress display consistency
+- [x] Add automated validation coverage (AC: 6)
+  - [x] Integration tests for label/enable transitions
+  - [x] Acceptance flow checks through assisted acknowledgment
 
 ## Dev Notes
 
@@ -61,13 +61,31 @@ so that I complete each question with closure.
 GPT-5 Codex
 
 ### Debug Log References
-- N/A (story creation only)
+- `npm run dev-story:validate`
+- `npm run test:integration`
+- `npm run test:acceptance`
 
 ### Completion Notes List
-- Story created for deterministic progression and state-based primary action behavior.
+- Implemented declarative primary-action mapping in `app/challenge/page.js`:
+  - `Try Again` in guided retry
+  - `Continue` after resolved correct states
+  - `I understand` in assisted acknowledgment state
+- Enforced disabled `Continue` before resolution and disabled `I understand` until assisted explanation becomes visible.
+- Implemented clean transient-state reset on question advance while preserving session-level outcome and XP history.
+- Implemented last-question routing to summary with correct `N/N` and full progress bar fill semantics.
+- Updated existing Story 2.2 integration test to use new `challenge-primary-action` behavior.
+- Manual Test Steps (executed): validate label transitions across wrong/retry/assisted flows, verify `Continue` disabled pre-resolution, verify `I understand` gate after assisted reveal delay, verify final question routes to summary and progress displays `9/9`.
+- Manual Validation Result: PASS.
+- Automated Validation Result: PASS (`build`, unit, integration, acceptance).
 
 ### File List
+- app/challenge/page.js
+- tests/integration/story-2-2-diverse-question-selection-with-cooldown.integration.test.jsx
+- tests/integration/story-3-3-continue-flow-after-correct-or-assisted-acknowledge.integration.test.jsx
+- tests/acceptance/story-3-3-continue-flow-after-correct-or-assisted-acknowledge.acceptance.spec.js
 - _bmad-output/implementation-artifacts/3-3-continue-flow-after-correct-or-assisted-acknowledge.md
+- _bmad-output/implementation-artifacts/sprint-status.yaml
 
 ### Change Log
 - 2026-03-05: Story created as implementation-ready (`ready-for-dev`).
+- 2026-03-05: Implemented state-based continuation controls and end-of-level transition semantics; status moved to `review`.

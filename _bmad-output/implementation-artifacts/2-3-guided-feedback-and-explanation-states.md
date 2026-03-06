@@ -1,6 +1,6 @@
 # Story 2.3: Guided Feedback and Explanation States
 
-Status: ready-for-dev
+Status: review
 
 ## Story
 
@@ -23,21 +23,21 @@ so that I understand reasoning without blind guessing.
 
 ## Tasks / Subtasks
 
-- [ ] Implement challenge feedback state model (AC: 1, 2, 3, 4, 7)
-  - [ ] Add explicit answer-state phases for `ready`, `wrong_first`, `correct_first`, `correct_second`, `assisted`, and `await_acknowledge`
-  - [ ] Ensure action labels and enabled/disabled behavior follow phase rules
-- [ ] Implement hero hint/explanation renderer (AC: 1, 2, 3, 4, 5)
-  - [ ] Render hint-only content before answer
-  - [ ] Render first-wrong explanation without answer reveal
-  - [ ] Render assisted explanation with answer reveal and reasoning
-  - [ ] Apply 400-600ms explanation delay after answer input
-- [ ] Implement supportive pet message states (AC: 6)
-  - [ ] Add concise encouragement variants for ready/correct/retry/assisted
-  - [ ] Remove punitive terms from pet message copy paths
-- [ ] Add automated validation coverage (AC: 8)
-  - [ ] Unit tests for state transitions and explanation payload selection
-  - [ ] Integration tests for rendered hint/explanation and action label transitions
-  - [ ] Acceptance test for end-to-end guided retry -> assisted acknowledgment path
+- [x] Implement challenge feedback state model (AC: 1, 2, 3, 4, 7)
+  - [x] Add explicit answer-state phases for `ready`, `wrong_first`, `correct_first`, `correct_second`, `assisted`, and `await_acknowledge`
+  - [x] Ensure action labels and enabled/disabled behavior follow phase rules
+- [x] Implement hero hint/explanation renderer (AC: 1, 2, 3, 4, 5)
+  - [x] Render hint-only content before answer
+  - [x] Render first-wrong explanation without answer reveal
+  - [x] Render assisted explanation with answer reveal and reasoning
+  - [x] Apply 400-600ms explanation delay after answer input
+- [x] Implement supportive pet message states (AC: 6)
+  - [x] Add concise encouragement variants for ready/correct/retry/assisted
+  - [x] Remove punitive terms from pet message copy paths
+- [x] Add automated validation coverage (AC: 8)
+  - [x] Unit tests for state transitions and explanation payload selection
+  - [x] Integration tests for rendered hint/explanation and action label transitions
+  - [x] Acceptance test for end-to-end guided retry -> assisted acknowledgment path
 
 ## Dev Notes
 
@@ -82,16 +82,29 @@ so that I understand reasoning without blind guessing.
 GPT-5 Codex
 
 ### Debug Log References
-- N/A (story creation only)
+- `npm run dev-story:validate`
+- `npm run test:integration`
+- `npm run test:acceptance`
 
 ### Completion Notes List
-- Story file created and aligned to approved correct-course updates.
-- Acceptance criteria translated into implementable behavior and test scope.
+- Implemented deterministic challenge feedback phases in `app/challenge/page.js` using `ready`, `wrong_first`, `correct_first`, `correct_second`, `assisted`, and `await_acknowledge`.
+- Added centralized feedback utilities in `src/lib/challengeStateModel.js` for hero/pet messaging, action-state mapping, and explanation delay contract (`EXPLANATION_DELAY_MS=500`).
+- Implemented delayed hero explanation rendering after answer selection with non-revealing first-wrong copy and assisted reveal copy.
+- Implemented supportive pet messaging across ready/retry/correct/assisted states with no punitive wording.
+- Manual Test Steps (executed): open `/challenge` with `gpa_selected_topic_v1=nouns`, select wrong answer, verify delayed `Try Again`, click `Try Again`, verify first wrong option disabled, select second wrong option, verify delayed assisted reveal + `I understand`, click `I understand`, verify progression to next question.
+- Manual Validation Result: PASS.
+- Automated Validation Result: PASS (`build`, unit, integration, acceptance).
 
 ### File List
+- app/challenge/page.js
+- src/lib/challengeStateModel.js
+- src/lib/challengeQuestionSelection.js
+- tests/unit/story-2-3-guided-feedback-and-explanation-states.unit.test.js
+- tests/integration/story-2-3-guided-feedback-and-explanation-states.integration.test.jsx
+- tests/acceptance/story-2-3-guided-feedback-and-explanation-states.acceptance.spec.js
 - _bmad-output/implementation-artifacts/2-3-guided-feedback-and-explanation-states.md
 - _bmad-output/implementation-artifacts/sprint-status.yaml
 
 ### Change Log
 - 2026-03-05: Story created as implementation-ready (`ready-for-dev`) from approved sprint change proposal.
-
+- 2026-03-05: Implemented guided feedback state machine, delayed hero explanations, supportive pet messaging, and full validation coverage; status moved to `review`.

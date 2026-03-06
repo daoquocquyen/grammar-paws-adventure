@@ -1,6 +1,6 @@
 # Story 2.5: Performance Indicators and Answer Micro-Interactions
 
-Status: ready-for-dev
+Status: review
 
 ## Story
 
@@ -26,21 +26,21 @@ so that I can track learning quality without feeling punished.
 
 ## Tasks / Subtasks
 
-- [ ] Implement indicator rendering and mapping (AC: 1, 2)
-  - [ ] Add indicator-state model tied to per-question outcome class
-  - [ ] Render `⭐/☆/✓` summary row near progress zone
-  - [ ] Remove punitive copy/icon paths from challenge UI
-- [ ] Implement micro-interaction states (AC: 3, 4, 5, 7)
-  - [ ] Selected answer highlight + subtle scale
-  - [ ] Incorrect answer shake + disable for retry
-  - [ ] Correct answer soft glow state
-- [ ] Validate progress bar visual semantics (AC: 6)
-  - [ ] Keep `1/N` with empty fill on first question
-  - [ ] Ensure last question reaches full fill
-- [ ] Add automated validation coverage (AC: 8)
-  - [ ] Unit tests for indicator mapping by outcome type
-  - [ ] Integration tests for class/state transitions on select/wrong/correct
-  - [ ] Acceptance checks for indicator visibility and non-punitive UI constraints
+- [x] Implement indicator rendering and mapping (AC: 1, 2)
+  - [x] Add indicator-state model tied to per-question outcome class
+  - [x] Render `⭐/☆/✓` summary row near progress zone
+  - [x] Remove punitive copy/icon paths from challenge UI
+- [x] Implement micro-interaction states (AC: 3, 4, 5, 7)
+  - [x] Selected answer highlight + subtle scale
+  - [x] Incorrect answer shake + disable for retry
+  - [x] Correct answer soft glow state
+- [x] Validate progress bar visual semantics (AC: 6)
+  - [x] Keep `1/N` with empty fill on first question
+  - [x] Ensure last question reaches full fill
+- [x] Add automated validation coverage (AC: 8)
+  - [x] Unit tests for indicator mapping by outcome type
+  - [x] Integration tests for class/state transitions on select/wrong/correct
+  - [x] Acceptance checks for indicator visibility and non-punitive UI constraints
 
 ## Dev Notes
 
@@ -78,13 +78,29 @@ so that I can track learning quality without feeling punished.
 GPT-5 Codex
 
 ### Debug Log References
-- N/A (story creation only)
+- `npm run dev-story:validate`
+- `npm run test:integration`
+- `npm run test:acceptance`
 
 ### Completion Notes List
-- Story created from approved correct-course proposal and mapped to current challenge implementation direction.
+- Added per-question indicator rendering in `app/challenge/page.js` backed by outcome source-of-truth and `src/lib/challengeStateModel.js` mapping (`⭐`, `☆`, `✓`).
+- Removed punitive UI labels and replaced phase badge text with non-punitive labels (`Ready`, `Guided Retry`, `Great Work`, `Coach Help`).
+- Implemented answer micro-interaction classes (`gpa-answer-selected`, `gpa-answer-shake`, `gpa-answer-correct-glow`) and added CSS animations in `app/globals.css`.
+- Implemented guided-retry disabled-option behavior and preserved progress semantics (`1/N` with empty fill at first question, full fill on last question).
+- Manual Test Steps (executed): trigger first wrong answer, verify wrong-state feedback and `Try Again`, verify wrong option disabled on retry, select correct retry answer, verify indicator row updates to `☆`, confirm no `Wrong`/punitive labels in challenge UI.
+- Manual Validation Result: PASS.
+- Automated Validation Result: PASS (`build`, unit, integration, acceptance).
 
 ### File List
+- app/challenge/page.js
+- app/globals.css
+- src/lib/challengeStateModel.js
+- tests/unit/story-2-5-performance-indicators-and-answer-micro-interactions.unit.test.js
+- tests/integration/story-2-5-performance-indicators-and-answer-micro-interactions.integration.test.jsx
+- tests/acceptance/story-2-5-performance-indicators-and-answer-micro-interactions.acceptance.spec.js
 - _bmad-output/implementation-artifacts/2-5-performance-indicators-and-answer-micro-interactions.md
+- _bmad-output/implementation-artifacts/sprint-status.yaml
 
 ### Change Log
 - 2026-03-05: Story created as implementation-ready (`ready-for-dev`).
+- 2026-03-05: Implemented indicator model and child-friendly answer micro-interactions with full test coverage; status moved to `review`.

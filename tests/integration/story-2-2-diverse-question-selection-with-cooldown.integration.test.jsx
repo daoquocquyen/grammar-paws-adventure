@@ -1,4 +1,4 @@
-import { cleanup, fireEvent, render, screen } from "@testing-library/react";
+import { cleanup, fireEvent, render, screen, waitFor } from "@testing-library/react";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
 vi.mock("next/link", () => ({
@@ -57,17 +57,29 @@ describe("Story 2.2 integration", () => {
         expect(selectedQuestionIds).not.toContain("nouns::plurality::q2");
     });
 
-    it("changes the rendered sentence after moving to next question", () => {
+    it("advances to the next question after resolving current one", async () => {
         window.localStorage.setItem("gpa_selected_topic_v1", "nouns");
 
         render(<ChallengePage />);
 
-        const firstSentence = screen.getByTestId("challenge-question-sentence").textContent;
+        const metadata = screen.getByTestId("challenge-selection-metadata");
+        const correctAnswer = (metadata.getAttribute("data-current-correct-answer") || "").trim().toLowerCase();
+        const answerButtons = screen.getAllByRole("button").filter((button) =>
+            (button.getAttribute("data-testid") || "").startsWith("challenge-answer-option-")
+        );
+        const correctButton = answerButtons.find(
+            (button) => (button.textContent || "").trim().toLowerCase() === correctAnswer
+        );
 
-        fireEvent.click(screen.getByTestId("challenge-answer-option-0"));
-        fireEvent.click(screen.getByRole("button", { name: /Next Question/i }));
+        if (!correctButton) {
+            throw new Error("Missing correct option for advance test");
+        }
 
-        const secondSentence = screen.getByTestId("challenge-question-sentence").textContent;
-        expect(secondSentence).not.toBe(firstSentence);
+        fireEvent.click(correctButton);
+        const primaryAction = screen.getByTestId("challenge-primary-action");
+        await waitFor(() => expect(primaryAction).toBeEnabled());
+        fireEvent.click(primaryAction);
+
+        expect(screen.getByTestId("challenge-progress-text")).toHaveTextContent("2/9");
     });
 });

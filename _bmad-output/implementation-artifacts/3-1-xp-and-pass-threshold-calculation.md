@@ -1,6 +1,6 @@
 # Story 3.1: XP and Pass Threshold Calculation
 
-Status: ready-for-dev
+Status: review
 
 ## Story
 
@@ -25,18 +25,18 @@ so that progression rewards learning effort and correctness.
 
 ## Tasks / Subtasks
 
-- [ ] Implement XP calculation utility (AC: 1, 7)
-  - [ ] Add deterministic mapping from outcome class to base XP
-  - [ ] Add aggregate score + pass-threshold helper
-- [ ] Wire per-question award flow (AC: 3, 4, 5)
-  - [ ] Persist outcome class in challenge session state
-  - [ ] Guard against duplicate awards
-  - [ ] Render outcome-aligned XP message
-- [ ] Implement level-complete summary fields (AC: 2, 6)
-  - [ ] Show total XP and pass/fail from computed aggregates
-- [ ] Add automated validation coverage (AC: 7, 8)
-  - [ ] Unit tests for XP mapping and pass-threshold edge cases
-  - [ ] Integration tests for one-time award and summary correctness
+- [x] Implement XP calculation utility (AC: 1, 7)
+  - [x] Add deterministic mapping from outcome class to base XP
+  - [x] Add aggregate score + pass-threshold helper
+- [x] Wire per-question award flow (AC: 3, 4, 5)
+  - [x] Persist outcome class in challenge session state
+  - [x] Guard against duplicate awards
+  - [x] Render outcome-aligned XP message
+- [x] Implement level-complete summary fields (AC: 2, 6)
+  - [x] Show total XP and pass/fail from computed aggregates
+- [x] Add automated validation coverage (AC: 7, 8)
+  - [x] Unit tests for XP mapping and pass-threshold edge cases
+  - [x] Integration tests for one-time award and summary correctness
 
 ## Dev Notes
 
@@ -65,13 +65,27 @@ so that progression rewards learning effort and correctness.
 GPT-5 Codex
 
 ### Debug Log References
-- N/A (story creation only)
+- `npm run dev-story:validate`
+- `npm run test:integration`
+- `npm run test:acceptance`
 
 ### Completion Notes List
-- Story created with explicit XP and pass-threshold contracts for implementation and tests.
+- Added XP and pass-threshold calculators in `src/lib/challengeScoring.js` with exact base mapping: first=10, second=6, assisted=3, skip=0, and pass threshold `>=80%`.
+- Wired per-question outcome persistence and one-time XP messaging in `app/challenge/page.js` using canonical `questionOutcomes` model.
+- Added level-complete summary with base XP, total XP, pass/fail, score percentage, and persisted `latestChallenge` snapshot in `gpa_player_progress_v1`.
+- Manual Test Steps (executed): complete full challenge with correct answers, verify per-question XP messaging, verify summary total (`125`) and pass state, verify persisted `latestChallenge` contains 9 outcomes and consistent XP totals.
+- Manual Validation Result: PASS.
+- Automated Validation Result: PASS (`build`, unit, integration, acceptance).
 
 ### File List
+- app/challenge/page.js
+- src/lib/challengeScoring.js
+- src/lib/challengeStateModel.js
+- tests/unit/story-3-1-xp-and-pass-threshold-calculation.unit.test.js
+- tests/integration/story-3-1-xp-and-pass-threshold-calculation.integration.test.jsx
 - _bmad-output/implementation-artifacts/3-1-xp-and-pass-threshold-calculation.md
+- _bmad-output/implementation-artifacts/sprint-status.yaml
 
 ### Change Log
 - 2026-03-05: Story created as implementation-ready (`ready-for-dev`).
+- 2026-03-05: Implemented XP and pass-threshold runtime with persisted per-question outcomes and validation coverage; status moved to `review`.
