@@ -66,7 +66,7 @@ Grammar Paws Adventure is a kid-first web game for an 11-year-old non-native Eng
 - Number of questions depends on topic aspect count.
 - Default formula: questions = clamp(aspect_count * 3, min 6, max 15).
 - Question selection must vary across replays using anti-repeat logic.
-- Answer options must be capped at 3 for MVP (2 for early levels, up to 3 for mid levels).
+- Answer options must be capped at 4 for MVP.
 - Drag interactions must use single-word drag only.
 
 ### FR-03 Answer Evaluation + Explanation

@@ -155,7 +155,8 @@ Current navigation status:
     - Per-question performance indicators (`⭐`, `☆`, `✓`).
   - Center challenge zone:
     - Single sentence with one blank.
-    - 2-3 answer options max (level-dependent).
+    - 4 answer options per question.
+    - Wider question sentence container to keep common prompts on one line on desktop.
   - Bottom coaching zone:
     - Pet avatar bubble (effort-focused encouragement).
     - Hero avatar bubble (hint pre-answer, explanation post-answer).
