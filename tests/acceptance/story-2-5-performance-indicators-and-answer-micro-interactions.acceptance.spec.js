@@ -32,30 +32,34 @@ test.describe("Story 2.5 acceptance", () => {
         await optionButtons.nth(firstWrongIndex).click();
 
         const primaryAction = page.getByTestId("challenge-primary-action");
-        await expect(primaryAction).toContainText("Continue");
+        await expect(primaryAction).toContainText("Next");
         await expect(primaryAction).toBeDisabled();
 
         await expect(optionButtons.nth(firstWrongIndex)).toHaveAttribute("data-option-state", "wrong");
 
         await expect(optionButtons.nth(firstWrongIndex)).toBeDisabled();
 
-        let correctIndex = -1;
-        for (let index = 0; index < optionCount; index += 1) {
-            const option = optionButtons.nth(index);
-            const isDisabled = await option.isDisabled();
-            const optionText = ((await option.textContent()) || "").trim().toLowerCase();
-            if (!isDisabled && optionText === correctAnswer) {
-                correctIndex = index;
-                break;
+        const findEnabledCorrectIndex = async () => {
+            for (let index = 0; index < optionCount; index += 1) {
+                const option = optionButtons.nth(index);
+                const isDisabled = await option.isDisabled();
+                const optionText = ((await option.textContent()) || "").trim().toLowerCase();
+                if (!isDisabled && optionText === correctAnswer) {
+                    return index;
+                }
             }
-        }
+            return -1;
+        };
+
+        await expect.poll(findEnabledCorrectIndex).not.toBe(-1);
+        const correctIndex = await findEnabledCorrectIndex();
 
         if (correctIndex < 0) {
             throw new Error("Could not find enabled correct option");
         }
 
         await optionButtons.nth(correctIndex).click();
-        await expect(primaryAction).toContainText("Continue");
+        await expect(primaryAction).toContainText("Next");
         await expect(primaryAction).toBeEnabled();
 
         await expect(page.getByTestId("challenge-indicator-0")).toHaveAttribute("data-indicator-type", "HOLLOW_STAR");

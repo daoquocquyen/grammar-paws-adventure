@@ -30,7 +30,7 @@ test.describe("Story 3.3 acceptance", () => {
         await expect(page.getByTestId("challenge-selection-metadata")).toHaveAttribute("data-selected-question-ids", /nouns::/);
 
         const primaryAction = page.getByTestId("challenge-primary-action");
-        await expect(primaryAction).toContainText("Continue");
+        await expect(primaryAction).toContainText("Next");
         await expect(primaryAction).toBeDisabled();
 
         for (let index = 0; index < 9; index += 1) {

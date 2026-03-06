@@ -33,7 +33,7 @@ describe("Story 2.5 integration", () => {
 
         fireEvent.click(firstWrongButton);
 
-        await waitFor(() => expect(primaryAction).toHaveTextContent("Continue"));
+        await waitFor(() => expect(primaryAction).toHaveTextContent("Next"));
         expect(primaryAction).toBeDisabled();
 
         expect(firstWrongButton).toHaveAttribute("data-option-state", "wrong");
@@ -55,10 +55,10 @@ describe("Story 2.5 integration", () => {
         }
 
         fireEvent.click(correctButton);
-        await waitFor(() => expect(primaryAction).toHaveTextContent("Continue"));
+        await waitFor(() => expect(primaryAction).toHaveTextContent("Next"));
         await waitFor(() => expect(primaryAction).toBeEnabled());
         await waitFor(() =>
-            expect(screen.getByTestId("challenge-pet-message")).toHaveTextContent("+6 XP! You fixed it!")
+            expect(screen.getByTestId("challenge-pet-message")).toHaveTextContent("+6 XP!")
         );
 
         expect(correctButton).toHaveAttribute("data-option-state", "correct");
@@ -115,7 +115,7 @@ describe("Story 2.5 integration", () => {
         expect(screen.getByTestId("challenge-blank")).toHaveTextContent("_______");
 
         const primaryAction = screen.getByTestId("challenge-primary-action");
-        expect(primaryAction).toHaveTextContent("Continue");
+        expect(primaryAction).toHaveTextContent("Next");
         expect(primaryAction).toBeDisabled();
 
         await waitFor(() => {
@@ -177,7 +177,7 @@ describe("Story 2.5 integration", () => {
         });
 
         await waitFor(() => expect(blank).toHaveAttribute("data-blank-state", "filled-correct"));
-        expect(blank).toHaveTextContent(correctAnswer);
+        expect((blank.textContent || "").trim().toLowerCase()).toBe(correctAnswer);
 
         const optionButtonsAfterDrop = within(screen.getByTestId("challenge-answer-options")).getAllByRole("button");
         const renderedOptionsText = optionButtonsAfterDrop.map((button) => (button.textContent || "").trim().toLowerCase());

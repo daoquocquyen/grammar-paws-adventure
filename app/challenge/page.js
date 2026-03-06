@@ -404,8 +404,8 @@ export default function ChallengePage() {
     );
 
     const petMessage = useMemo(
-        () => getPetFeedbackText({ phase, hasResolvedQuestion, outcomeClass: currentOutcome }),
-        [phase, hasResolvedQuestion, currentOutcome]
+        () => getPetFeedbackText({ phase, hasResolvedQuestion, outcomeClass: currentOutcome, attemptCount }),
+        [phase, hasResolvedQuestion, currentOutcome, attemptCount]
     );
 
     const clearExplanationTimer = () => {
@@ -637,22 +637,12 @@ export default function ChallengePage() {
             setDisabledRetryOption("");
             setHiddenAnswerPanelOption("");
             setQuestionXpMessage("");
+            setAttemptCount((previousCount) => Math.min(3, previousCount + 1));
             if (source === "drag") {
                 triggerBounceBack(answerValue, dragMeta);
             }
-            setQuestionOutcomes((previousOutcomes) => {
-                if (previousOutcomes[currentQuestionIndex]) {
-                    return previousOutcomes;
-                }
-                return {
-                    ...previousOutcomes,
-                    [currentQuestionIndex]: OUTCOME_CLASSES.SKIPPED,
-                };
-            });
-            const failAdvanceDelayMs = source === "drag" ? 620 : 220;
-            window.setTimeout(() => {
-                advanceToNextQuestionOrSummary();
-            }, failAdvanceDelayMs);
+            setPhase(CHALLENGE_PHASES.ASSISTED);
+            setExplanationDelay({ nextPhaseAfterDelay: null, revealCorrectAnswer: false });
             return;
         }
 

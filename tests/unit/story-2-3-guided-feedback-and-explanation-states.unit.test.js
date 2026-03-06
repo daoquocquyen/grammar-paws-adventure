@@ -31,17 +31,17 @@ describe("Story 2.3 unit", () => {
 
     it("maps primary action labels by phase", () => {
         expect(getPrimaryActionState({ phase: CHALLENGE_PHASES.WRONG_FIRST, isExplanationVisible: true, hasResolvedQuestion: false })).toEqual({
-            label: "Continue",
+            label: "Next",
             enabled: false,
         });
 
         expect(getPrimaryActionState({ phase: CHALLENGE_PHASES.CORRECT_FIRST, isExplanationVisible: true, hasResolvedQuestion: true })).toEqual({
-            label: "Continue",
+            label: "Next",
             enabled: true,
         });
 
         expect(getPrimaryActionState({ phase: CHALLENGE_PHASES.AWAIT_ACKNOWLEDGE, isExplanationVisible: true, hasResolvedQuestion: true })).toEqual({
-            label: "I understand",
+            label: "Next",
             enabled: true,
         });
     });

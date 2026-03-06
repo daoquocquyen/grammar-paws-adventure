@@ -37,7 +37,7 @@ describe("Story 3.3 integration", () => {
         const metadata = screen.getByTestId("challenge-selection-metadata");
         const correctAnswer = (metadata.getAttribute("data-current-correct-answer") || "").trim().toLowerCase();
         const primaryAction = screen.getByTestId("challenge-primary-action");
-        expect(primaryAction).toHaveTextContent("Continue");
+        expect(primaryAction).toHaveTextContent("Next");
         expect(primaryAction).toBeDisabled();
 
         const buttons = within(screen.getByTestId("challenge-answer-options")).getAllByRole("button");
@@ -50,7 +50,7 @@ describe("Story 3.3 integration", () => {
 
         fireEvent.click(firstWrongButton);
 
-        await waitFor(() => expect(primaryAction).toHaveTextContent("Continue"));
+        await waitFor(() => expect(primaryAction).toHaveTextContent("Next"));
         expect(primaryAction).toBeDisabled();
 
         await waitFor(() => {
@@ -70,7 +70,7 @@ describe("Story 3.3 integration", () => {
         }
         fireEvent.click(secondWrongButton);
 
-        await waitFor(() => expect(primaryAction).toHaveTextContent("I understand"));
+        await waitFor(() => expect(primaryAction).toHaveTextContent("Next"));
         expect(primaryAction).toBeDisabled();
         await waitFor(() => {
             const buttons = within(screen.getByTestId("challenge-answer-options")).getAllByRole("button");
@@ -90,10 +90,10 @@ describe("Story 3.3 integration", () => {
 
         fireEvent.click(coachedCorrectButton);
 
-        expect(primaryAction).toHaveTextContent("I understand");
+        expect(primaryAction).toHaveTextContent("Next");
         expect(primaryAction).toBeDisabled();
         await waitFor(() =>
-            expect(screen.getByTestId("challenge-pet-message")).toHaveTextContent("+3 XP! Learning moment!")
+            expect(screen.getByTestId("challenge-pet-message")).toHaveTextContent("+3 XP!")
         );
         expect(screen.queryByTestId("challenge-xp-message")).not.toBeInTheDocument();
         await waitFor(() => expect(primaryAction).toBeEnabled());
@@ -102,7 +102,7 @@ describe("Story 3.3 integration", () => {
 
         expect(screen.getByTestId("challenge-progress-text")).toHaveTextContent("2/9");
         expect(screen.getByTestId("challenge-blank")).toHaveTextContent("_______");
-        expect(primaryAction).toHaveTextContent("Continue");
+        expect(primaryAction).toHaveTextContent("Next");
         expect(primaryAction).toBeDisabled();
     });
 

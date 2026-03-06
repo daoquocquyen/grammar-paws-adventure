@@ -87,13 +87,13 @@ export const getPrimaryActionState = ({
 }) => {
     if (phase === CHALLENGE_PHASES.ASSISTED || phase === CHALLENGE_PHASES.AWAIT_ACKNOWLEDGE) {
         return {
-            label: "I understand",
+            label: "Next",
             enabled: phase === CHALLENGE_PHASES.AWAIT_ACKNOWLEDGE && Boolean(isExplanationVisible),
         };
     }
 
     return {
-        label: "Continue",
+        label: "Next",
         enabled: Boolean(hasResolvedQuestion && isExplanationVisible),
     };
 };
@@ -136,7 +136,7 @@ export const getHeroFeedbackText = ({
     return `Let's solve it step by step. First, read the clue carefully. Then match the grammar rule. The correct answer is "${safeCorrect}".`;
 };
 
-export const getPetFeedbackText = ({ phase, hasResolvedQuestion, outcomeClass }) => {
+export const getPetFeedbackText = ({ phase, hasResolvedQuestion, outcomeClass, attemptCount }) => {
     if (outcomeClass === OUTCOME_CLASSES.FIRST_TRY_CORRECT) {
         return "Amazing focus. +10 XP!";
     }
@@ -154,6 +154,14 @@ export const getPetFeedbackText = ({ phase, hasResolvedQuestion, outcomeClass })
     }
 
     if (phase === CHALLENGE_PHASES.ASSISTED || phase === CHALLENGE_PHASES.AWAIT_ACKNOWLEDGE) {
+        if (
+            phase === CHALLENGE_PHASES.ASSISTED &&
+            Number.isFinite(attemptCount) &&
+            attemptCount >= 3 &&
+            !hasResolvedQuestion
+        ) {
+            return "That one is tricky. You can do it, try again!";
+        }
         return "Step by step is brave and smart. Keep going.";
     }
 

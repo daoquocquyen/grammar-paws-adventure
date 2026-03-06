@@ -17,7 +17,7 @@ describe("Story 3.2 integration", () => {
         cleanup();
     });
 
-    it("enforces two-attempt flow with disabled retry option and coached third-attempt skip", async () => {
+    it("enforces two-attempt flow with disabled retry option and coached third-attempt retry state", async () => {
         render(<ChallengePage />);
 
         const metadata = screen.getByTestId("challenge-selection-metadata");
@@ -34,7 +34,7 @@ describe("Story 3.2 integration", () => {
 
         fireEvent.click(firstWrongButton);
 
-        await waitFor(() => expect(primaryAction).toHaveTextContent("Continue"));
+        await waitFor(() => expect(primaryAction).toHaveTextContent("Next"));
         expect(primaryAction).toBeDisabled();
 
         await waitFor(() => {
@@ -55,7 +55,7 @@ describe("Story 3.2 integration", () => {
 
         fireEvent.click(secondWrongButton);
 
-        await waitFor(() => expect(primaryAction).toHaveTextContent("I understand"));
+        await waitFor(() => expect(primaryAction).toHaveTextContent("Next"));
         expect(primaryAction).toBeDisabled();
         await waitFor(() => {
             const buttons = within(screen.getByTestId("challenge-answer-options")).getAllByRole("button");
@@ -75,7 +75,12 @@ describe("Story 3.2 integration", () => {
         }
 
         fireEvent.click(thirdWrongButton);
-        await waitFor(() => expect(screen.getByTestId("challenge-progress-text")).toHaveTextContent("2/9"));
+        await waitFor(() =>
+            expect(screen.getByTestId("challenge-pet-message").textContent?.toLowerCase() || "").toContain(
+                "try again"
+            )
+        );
+        expect(screen.getByTestId("challenge-progress-text")).toHaveTextContent("1/9");
         expect(screen.getByTestId("challenge-indicator-0")).toHaveAttribute("data-indicator-type", "EMPTY");
     });
 });

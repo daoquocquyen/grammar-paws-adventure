@@ -1,7 +1,7 @@
 import { expect, test } from "@playwright/test";
 
 test.describe("Story 2.3 acceptance", () => {
-    test("supports guided retry and coached retry without auto-resolution on second wrong", async ({ page }) => {
+    test("supports guided retry and coached retry without auto-resolution on second or third wrong", async ({ page }) => {
         await page.goto("/");
 
         await page.evaluate(() => {
@@ -32,7 +32,7 @@ test.describe("Story 2.3 acceptance", () => {
         await optionButtons.nth(firstWrongIndex).click();
 
         const primaryAction = page.getByTestId("challenge-primary-action");
-        await expect(primaryAction).toContainText("Continue");
+        await expect(primaryAction).toContainText("Next");
         await expect(primaryAction).toBeDisabled();
 
         await expect(optionButtons.nth(firstWrongIndex)).toBeDisabled();
@@ -58,7 +58,7 @@ test.describe("Story 2.3 acceptance", () => {
 
         await optionButtons.nth(secondWrongIndex).click();
 
-        await expect(primaryAction).toContainText("I understand");
+        await expect(primaryAction).toContainText("Next");
         await expect(primaryAction).toBeDisabled();
         await expect(page.getByTestId("challenge-xp-message")).toHaveCount(0);
 
@@ -66,6 +66,9 @@ test.describe("Story 2.3 acceptance", () => {
         const thirdWrongIndex = await findEnabledWrongIndex();
         await optionButtons.nth(thirdWrongIndex).click();
 
-        await expect(page.getByTestId("challenge-progress-text")).toHaveText("2/9");
+        await expect(page.getByTestId("challenge-pet-message")).toContainText("try again", {
+            ignoreCase: true,
+        });
+        await expect(page.getByTestId("challenge-progress-text")).toHaveText("1/9");
     });
 });

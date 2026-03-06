@@ -17,7 +17,7 @@ describe("Story 2.3 integration", () => {
         cleanup();
     });
 
-    it("runs hint -> guided retry -> coached retry without auto-resolution on second wrong", async () => {
+    it("runs hint -> guided retry -> coached retry without auto-resolution on second or third wrong", async () => {
         render(<ChallengePage />);
 
         expect(screen.getByTestId("challenge-hero-message").textContent).toContain("Hint");
@@ -36,7 +36,7 @@ describe("Story 2.3 integration", () => {
         fireEvent.click(firstWrongButton);
 
         const primaryAction = screen.getByTestId("challenge-primary-action");
-        expect(primaryAction).toHaveTextContent("Continue");
+        expect(primaryAction).toHaveTextContent("Next");
         expect(primaryAction).toBeDisabled();
 
         await waitFor(() => {
@@ -56,7 +56,7 @@ describe("Story 2.3 integration", () => {
         }
         fireEvent.click(secondWrongButton);
 
-        expect(primaryAction).toHaveTextContent("I understand");
+        expect(primaryAction).toHaveTextContent("Next");
         expect(primaryAction).toBeDisabled();
         await waitFor(() =>
             expect((screen.getByTestId("challenge-hero-message").textContent ?? "").toLowerCase()).toContain(
@@ -84,6 +84,11 @@ describe("Story 2.3 integration", () => {
 
         fireEvent.click(thirdWrongButton);
 
-        await waitFor(() => expect(screen.getByTestId("challenge-progress-text")).toHaveTextContent("2/9"));
+        await waitFor(() =>
+            expect(screen.getByTestId("challenge-pet-message").textContent?.toLowerCase() || "").toContain(
+                "try again"
+            )
+        );
+        expect(screen.getByTestId("challenge-progress-text")).toHaveTextContent("1/9");
     });
 });
