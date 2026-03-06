@@ -1,6 +1,6 @@
 # Story 1.2: Persist Player Profile After Start Journey
 
-Status: review
+Status: done
 
 ## Story
 
@@ -88,8 +88,8 @@ GPT-5.3-Codex
 
 ### File List
 - _bmad-output/implementation-artifacts/1-2-persist-player-profile-after-start-journey.md
-- tests/integration/onboarding.screen1.integration.test.jsx
-- tests/acceptance/onboarding.spec.js
+- tests/integration/story-1-2-profile-persistence.integration.test.jsx
+- tests/acceptance/story-1-2-profile-persistence.acceptance.spec.js
 - _bmad-output/implementation-artifacts/sprint-status.yaml
 
 ### Change Log
@@ -98,6 +98,7 @@ GPT-5.3-Codex
 - 2026-03-03: Senior code review completed; 3 medium findings fixed and story approved.
 - 2026-03-03: Reopened story for re-development run.
 - 2026-03-03: Re-development complete with expanded integration and acceptance tests; story returned to review.
+- 2026-03-06: Senior review pass corrected stale File List test paths and confirmed AC/test coverage remains satisfied.
 
 ## Senior Developer Review (AI)
 

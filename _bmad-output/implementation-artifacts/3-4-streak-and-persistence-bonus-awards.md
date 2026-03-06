@@ -1,6 +1,6 @@
 # Story 3.4: Streak and Persistence Bonus Awards
 
-Status: review
+Status: done
 
 ## Story
 
@@ -91,3 +91,4 @@ GPT-5 Codex
 ### Change Log
 - 2026-03-05: Story created as implementation-ready (`ready-for-dev`).
 - 2026-03-05: Implemented streak/persistence/accuracy bonuses with one-time persistence and test coverage; status moved to `review`.
+- 2026-03-06: Senior review pass verified deterministic bonus rules and idempotent summary persistence behavior.

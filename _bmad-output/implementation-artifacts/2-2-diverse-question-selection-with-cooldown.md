@@ -1,6 +1,6 @@
 # Story 2.2: Diverse Question Selection with Cooldown
 
-Status: review
+Status: done
 
 ## Story
 
@@ -106,3 +106,4 @@ GPT-5.3-Codex
 - 2026-03-05: Implemented centralized diverse question selection utility with recent-attempt cooldown and fallback behavior.
 - 2026-03-05: Wired challenge route to produce and persist cooldown-aware topic attempt question sets.
 - 2026-03-05: Added Story 2.2 unit, integration, and acceptance tests.
+- 2026-03-06: Fixed topic-hydration race in challenge attempt persistence and added integration coverage to prevent cross-topic history pollution.

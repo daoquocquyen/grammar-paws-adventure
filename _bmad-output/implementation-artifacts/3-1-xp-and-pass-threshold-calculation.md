@@ -1,6 +1,6 @@
 # Story 3.1: XP and Pass Threshold Calculation
 
-Status: review
+Status: done
 
 ## Story
 
@@ -83,9 +83,11 @@ GPT-5 Codex
 - src/lib/challengeStateModel.js
 - tests/unit/story-3-1-xp-and-pass-threshold-calculation.unit.test.js
 - tests/integration/story-3-1-xp-and-pass-threshold-calculation.integration.test.jsx
+- tests/acceptance/story-3-1-xp-and-pass-threshold-calculation.acceptance.spec.js
 - _bmad-output/implementation-artifacts/3-1-xp-and-pass-threshold-calculation.md
 - _bmad-output/implementation-artifacts/sprint-status.yaml
 
 ### Change Log
 - 2026-03-05: Story created as implementation-ready (`ready-for-dev`).
 - 2026-03-05: Implemented XP and pass-threshold runtime with persisted per-question outcomes and validation coverage; status moved to `review`.
+- 2026-03-06: Hardened acceptance flow against topic-hydration race and added explicit sub-80% unit pass-threshold validation.

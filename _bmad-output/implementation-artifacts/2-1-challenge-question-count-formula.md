@@ -1,6 +1,6 @@
 # Story 2.1: Challenge Question Count Formula
 
-Status: review
+Status: done
 
 ## Story
 
@@ -110,3 +110,4 @@ GPT-5.3-Codex
 - 2026-03-05: Added unit coverage for formula AC scenarios and edge handling; validated with `npm run dev-story:validate`.
 - 2026-03-05: Added Story 2.1 integration and acceptance tests for challenge question-count metadata rendering and validated both tests pass.
 - 2026-03-05: Aligned CTA UX to plain `Start Challenge` (no visible count) and added functional navigation to `/challenge` with legacy route compatibility redirect.
+- 2026-03-06: Senior review pass confirmed AC coverage and no further implementation defects.
