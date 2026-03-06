@@ -50,6 +50,18 @@ const getIndicatorXpLabel = (indicatorType) => {
     }
     return "";
 };
+const getIndicatorXpTextClass = (indicatorType) => {
+    if (indicatorType === "STAR") {
+        return "text-emerald-700";
+    }
+    if (indicatorType === "HOLLOW_STAR") {
+        return "text-sky-700";
+    }
+    if (indicatorType === "CHECK") {
+        return "text-yellow-600";
+    }
+    return "text-slate-300";
+};
 
 const defaultProgressState = {
     version: 1,
@@ -1083,7 +1095,7 @@ export default function ChallengePage() {
                                     key={`indicator-${index}`}
                                     className={`inline-flex h-7 w-7 shrink-0 items-center justify-center rounded-full border-2 text-[10px] font-black transition md:h-8 md:w-8 md:text-xs ${
                                         hasOutcome
-                                            ? "border-sky-400 bg-sky-50 text-sky-700 shadow-[0_2px_10px_rgba(56,189,248,0.35)]"
+                                            ? `border-sky-400 bg-sky-50 shadow-[0_2px_10px_rgba(56,189,248,0.35)] ${getIndicatorXpTextClass(indicatorType)}`
                                             : "border-sky-300 border-dotted bg-white text-slate-300 shadow-[0_1px_6px_rgba(56,189,248,0.2)]"
                                     } ${isActiveQuestion ? "scale-105 ring-2 ring-sky-300 shadow-[0_0_16px_rgba(56,189,248,0.75)]" : ""}`}
                                     data-testid={`challenge-indicator-${index}`}
