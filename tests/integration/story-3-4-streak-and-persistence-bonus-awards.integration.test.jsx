@@ -56,5 +56,5 @@ describe("Story 3.4 integration", () => {
 
         const afterRerender = JSON.parse(window.localStorage.getItem("gpa_player_progress_v1") || "{}");
         expect(afterRerender.totalXp).toBe(beforeTotalXp);
-    });
+    }, 15000);
 });

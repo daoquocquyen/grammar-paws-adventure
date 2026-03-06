@@ -82,4 +82,24 @@ describe("Story 2.2 integration", () => {
 
         expect(screen.getByTestId("challenge-progress-text")).toHaveTextContent("2/9");
     });
+
+    it("persists generated attempts only for the hydrated selected topic", async () => {
+        window.localStorage.setItem("gpa_selected_topic_v1", "nouns");
+
+        render(<ChallengePage />);
+
+        const metadata = screen.getByTestId("challenge-selection-metadata");
+        await waitFor(() =>
+            expect(metadata.getAttribute("data-selected-question-ids") || "").toContain("nouns::")
+        );
+
+        await waitFor(() => {
+            const historyRaw = window.localStorage.getItem("gpa_topic_attempt_history_v1");
+            expect(historyRaw).toBeTruthy();
+
+            const history = JSON.parse(historyRaw || "{}");
+            expect(Array.isArray(history.nouns)).toBe(true);
+            expect((history.verbs ?? []).length).toBe(0);
+        });
+    });
 });

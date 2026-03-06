@@ -31,4 +31,19 @@ describe("Story 3.1 unit", () => {
         expect(result.passed).toBe(true);
         expect(result.baseXp).toBe(39);
     });
+
+    it("fails pass threshold when score is below 80%", () => {
+        const result = summarizeOutcomes([
+            OUTCOME_CLASSES.FIRST_TRY_CORRECT,
+            OUTCOME_CLASSES.SECOND_TRY_CORRECT,
+            OUTCOME_CLASSES.FIRST_TRY_CORRECT,
+            OUTCOME_CLASSES.ASSISTED,
+            OUTCOME_CLASSES.SKIPPED,
+        ]);
+
+        expect(result.correctCount).toBe(3);
+        expect(result.totalQuestions).toBe(5);
+        expect(result.passRate).toBe(0.6);
+        expect(result.passed).toBe(false);
+    });
 });

@@ -134,6 +134,7 @@ export default function ChallengePage() {
 
     const [selectedTopicKey, setSelectedTopicKey] = useState("verbs");
     const [topicAttempts, setTopicAttempts] = useState([]);
+    const [isTopicHydrated, setIsTopicHydrated] = useState(false);
     const [currentQuestionNumber, setCurrentQuestionNumber] = useState(0);
 
     const [phase, setPhase] = useState(CHALLENGE_PHASES.READY);
@@ -263,10 +264,11 @@ export default function ChallengePage() {
 
         setSelectedTopicKey(safeTopic);
         setTopicAttempts(restoredTopicAttempts);
+        setIsTopicHydrated(true);
     }, []);
 
     useEffect(() => {
-        if (selectedQuestionIds.length === 0) {
+        if (!isTopicHydrated || selectedQuestionIds.length === 0) {
             return;
         }
 
@@ -287,7 +289,7 @@ export default function ChallengePage() {
         };
 
         saveTopicAttemptHistory(nextHistoryByTopic);
-    }, [selectedTopicKey, selectedQuestionIds]);
+    }, [isTopicHydrated, selectedTopicKey, selectedQuestionIds]);
 
     useEffect(() => {
         return () => {

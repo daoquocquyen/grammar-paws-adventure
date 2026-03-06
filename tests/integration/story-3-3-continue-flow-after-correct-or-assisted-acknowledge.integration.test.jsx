@@ -96,6 +96,7 @@ describe("Story 3.3 integration", () => {
             expect(screen.getByTestId("challenge-pet-message")).toHaveTextContent("+3 XP!")
         );
         expect(screen.queryByTestId("challenge-xp-message")).not.toBeInTheDocument();
+        await waitFor(() => expect(primaryAction).toHaveTextContent("Next"));
         await waitFor(() => expect(primaryAction).toBeEnabled());
 
         fireEvent.click(primaryAction);
