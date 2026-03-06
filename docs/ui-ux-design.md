@@ -162,8 +162,7 @@ Current navigation status:
     - Pet avatar bubble (effort-focused encouragement).
     - Hero avatar bubble (hint pre-answer, explanation post-answer).
   - Primary actions:
-    - `Try Again` in guided retry context.
-    - `Continue` after correct or assisted acknowledgment.
+    - `Next` across all challenge states (enabled only when progression is allowed).
 - Interaction behavior:
   - Profile hydration from `gpa_player_profile_v1`.
   - Guided attempt model:
@@ -171,13 +170,13 @@ Current navigation status:
     - Attempt 2: previously chosen incorrect option disabled.
     - After second wrong: enter coached stage with explanation and no auto-complete/XP award.
     - Coached retry:
-      - correct answer -> assisted acknowledge path (`I understand`) then continue.
+      - correct answer -> assisted acknowledge path (`Next`) then advance.
       - wrong answer -> no XP, mark failed/skipped, auto-advance to next question.
   - Hero explanation appears with short delay (400-600ms) after answer input.
   - Wrong-option interaction uses light shake and disable behavior.
   - Correct-option interaction uses soft glow; companion can animate celebration.
 - CTA hierarchy:
-  - Primary: `Try Again` / `Continue` (state-based).
+  - Primary: `Next` (single label, state-gated enablement).
   - Secondary: answer option selection/drag.
 - State handling:
   - `ready`: hint only, no answer reveal.
@@ -185,7 +184,7 @@ Current navigation status:
   - `correct_first`: success feedback + full XP quality.
   - `correct_second`: success feedback + partial XP quality.
   - `assisted`: coached retry stage with reasoning visible, but no auto-resolution.
-  - `await_acknowledge`: shown only after coached correct answer, then learner confirms with `I understand`.
+  - `await_acknowledge`: shown only after coached correct answer, then learner confirms with `Next`.
 
 ## Responsive Behavior
 - Mobile:
