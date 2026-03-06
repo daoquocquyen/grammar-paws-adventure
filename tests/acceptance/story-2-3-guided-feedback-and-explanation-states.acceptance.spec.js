@@ -75,5 +75,8 @@ test.describe("Story 2.3 acceptance", () => {
         for (let index = 0; index < optionCountAfterThirdWrong; index += 1) {
             await expect(optionButtons.nth(index)).toBeDisabled();
         }
+
+        await primaryAction.click();
+        await expect(page.getByTestId("challenge-progress-text")).toHaveText("2/9");
     });
 });

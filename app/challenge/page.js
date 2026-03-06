@@ -926,7 +926,7 @@ export default function ChallengePage() {
             return;
         }
 
-        if (phase === CHALLENGE_PHASES.AWAIT_ACKNOWLEDGE || phase === CHALLENGE_PHASES.CORRECT_FIRST || phase === CHALLENGE_PHASES.CORRECT_SECOND) {
+        if (hasResolvedQuestion) {
             advanceToNextQuestionOrSummary();
         }
     };

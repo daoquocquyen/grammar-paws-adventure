@@ -93,5 +93,8 @@ describe("Story 2.3 integration", () => {
         expect(primaryAction).toBeEnabled();
         const lockedButtons = within(screen.getByTestId("challenge-answer-options")).getAllByRole("button");
         lockedButtons.forEach((button) => expect(button).toBeDisabled());
+
+        fireEvent.click(primaryAction);
+        await waitFor(() => expect(screen.getByTestId("challenge-progress-text")).toHaveTextContent("2/9"));
     });
 });
