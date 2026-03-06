@@ -21,7 +21,6 @@ import {
     EXPLANATION_DELAY_MS,
     getHeroFeedbackText,
     getIndicatorForOutcome,
-    getIndicatorGlyph,
     getOutcomeClassFromPhase,
     getPetFeedbackText,
     getPrimaryActionState,
@@ -39,6 +38,18 @@ const topicAttemptHistoryKey = "gpa_topic_attempt_history_v1";
 const defaultAvatar = DEFAULT_COMPANION_AVATAR;
 const toSafeLower = (value) => (typeof value === "string" ? value.trim().toLowerCase() : "");
 const toSafeString = (value) => (typeof value === "string" ? value.trim() : "");
+const getIndicatorXpLabel = (indicatorType) => {
+    if (indicatorType === "STAR") {
+        return "+10";
+    }
+    if (indicatorType === "HOLLOW_STAR") {
+        return "+6";
+    }
+    if (indicatorType === "CHECK") {
+        return "+3";
+    }
+    return "";
+};
 
 const defaultProgressState = {
     version: 1,
@@ -1062,22 +1073,23 @@ export default function ChallengePage() {
                         />
                     </div>
 
-                    <div className="mt-3 flex flex-wrap items-center gap-2" data-testid="challenge-indicator-row" aria-label="Question quality indicators">
+                    <div className="mt-3 flex w-full items-center justify-between gap-1.5 md:gap-2" data-testid="challenge-indicator-row" aria-label="Question quality indicators">
                         {indicatorStates.map((indicatorType, index) => {
-                            const glyph = getIndicatorGlyph(indicatorType);
-                            const hasOutcome = Boolean(glyph);
+                            const xpLabel = getIndicatorXpLabel(indicatorType);
+                            const hasOutcome = Boolean(xpLabel);
+                            const isActiveQuestion = !showSummary && index === currentQuestionIndex;
                             return (
                                 <span
                                     key={`indicator-${index}`}
-                                    className={`inline-flex h-8 min-w-8 items-center justify-center rounded-full border text-sm font-black ${
+                                    className={`inline-flex h-7 w-7 shrink-0 items-center justify-center rounded-full border-2 text-[10px] font-black transition md:h-8 md:w-8 md:text-xs ${
                                         hasOutcome
-                                            ? "border-primary/30 bg-primary/10 text-primary"
-                                            : "border-slate-200 bg-white text-slate-300"
-                                    }`}
+                                            ? "border-sky-400 bg-sky-50 text-sky-700 shadow-[0_2px_10px_rgba(56,189,248,0.35)]"
+                                            : "border-sky-300 border-dotted bg-white text-slate-300 shadow-[0_1px_6px_rgba(56,189,248,0.2)]"
+                                    } ${isActiveQuestion ? "scale-105 ring-2 ring-sky-300 shadow-[0_0_16px_rgba(56,189,248,0.75)]" : ""}`}
                                     data-testid={`challenge-indicator-${index}`}
                                     data-indicator-type={indicatorType}
                                 >
-                                    {glyph || ""}
+                                    {xpLabel}
                                 </span>
                             );
                         })}
