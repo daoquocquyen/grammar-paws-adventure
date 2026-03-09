@@ -1,0 +1,93 @@
+#!/bin/sh
+set -eu
+
+MESSAGE_FILE="${1:-}"
+
+if [ -z "$MESSAGE_FILE" ] || [ ! -f "$MESSAGE_FILE" ]; then
+  echo "ERROR(commit-msg): Commit message file is missing." >&2
+  exit 1
+fi
+
+awk '
+function fail(message) {
+  print "ERROR(commit-msg): " message > "/dev/stderr"
+  hasError = 1
+}
+
+BEGIN {
+  hasError = 0
+  lineCount = 0
+}
+
+{
+  gsub(/\r$/, "", $0)
+  if ($0 ~ /^#/) {
+    next
+  }
+  lines[++lineCount] = $0
+}
+
+END {
+  if (lineCount == 0) {
+    fail("Commit message is empty.")
+  }
+
+  firstLine = lines[1]
+
+  # Allow git-generated merge/revert messages.
+  if (firstLine ~ /^(Merge|Revert) /) {
+    exit 0
+  }
+
+  if (firstLine !~ /^(feat|fix|docs|refactor|test): .+/) {
+    fail("Title must match: <type>: <short title> using feat|fix|docs|refactor|test.")
+  }
+
+  if (length(firstLine) > 72) {
+    fail("Title should be 72 characters or fewer.")
+  }
+
+  if (lineCount < 4) {
+    fail("Message must include a blank line, Details:, and at least one bullet.")
+  }
+
+  if (lines[2] != "") {
+    fail("Line 2 must be blank.")
+  }
+
+  if (lines[3] != "Details:") {
+    fail("Line 3 must be exactly: Details:")
+  }
+
+  if (lines[4] !~ /^- /) {
+    fail("Line 4 must start with a details bullet: - <detail>")
+  }
+
+  bulletCount = 0
+  for (i = 4; i <= lineCount; i++) {
+    if (lines[i] == "") {
+      continue
+    }
+    if (lines[i] !~ /^- /) {
+      fail("All non-empty lines after Details: must be bullets starting with \"- \".")
+      break
+    }
+    bulletCount++
+  }
+
+  if (bulletCount < 1) {
+    fail("Provide at least one bullet under Details:.")
+  }
+
+  if (hasError) {
+    print "" > "/dev/stderr"
+    print "Expected format:" > "/dev/stderr"
+    print "<type>: <short title>" > "/dev/stderr"
+    print "" > "/dev/stderr"
+    print "Details:" > "/dev/stderr"
+    print "- <implementation or bug-fix detail 1>" > "/dev/stderr"
+    print "- <implementation or bug-fix detail 2>" > "/dev/stderr"
+    exit 1
+  }
+}
+' "$MESSAGE_FILE"

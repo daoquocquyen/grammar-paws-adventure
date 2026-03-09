@@ -86,6 +86,7 @@ Details:
 - Details must describe concrete changes, not generic statements.
 - For implementation or bug fix commits, details must mention impacted behavior.
 - If docs were updated, include that in details.
+- Commit format is enforced by repo hook `.githooks/commit-msg` after running `npm run hooks:install`.
 
 ### Examples
 

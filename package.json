@@ -6,6 +6,7 @@
         "dev": "next dev",
         "build": "next build",
         "start": "next start",
+        "hooks:install": "sh scripts/install-git-hooks.sh",
         "test:unit": "vitest run tests/unit",
         "test:integration": "vitest run tests/integration",
         "test": "vitest run",

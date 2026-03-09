@@ -7,6 +7,7 @@
 ## Build and Test Commands
 
 ### Current (Observed)
+- Git hook install command: `npm run hooks:install` (required once per clone to enforce commit message format).
 - Build command: `npm run build`.
 - Unit test command: `npm run test:unit`.
 - Integration test command: `npm run test:integration`.
