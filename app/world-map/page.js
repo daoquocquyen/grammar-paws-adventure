@@ -292,7 +292,6 @@ export default function Screen2TopicSelectionPage() {
     const [mapTitle] = useState("Grammar World Map");
     const [startMessage, setStartMessage] = useState("");
     const [focusedTopicKey, setFocusedTopicKey] = useState(topicDefinitions[0].topicKey);
-    const [playerLevel, setPlayerLevel] = useState(1);
     const [playerProgress, setPlayerProgress] = useState(defaultProgressState);
     const [isDraggingCarousel, setIsDraggingCarousel] = useState(false);
 
@@ -307,22 +306,15 @@ export default function Screen2TopicSelectionPage() {
                 .map((topicKey) => topicKey.trim())
         );
 
-        const highestEngagedIndex = topicDefinitions.reduce((currentMax, topic, index) => {
-            const hasEngagement = completedTopicSet.has(topic.topicKey) || (normalizedProgress[topic.topicKey] ?? 0) > 0;
-            return hasEngagement ? index : currentMax;
-        }, -1);
-
-        const sequentialUnlockedCount = Math.min(topicDefinitions.length, Math.max(1, highestEngagedIndex + 2));
-        const unlockedByLevelCount = Math.min(topicDefinitions.length, Math.max(1, playerLevel));
-        const unlockedCount = Math.max(sequentialUnlockedCount, unlockedByLevelCount);
-
         return topicDefinitions.map((topic, index) => {
             const progress = clampPercent(normalizedProgress[topic.topicKey] ?? 0);
+            const prerequisiteTopic = index > 0 ? topicDefinitions[index - 1] : null;
+            const isUnlocked = index === 0 || (prerequisiteTopic && completedTopicSet.has(prerequisiteTopic.topicKey));
 
             let status = "locked";
             if (completedTopicSet.has(topic.topicKey) || progress >= 100) {
                 status = "done";
-            } else if (progress > 0 || index < unlockedCount) {
+            } else if (isUnlocked) {
                 status = "ongoing";
             }
 
@@ -333,7 +325,7 @@ export default function Screen2TopicSelectionPage() {
                 topicIcon: getTopicIconName(selectedPetName, topic.topicKey),
             };
         });
-    }, [playerLevel, playerProgress, selectedPetName]);
+    }, [playerProgress, selectedPetName]);
 
     useEffect(() => {
         const profileRaw = localStorage.getItem(profileStorageKey);
@@ -379,17 +371,14 @@ export default function Screen2TopicSelectionPage() {
                 setPlayerProgress(parsedProgress);
 
                 const { level, title } = getPlayerLevelInfo(parsedProgress);
-                setPlayerLevel(level);
                 setHeaderLevelLabel(`Level ${level} • ${title}`);
             } catch (error) {
                 console.error("Failed to parse player progress", error);
                 setPlayerProgress(defaultProgressState);
-                setPlayerLevel(1);
                 setHeaderLevelLabel("Level 1 • Explorer");
             }
         } else {
             setPlayerProgress(defaultProgressState);
-            setPlayerLevel(1);
             setHeaderLevelLabel("Level 1 • Explorer");
         }
     }, []);

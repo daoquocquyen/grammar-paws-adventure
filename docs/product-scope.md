@@ -10,6 +10,7 @@
 - Require topic intro before challenge.
 - Provide supportive explanation after each answer.
 - Gate progression with a clear pass threshold (`>= 80%`).
+- Use strict sequential unlocks: challenge `N` unlocks only after challenge `N-1` is passed (`>= 80%`).
 - Tie learning completion to pet rewards/progression.
 
 ## In Scope (MVP Boundary)
@@ -20,6 +21,7 @@
 - Challenge flow with aspect-based question count formula: `clamp(aspect_count * 3, 6, 15)`.
 - Right/wrong explanation after each answer.
 - Pass/fail evaluation at `>= 80%`.
+- Sequential progression guard on world map: no level-based bypass of locked challenges.
 - Reward selection (1 of 3 choices) after pass.
 - Pet customization and milestone evolution.
 - Progress dashboard basics.

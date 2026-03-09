@@ -108,7 +108,8 @@ Current navigation status:
   - Header profile hydrates from stored player profile.
   - Header level badge hydrates from `gpa_player_progress_v1` and renders grouped title bands (e.g., level 1-3 Explorer).
   - Topic ordering is easy-to-hard.
-  - Topic status is computed dynamically from learner history + level (`done`, `ongoing`, `locked`).
+  - Topic status is computed dynamically from learner pass history (`done`, `ongoing`, `locked`) with strict sequential prerequisites.
+  - Unlock rule: topic/challenge `N` is unlocked only after topic/challenge `N-1` is passed (pass threshold is `>= 80%`).
   - Locked topics are non-interactive.
   - Focused topic card is emphasized via border glow/ring (without card scaling).
   - Main companion avatar resolves from `profile.petImage` (kid-selected pet), with shared fallback avatar from `src/lib/avatarDefaults.js`.
