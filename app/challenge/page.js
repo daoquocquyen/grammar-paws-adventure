@@ -13,6 +13,7 @@ import {
 } from "../../src/lib/avatarBubbleThemes";
 import {
     createTopicQuestionBank,
+    getQuestionStemKey,
     RECENT_TOPIC_ATTEMPT_COOLDOWN,
     selectChallengeQuestions,
 } from "../../src/lib/challengeQuestionSelection";
@@ -214,6 +215,11 @@ export default function ChallengePage() {
                 cooldownAttemptCount: RECENT_TOPIC_ATTEMPT_COOLDOWN,
             }),
         [topicQuestionBank, aspectIds.length, topicAttempts]
+    );
+    const selectedQuestionStemCount = selectedQuestions.length;
+    const uniqueSelectedQuestionStemCount = useMemo(
+        () => new Set(selectedQuestions.map((question) => getQuestionStemKey(question)).filter(Boolean)).size,
+        [selectedQuestions]
     );
 
     useEffect(() => {
@@ -1066,6 +1072,8 @@ export default function ChallengePage() {
                     data-testid="challenge-selection-metadata"
                     data-question-count={questionCount}
                     data-selected-question-ids={selectedQuestionIds.join(",")}
+                    data-selected-question-stem-count={selectedQuestionStemCount}
+                    data-selected-unique-stem-count={uniqueSelectedQuestionStemCount}
                     data-recent-question-ids={Array.from(recentQuestionIds).join(",")}
                     data-current-correct-answer={toSafeString(correctAnswer)}
                 >

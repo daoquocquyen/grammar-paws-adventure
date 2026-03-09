@@ -2,6 +2,8 @@ import { describe, expect, it } from "vitest";
 
 import {
     createTopicQuestionBank,
+    getQuestionSelectionKey,
+    getQuestionStemKey,
     getRecentQuestionIds,
     RECENT_TOPIC_ATTEMPT_COOLDOWN,
     selectChallengeQuestions,
@@ -12,6 +14,16 @@ const buildAttempts = (questionIdsByAttempt) =>
         questionIds,
         createdAt: `2026-03-05T00:00:0${index}Z`,
     }));
+
+const buildSyntheticQuestion = ({ id, aspectId, stemSeed }) => ({
+    id,
+    aspectId,
+    prompt: `Prompt ${stemSeed}`,
+    sentencePrefix: `Prefix ${stemSeed}`,
+    sentenceSuffix: ".",
+    correctAnswer: `answer-${stemSeed}`,
+    options: [`answer-${stemSeed}`, `wrong-a-${stemSeed}`, `wrong-b-${stemSeed}`, `wrong-c-${stemSeed}`],
+});
 
 describe("Story 2.2 unit", () => {
     it("creates topic-matched challenge questions with varying content", () => {
@@ -47,23 +59,32 @@ describe("Story 2.2 unit", () => {
 
         const aspectCoverage = new Set(selection.selectedQuestions.map((question) => question.aspectId));
         expect(aspectCoverage).toEqual(new Set(["ing-ending", "auxiliary", "time-marker"]));
+
+        const selectedStemKeys = selection.selectedQuestions.map(getQuestionStemKey);
+        expect(new Set(selectedStemKeys).size).toBe(selection.selectedQuestions.length);
     });
 
-    it("excludes questions from the last two attempts when enough question pool exists", () => {
-        const questionBank = createTopicQuestionBank("nouns", ["common", "proper", "plurality"]);
+    it("excludes recent questions when enough non-duplicate stem pool exists", () => {
+        const aspectIds = ["a1", "a2", "a3"];
+        const questionBank = aspectIds.flatMap((aspectId) =>
+            Array.from({ length: 6 }, (_, index) =>
+                buildSyntheticQuestion({
+                    id: `topic::${aspectId}::q${index + 1}`,
+                    aspectId,
+                    stemSeed: `${aspectId}-${index + 1}`,
+                })
+            )
+        );
         const topicAttempts = buildAttempts([
             [
-                "nouns::common::q1",
-                "nouns::proper::q1",
-                "nouns::plurality::q1",
+                "topic::a1::q1",
+                "topic::a2::q1",
+                "topic::a3::q1",
             ],
             [
-                "nouns::common::q2",
-                "nouns::proper::q2",
-                "nouns::plurality::q2",
-                "nouns::common::q4",
-                "nouns::proper::q4",
-                "nouns::plurality::q4",
+                "topic::a1::q2",
+                "topic::a2::q2",
+                "topic::a3::q2",
             ],
         ]);
 
@@ -79,6 +100,49 @@ describe("Story 2.2 unit", () => {
 
         expect(hasRecentQuestion).toBe(false);
         expect(selection.selectedQuestionIds).toHaveLength(9);
+    });
+
+    it("keeps selected stems unique across random picks", () => {
+        const questionBank = createTopicQuestionBank("verbs", ["ing-ending", "auxiliary", "time-marker"]);
+
+        for (let run = 0; run < 30; run += 1) {
+            const selection = selectChallengeQuestions({
+                questions: questionBank,
+                aspectCount: 3,
+                topicAttempts: [],
+            });
+            const stemKeys = selection.selectedQuestions.map((question) => getQuestionStemKey(question)).filter(Boolean);
+            expect(new Set(stemKeys).size).toBe(stemKeys.length);
+        }
+    });
+
+    it("keeps stem-level dedupe across preferred and fallback merge paths", () => {
+        const questionBank = [
+            buildSyntheticQuestion({ id: "custom::q1", aspectId: "custom", stemSeed: "a" }),
+            buildSyntheticQuestion({ id: "custom::q2", aspectId: "custom", stemSeed: "b" }),
+            buildSyntheticQuestion({ id: "custom::q3", aspectId: "custom", stemSeed: "c" }),
+            buildSyntheticQuestion({ id: "custom::q4", aspectId: "custom", stemSeed: "d" }),
+            buildSyntheticQuestion({ id: "custom::q5", aspectId: "custom", stemSeed: "e" }),
+            buildSyntheticQuestion({ id: "custom::q6", aspectId: "custom", stemSeed: "f" }),
+            buildSyntheticQuestion({ id: "custom::q7", aspectId: "custom", stemSeed: "e" }),
+            buildSyntheticQuestion({ id: "custom::q8", aspectId: "custom", stemSeed: "b" }),
+            buildSyntheticQuestion({ id: "custom::q9", aspectId: "custom", stemSeed: "g" }),
+        ];
+        const topicAttempts = buildAttempts([["custom::q1", "custom::q2", "custom::q3", "custom::q4"]]);
+
+        const selection = selectChallengeQuestions({
+            questions: questionBank,
+            aspectCount: 1,
+            topicAttempts,
+            randomFn: () => 0,
+        });
+
+        const stemKeys = selection.selectedQuestions.map((question) => getQuestionStemKey(question)).filter(Boolean);
+        const selectionKeys = selection.selectedQuestions.map((question) => getQuestionSelectionKey(question)).filter(Boolean);
+
+        expect(selection.selectedQuestionIds).toHaveLength(6);
+        expect(new Set(stemKeys).size).toBe(stemKeys.length);
+        expect(new Set(selectionKeys).size).toBe(selectionKeys.length);
     });
 
     it("falls back safely to recent questions when cooldown exclusion cannot fill target count", () => {

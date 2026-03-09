@@ -511,6 +511,38 @@ const shuffleWithRandom = (items, randomFn = Math.random) => {
     return clonedItems;
 };
 
+const normalizeComparableText = (value) =>
+    toSafeString(value)
+        .replace(/\s+/g, " ")
+        .toLowerCase();
+
+export const getQuestionStemKey = (question) => {
+    const prompt = normalizeComparableText(question?.prompt);
+    const sentencePrefix = normalizeComparableText(question?.sentencePrefix);
+    const sentenceSuffix = normalizeComparableText(question?.sentenceSuffix);
+    const correctAnswer = normalizeComparableText(question?.correctAnswer);
+
+    if (!prompt && !sentencePrefix && !sentenceSuffix && !correctAnswer) {
+        return "";
+    }
+
+    return `${prompt}::${sentencePrefix}::${sentenceSuffix}::${correctAnswer}`;
+};
+
+export const getQuestionSelectionKey = (question) => {
+    const stemKey = getQuestionStemKey(question);
+    if (stemKey) {
+        return `stem::${stemKey}`;
+    }
+
+    const questionId = toSafeString(question?.id);
+    if (questionId) {
+        return `id::${questionId}`;
+    }
+
+    return "";
+};
+
 const buildAspectGroups = (questions, randomFn) => {
     const groupedQuestions = new Map();
 
@@ -535,10 +567,11 @@ const buildAspectGroups = (questions, randomFn) => {
     }));
 };
 
-const pickRoundRobinByAspect = (questions, pickCount, randomFn) => {
+const pickRoundRobinByAspect = (questions, pickCount, randomFn, blockedSelectionKeys = new Set()) => {
     const aspectGroups = buildAspectGroups(questions, randomFn);
     const selectedQuestions = [];
     const selectedQuestionIds = new Set();
+    const selectedSelectionKeys = new Set(blockedSelectionKeys);
 
     if (aspectGroups.length === 0 || pickCount <= 0) {
         return selectedQuestions;
@@ -559,8 +592,15 @@ const pickRoundRobinByAspect = (questions, pickCount, randomFn) => {
             }
 
             const nextQuestion = group.questions.shift();
-            if (!selectedQuestionIds.has(nextQuestion.id)) {
+            const selectionKey = getQuestionSelectionKey(nextQuestion);
+            if (
+                !selectedQuestionIds.has(nextQuestion.id) &&
+                (!selectionKey || !selectedSelectionKeys.has(selectionKey))
+            ) {
                 selectedQuestionIds.add(nextQuestion.id);
+                if (selectionKey) {
+                    selectedSelectionKeys.add(selectionKey);
+                }
                 selectedQuestions.push(nextQuestion);
             }
         });
@@ -697,11 +737,17 @@ export const selectChallengeQuestions = ({
 
     if (selectedQuestions.length < questionCount) {
         const alreadySelectedIds = new Set(selectedQuestions.map((question) => question.id));
+        const selectedSelectionKeys = new Set(
+            selectedQuestions
+                .map((question) => getQuestionSelectionKey(question))
+                .filter(Boolean)
+        );
         const fallbackQuestions = safeQuestions.filter((question) => !alreadySelectedIds.has(toSafeString(question?.id)));
         const fallbackSelections = pickRoundRobinByAspect(
             fallbackQuestions,
             questionCount - selectedQuestions.length,
-            randomFn
+            randomFn,
+            selectedSelectionKeys
         );
         selectedQuestions.push(...fallbackSelections);
     }

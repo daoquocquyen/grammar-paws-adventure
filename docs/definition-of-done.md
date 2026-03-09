@@ -14,6 +14,7 @@
 ### S2: Challenge Engine + Explanations
 - [ ] Question count uses `clamp(aspect_count * 3, 6, 15)`.
 - [ ] Question selection supports variation and recent-question cooldown.
+- [ ] A single challenge run does not contain duplicate question stems (same prompt/sentence/correct-answer combo).
 - [ ] Every answer shows correctness + kid-friendly explanation.
 - [ ] Replay voice for current question is available or safely disabled.
 - [ ] Retry of same topic produces different set unless pool exhausted.

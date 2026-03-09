@@ -35,6 +35,7 @@ Focus on deterministic gameplay rules:
 - Question count formula: `clamp(aspect_count * 3, 6, 15)`.
 - Pass threshold: `score >= 80%`.
 - Anti-repeat question selection over recent attempts.
+- In-challenge question stem uniqueness (same prompt/sentence/correct-answer combo cannot repeat within one challenge run), even when cooldown fallback is used.
 - Voice settings read/write behavior.
 
 ### Integration

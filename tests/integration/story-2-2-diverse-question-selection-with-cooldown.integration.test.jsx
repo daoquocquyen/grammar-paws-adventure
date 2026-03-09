@@ -48,6 +48,8 @@ describe("Story 2.2 integration", () => {
         const selectedQuestionIds = (cooldownMetadata.getAttribute("data-selected-question-ids") ?? "").split(",").filter(Boolean);
 
         expect(cooldownMetadata).toHaveAttribute("data-question-count", "9");
+        expect(cooldownMetadata).toHaveAttribute("data-selected-question-stem-count", "9");
+        expect(cooldownMetadata).toHaveAttribute("data-selected-unique-stem-count", "9");
         expect(selectedQuestionIds).toHaveLength(9);
         expect(selectedQuestionIds).not.toContain("nouns::common::q1");
         expect(selectedQuestionIds).not.toContain("nouns::proper::q1");
