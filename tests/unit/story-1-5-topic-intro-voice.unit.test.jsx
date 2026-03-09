@@ -18,4 +18,32 @@ describe("Story 1.5 unit", () => {
 
         expect(screen.getByText("Voice unavailable in this browser. Text mode is active.")).toBeInTheDocument();
     });
+
+    it("cancels speech when leaving topic-intro", () => {
+        const originalSpeechSynthesis = window.speechSynthesis;
+        const originalSpeechSynthesisUtterance = window.SpeechSynthesisUtterance;
+        const cancelMock = vi.fn();
+
+        window.localStorage.clear();
+        window.localStorage.setItem("gpa_selected_topic_v1", "nouns");
+        window.speechSynthesis = {
+            cancel: cancelMock,
+            speak: vi.fn(),
+        };
+        window.SpeechSynthesisUtterance = function MockSpeechSynthesisUtterance(text) {
+            this.text = text;
+        };
+
+        try {
+            const { unmount } = render(<TopicIntroPage />);
+            const callsBeforeUnmount = cancelMock.mock.calls.length;
+
+            unmount();
+
+            expect(cancelMock.mock.calls.length).toBeGreaterThan(callsBeforeUnmount);
+        } finally {
+            window.speechSynthesis = originalSpeechSynthesis;
+            window.SpeechSynthesisUtterance = originalSpeechSynthesisUtterance;
+        }
+    });
 });

@@ -169,6 +169,12 @@ export default function Screen3TopicIntroPage() {
         }
     }, [isLoading, topic, voiceMuted, voiceSupported]);
 
+    useEffect(() => () => {
+        if (typeof window !== "undefined" && "speechSynthesis" in window) {
+            window.speechSynthesis.cancel();
+        }
+    }, []);
+
     const handleToggleMute = () => {
         const nextMuted = !voiceMuted;
         setVoiceMuted(nextMuted);

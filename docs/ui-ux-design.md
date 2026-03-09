@@ -135,6 +135,7 @@ Current navigation status:
   - Renders topic content from shared topic catalog (`src/lib/topicCatalog.js`).
   - Topic aspect count is dynamic per topic and follows curriculum-focused metadata (not fixed card count).
   - Auto-plays speech when available and not muted.
+  - Active narration is canceled when leaving the page so audio does not continue across routes.
   - Saves voice setting to `gpa_voice_settings_v1`.
   - Main companion avatar resolves from `profile.petImage` (kid-selected pet), with shared fallback avatar from `src/lib/avatarDefaults.js`.
 - CTA hierarchy:

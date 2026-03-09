@@ -47,6 +47,7 @@ Focus on feature seams between screens and storage:
 - Screen 2 default focus resolves to the latest unlocked topic card from progress state.
 - Screen 2 carousel auto-scroll keeps the focused latest unlocked card visible on initial load.
 - Screen 3 hydrates selected topic + renders aspects + voice controls.
+- Screen 3 cancels active narration when route changes/unmount occurs.
 - Screen 4 consumes profile context without crash.
 - Returning session boot restores saved name/pet/progress/accessories without forcing onboarding re-entry.
 
@@ -87,6 +88,7 @@ Focus on user outcomes:
 - [ ] Corrupt/missing persisted data degrades safely to first-time flow without crash.
 - [ ] Screen 3 loads topic data and toggles loading/error/content states correctly.
 - [ ] Voice speaker toggle (on/off) functions or degrades safely.
+- [ ] Leaving Screen 3 stops any in-progress narration (no carry-over audio).
 - [ ] Screen 3 `Start Challenge` routes to `/challenge` and remains visually labeled as `Start Challenge`.
 - [ ] Screen 4 displays challenge UI and profile hydration safely.
 
