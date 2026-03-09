@@ -85,4 +85,71 @@ describe("Story 1.4 unit", () => {
         expect(adjectivesCard).toBeTruthy();
         expect(within(adjectivesCard).getByText("IN PROGRESS")).toBeInTheDocument();
     });
+
+    it("defaults focus to the latest unlocked topic card", () => {
+        window.localStorage.clear();
+        pushMock.mockReset();
+        window.localStorage.setItem(
+            "gpa_player_profile_v1",
+            JSON.stringify({ version: 1, name: "Mia", heroName: "Mia", petName: "Golden Retriever" })
+        );
+        window.localStorage.setItem(
+            "gpa_player_progress_v1",
+            JSON.stringify({
+                version: 1,
+                completedTopics: ["nouns", "pronouns", "verbs"],
+                topicProgress: {
+                    articles: 40,
+                },
+            })
+        );
+
+        render(<WorldMapPage />);
+
+        expect(screen.getByText(/ready to leap into articles/i)).toBeInTheDocument();
+    });
+
+    it("auto-scrolls the carousel to reveal the latest unlocked default focus", () => {
+        const clientWidthSpy = vi.spyOn(HTMLElement.prototype, "clientWidth", "get").mockReturnValue(400);
+        const scrollWidthSpy = vi.spyOn(HTMLElement.prototype, "scrollWidth", "get").mockReturnValue(1200);
+        const originalScrollTo = HTMLElement.prototype.scrollTo;
+        const scrollToMock = vi.fn();
+        HTMLElement.prototype.scrollTo = scrollToMock;
+        try {
+            window.localStorage.clear();
+            pushMock.mockReset();
+            window.localStorage.setItem(
+                "gpa_player_profile_v1",
+                JSON.stringify({ version: 1, name: "Mia", heroName: "Mia", petName: "Golden Retriever" })
+            );
+            window.localStorage.setItem(
+                "gpa_player_progress_v1",
+                JSON.stringify({
+                    version: 1,
+                    completedTopics: ["nouns", "pronouns", "verbs", "articles"],
+                    topicProgress: {
+                        adjectives: 15,
+                    },
+                })
+            );
+
+            render(<WorldMapPage />);
+
+            expect(screen.getByText(/ready to leap into adjectives/i)).toBeInTheDocument();
+            expect(scrollToMock).toHaveBeenCalledWith(
+                expect.objectContaining({
+                    left: expect.any(Number),
+                    behavior: "auto",
+                })
+            );
+            const hasPositiveScrollTarget = scrollToMock.mock.calls.some(
+                ([options]) => options && typeof options.left === "number" && options.left > 0
+            );
+            expect(hasPositiveScrollTarget).toBe(true);
+        } finally {
+            HTMLElement.prototype.scrollTo = originalScrollTo;
+            clientWidthSpy.mockRestore();
+            scrollWidthSpy.mockRestore();
+        }
+    });
 });

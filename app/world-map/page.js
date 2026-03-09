@@ -281,6 +281,11 @@ const getActionLabel = (status) => {
     return "Start Topic";
 };
 
+const getDefaultFocusedTopicCard = (topicCards) => {
+    const unlockedCards = topicCards.filter((card) => card.status !== "locked");
+    return unlockedCards[unlockedCards.length - 1] ?? topicCards[0] ?? null;
+};
+
 export default function Screen2TopicSelectionPage() {
     const router = useRouter();
     const [headerName, setHeaderName] = useState("Adventurer");
@@ -291,7 +296,8 @@ export default function Screen2TopicSelectionPage() {
     const [headerLevelLabel, setHeaderLevelLabel] = useState("Level 1 • Explorer");
     const [mapTitle] = useState("Grammar World Map");
     const [startMessage, setStartMessage] = useState("");
-    const [focusedTopicKey, setFocusedTopicKey] = useState(topicDefinitions[0].topicKey);
+    const [focusedTopicKey, setFocusedTopicKey] = useState("");
+    const [hasUserFocusedTopic, setHasUserFocusedTopic] = useState(false);
     const [playerProgress, setPlayerProgress] = useState(defaultProgressState);
     const [isDraggingCarousel, setIsDraggingCarousel] = useState(false);
 
@@ -384,18 +390,31 @@ export default function Screen2TopicSelectionPage() {
     }, []);
 
     useEffect(() => {
-        const focusedCard = topicCards.find((card) => card.topicKey === focusedTopicKey);
-        if (focusedCard && focusedCard.status !== "locked") {
+        if (topicCards.length === 0) {
             return;
         }
 
-        const firstInteractiveCard = topicCards.find((card) => card.status !== "locked") ?? topicCards[0];
-        if (firstInteractiveCard) {
-            setFocusedTopicKey(firstInteractiveCard.topicKey);
+        const defaultFocusedCard = getDefaultFocusedTopicCard(topicCards);
+        if (!defaultFocusedCard) {
+            return;
         }
-    }, [focusedTopicKey, topicCards]);
+
+        if (!hasUserFocusedTopic) {
+            if (focusedTopicKey !== defaultFocusedCard.topicKey) {
+                setFocusedTopicKey(defaultFocusedCard.topicKey);
+            }
+            return;
+        }
+
+        const focusedCard = topicCards.find((card) => card.topicKey === focusedTopicKey);
+        if (!focusedCard || focusedCard.status === "locked") {
+            setFocusedTopicKey(defaultFocusedCard.topicKey);
+            setHasUserFocusedTopic(false);
+        }
+    }, [focusedTopicKey, hasUserFocusedTopic, topicCards]);
 
     const handleFocusTopic = (topicKey) => {
+        setHasUserFocusedTopic(true);
         setFocusedTopicKey(topicKey);
     };
 
@@ -425,6 +444,37 @@ export default function Screen2TopicSelectionPage() {
             behavior: "smooth",
         });
     };
+
+    useEffect(() => {
+        const viewport = carouselViewportRef.current;
+        if (!viewport || !focusedTopicKey || topicCards.length === 0) {
+            return;
+        }
+
+        const focusedIndex = topicCards.findIndex((card) => card.topicKey === focusedTopicKey);
+        if (focusedIndex < 0) {
+            return;
+        }
+
+        const gap = 16;
+        const visibleCardCount = 4;
+        const cardWidth = (viewport.clientWidth - (gap * (visibleCardCount - 1))) / visibleCardCount;
+        const step = Math.max(0, cardWidth + gap);
+        const firstVisibleIndex = Math.max(0, focusedIndex - (visibleCardCount - 1));
+        const desiredLeft = step * firstVisibleIndex;
+        const maxLeft = Math.max(0, viewport.scrollWidth - viewport.clientWidth);
+        const nextLeft = Math.min(desiredLeft, maxLeft);
+
+        if (typeof viewport.scrollTo === "function") {
+            viewport.scrollTo({
+                left: nextLeft,
+                behavior: hasUserFocusedTopic ? "smooth" : "auto",
+            });
+            return;
+        }
+
+        viewport.scrollLeft = nextLeft;
+    }, [focusedTopicKey, hasUserFocusedTopic, topicCards]);
 
     const handleCarouselKeyDown = (event) => {
         if (event.key === "ArrowRight") {
@@ -487,7 +537,7 @@ export default function Screen2TopicSelectionPage() {
     };
 
     const focusedTopicCard = useMemo(
-        () => topicCards.find((card) => card.topicKey === focusedTopicKey) ?? topicCards.find((card) => card.status !== "locked") ?? topicCards[0],
+        () => topicCards.find((card) => card.topicKey === focusedTopicKey) ?? getDefaultFocusedTopicCard(topicCards),
         [focusedTopicKey, topicCards]
     );
 
