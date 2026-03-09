@@ -43,6 +43,7 @@ Focus on deterministic gameplay rules:
 Focus on feature seams between screens and storage:
 - Screen 1 profile -> localStorage (`gpa_player_profile_v1`).
 - Screen 1 save flow also initializes/updates progress + accessories state (`gpa_player_progress_v1`, `gpa_pet_accessories_v1`).
+- Screen 1 save flow scopes progress/accessories to active learner identity (`*__player__{playerId}`) and prevents cross-learner XP/progress bleed.
 - Screen 2 topic selection -> localStorage (`gpa_selected_topic_v1`) + route.
 - Screen 2 default focus resolves to the latest unlocked topic card from progress state.
 - Screen 2 carousel auto-scroll keeps the focused latest unlocked card visible on initial load.

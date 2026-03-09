@@ -16,6 +16,7 @@
 ## In Scope (MVP Boundary)
 - Home onboarding: name + pet selection in one start flow.
 - Returning session restore: if learner profile exists, restore name, selected pet, progress, and equipped accessories so onboarding does not need to be redone.
+- Learner identity isolation: entering a different learner name starts a separate progression state (XP/progress/accessories) and must not reuse another learner's saved data.
 - Topic selection map with progress/lock states.
 - Topic intro with aspects and one example per aspect.
 - Challenge flow with aspect-based question count formula: `clamp(aspect_count * 3, 6, 15)`.

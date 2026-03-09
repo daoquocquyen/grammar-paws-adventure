@@ -28,8 +28,14 @@ flowchart LR
   - `gpa_player_profile_v1`
   - `gpa_selected_topic_v1`
   - `gpa_voice_settings_v1`
-  - `gpa_player_progress_v1` (planned)
-  - `gpa_pet_accessories_v1` (planned)
+  - Active-player compatibility mirrors:
+    - `gpa_player_progress_v1`
+    - `gpa_pet_accessories_v1`
+    - `gpa_topic_attempt_history_v1`
+  - Player-scoped persistence keys:
+    - `gpa_player_progress_v1__player__{playerId}`
+    - `gpa_pet_accessories_v1__player__{playerId}`
+    - `gpa_topic_attempt_history_v1__player__{playerId}`
 - Voice: browser `speechSynthesis` in topic intro screen.
 - Navigation (legacy): relative links and `window.location.href`.
 - Navigation (new): Next.js route navigation (`next/navigation`).
@@ -58,9 +64,10 @@ flowchart LR
 - Keep gameplay rules defined in planning artifacts before engine wiring.
 
 ## Planned Persistence Contract (MVP)
-- Player profile (`gpa_player_profile_v1`): learner display name + selected pet identity.
-- Player progress (`gpa_player_progress_v1`): topic completion/pass status and latest progression markers.
-- Pet accessories (`gpa_pet_accessories_v1`): unlock inventory and currently equipped accessory IDs.
+- Player profile (`gpa_player_profile_v1`): learner display name + selected pet identity + `playerId`.
+- Player progress (`gpa_player_progress_v1__player__{playerId}`): topic completion/pass status and latest progression markers.
+- Pet accessories (`gpa_pet_accessories_v1__player__{playerId}`): unlock inventory and currently equipped accessory IDs.
+- Topic attempt history (`gpa_topic_attempt_history_v1__player__{playerId}`): recent challenge attempt question IDs by topic.
 - Restore behavior: app boot checks versioned keys and hydrates UI before showing onboarding defaults.
 - Fallback behavior: missing/corrupt keys fail safe to first-time onboarding state without runtime crash.
 
@@ -108,7 +115,7 @@ flowchart LR
   - Base XP: first try 10, second try 6, assisted 3, skip 0.
   - Streak bonuses and persistence bonus computed at run-end and merged into progress update.
 - Persistence additions:
-  - `gpa_player_progress_v1` should store per-question outcome class and streak context required for bonus computation.
+  - `gpa_player_progress_v1__player__{playerId}` should store per-question outcome class and streak context required for bonus computation.
 
 ## Migration Status
 - ✅ Next.js app scaffold created (`package.json`, `app/layout.js`, `app/globals.css`, `app/page.js`).
@@ -137,3 +144,4 @@ flowchart LR
 - `app/topic-intro/page.js`
 - `app/challenge/page.js`
 - `src/lib/topicCatalog.js`
+- `src/lib/playerStorage.js`
