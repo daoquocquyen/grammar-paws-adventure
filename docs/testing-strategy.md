@@ -44,6 +44,8 @@ Focus on feature seams between screens and storage:
 - Screen 1 profile -> localStorage (`gpa_player_profile_v1`).
 - Screen 1 save flow also initializes/updates progress + accessories state (`gpa_player_progress_v1`, `gpa_pet_accessories_v1`).
 - Screen 2 topic selection -> localStorage (`gpa_selected_topic_v1`) + route.
+- Screen 2 default focus resolves to the latest unlocked topic card from progress state.
+- Screen 2 carousel auto-scroll keeps the focused latest unlocked card visible on initial load.
 - Screen 3 hydrates selected topic + renders aspects + voice controls.
 - Screen 4 consumes profile context without crash.
 - Returning session boot restores saved name/pet/progress/accessories without forcing onboarding re-entry.
@@ -78,6 +80,8 @@ Focus on user outcomes:
 - [ ] React Screen 1 navigates to `/world-map` when valid.
 - [ ] All existing screen files load without console-breaking errors.
 - [ ] Screen 2 `Start Topic` stores selected topic and opens screen 3.
+- [ ] Screen 2 default focused card is the latest unlocked topic for the current progress state.
+- [ ] Screen 2 auto-scroll reveals the default focused card when it is outside the first visible 4-card viewport.
 - [ ] Screen 1 persists learner name + selected pet and survives hard refresh.
 - [ ] Progress and accessory state keys restore expected UI context on next visit.
 - [ ] Corrupt/missing persisted data degrades safely to first-time flow without crash.

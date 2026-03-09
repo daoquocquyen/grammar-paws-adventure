@@ -109,6 +109,8 @@ Current navigation status:
   - Header level badge hydrates from `gpa_player_progress_v1` and renders grouped title bands (e.g., level 1-3 Explorer).
   - Topic ordering is easy-to-hard.
   - Topic status is computed dynamically from learner pass history (`done`, `ongoing`, `locked`) with strict sequential prerequisites.
+  - Default focused card resolves to the latest unlocked topic so the learner lands on the newest actionable step.
+  - Carousel auto-scroll positions the focused topic card into the visible 4-card viewport on load and focus changes.
   - Unlock rule: topic/challenge `N` is unlocked only after topic/challenge `N-1` is passed (pass threshold is `>= 80%`).
   - Locked topics are non-interactive.
   - Focused topic card is emphasized via border glow/ring (without card scaling).
