@@ -55,22 +55,18 @@ export const getPlayerLevelInfo = (progressState) => {
         completedTopics.filter((topicKey) => typeof topicKey === "string" && topicKey.trim()).map((topicKey) => topicKey.trim())
     );
 
-    const normalizedTopicProgress = {};
-
-    completedTopicSet.forEach((topicKey) => {
-        normalizedTopicProgress[topicKey] = 100;
-    });
-
     if (progressState.topicProgress && typeof progressState.topicProgress === "object") {
         Object.entries(progressState.topicProgress).forEach(([topicKey, topicProgressValue]) => {
-            const existingValue = normalizedTopicProgress[topicKey] ?? 0;
             const nextValue = extractTopicPercent(topicProgressValue);
-            normalizedTopicProgress[topicKey] = Math.max(existingValue, nextValue);
+            if (nextValue >= 100 && typeof topicKey === "string" && topicKey.trim()) {
+                completedTopicSet.add(topicKey.trim());
+            }
         });
     }
 
-    const totalProgressPoints = Object.values(normalizedTopicProgress).reduce((sum, topicPercent) => sum + topicPercent, 0);
-    const computedLevel = Math.max(1, 1 + Math.floor(totalProgressPoints / 50));
+    // Level tracks linear content progression:
+    // base level 1 + one level per completed topic.
+    const computedLevel = Math.max(1, 1 + completedTopicSet.size);
 
     return {
         level: computedLevel,
