@@ -21,6 +21,7 @@ test.describe("Story 2.2 acceptance", () => {
         await page.reload();
 
         const secondMetadata = page.getByTestId("challenge-selection-metadata");
+        await expect(secondMetadata).toHaveAttribute("data-question-count", "9");
         const secondQuestionIds = ((await secondMetadata.getAttribute("data-selected-question-ids")) ?? "")
             .split(",")
             .filter(Boolean);

@@ -29,13 +29,18 @@ import {
     resolvePhaseFromAttempt,
 } from "../../src/lib/challengeStateModel";
 import { calculateChallengeTotals } from "../../src/lib/challengeScoring";
+import {
+    PLAYER_PROGRESS_STORAGE_KEY,
+    PROFILE_STORAGE_KEY,
+    TOPIC_ATTEMPT_HISTORY_STORAGE_KEY,
+    getPlayerIdFromProfile,
+    getPlayerScopedStorageKey,
+    hasExplicitPlayerId,
+} from "../../src/lib/playerStorage";
 import { getPlayerLevelInfo } from "../../src/lib/playerLevel";
 import { DEFAULT_TOPIC_KEY, getTopicAspectIds, hasTopic } from "../../src/lib/topicCatalog";
 
-const profileStorageKey = "gpa_player_profile_v1";
-const playerProgressKey = "gpa_player_progress_v1";
 const selectedTopicStorageKey = "gpa_selected_topic_v1";
-const topicAttemptHistoryKey = "gpa_topic_attempt_history_v1";
 
 const defaultAvatar = DEFAULT_COMPANION_AVATAR;
 const toSafeLower = (value) => (typeof value === "string" ? value.trim().toLowerCase() : "");
@@ -71,9 +76,20 @@ const defaultProgressState = {
     topicProgress: {},
 };
 
-const readTopicAttemptHistory = () => {
+const getInitialSelectedTopicKey = () => {
+    if (typeof window === "undefined") {
+        return DEFAULT_TOPIC_KEY;
+    }
+
+    const restoredTopic = window.localStorage.getItem(selectedTopicStorageKey);
+    return restoredTopic && hasTopic(restoredTopic) ? restoredTopic : DEFAULT_TOPIC_KEY;
+};
+
+const readTopicAttemptHistory = (storageKey, legacyFallbackKey = "") => {
     try {
-        const rawHistory = localStorage.getItem(topicAttemptHistoryKey);
+        const rawHistory = localStorage.getItem(storageKey) ?? (
+            legacyFallbackKey ? localStorage.getItem(legacyFallbackKey) : null
+        );
         if (!rawHistory) {
             return {};
         }
@@ -85,9 +101,13 @@ const readTopicAttemptHistory = () => {
     }
 };
 
-const saveTopicAttemptHistory = (historyByTopic) => {
+const saveTopicAttemptHistory = (historyByTopic, storageKey, legacyMirrorKey = "") => {
     try {
-        localStorage.setItem(topicAttemptHistoryKey, JSON.stringify(historyByTopic));
+        const serializedHistory = JSON.stringify(historyByTopic);
+        localStorage.setItem(storageKey, serializedHistory);
+        if (legacyMirrorKey && legacyMirrorKey !== storageKey) {
+            localStorage.setItem(legacyMirrorKey, serializedHistory);
+        }
     } catch (error) {
         console.error("Failed to persist topic attempt history", error);
     }
@@ -119,8 +139,11 @@ export default function ChallengePage() {
     const [headerLevelLabel, setHeaderLevelLabel] = useState("Level 1 • Explorer");
     const [heroBubbleBorderColor, setHeroBubbleBorderColor] = useState(DEFAULT_HERO_THEME_COLOR);
     const [petBubbleBorderColor, setPetBubbleBorderColor] = useState(DEFAULT_PET_THEME_COLOR);
+    const [activeProgressStorageKey, setActiveProgressStorageKey] = useState(PLAYER_PROGRESS_STORAGE_KEY);
+    const [activeTopicAttemptHistoryKey, setActiveTopicAttemptHistoryKey] = useState(TOPIC_ATTEMPT_HISTORY_STORAGE_KEY);
+    const [allowLegacyStorageFallback, setAllowLegacyStorageFallback] = useState(true);
 
-    const [selectedTopicKey, setSelectedTopicKey] = useState(DEFAULT_TOPIC_KEY);
+    const [selectedTopicKey, setSelectedTopicKey] = useState(getInitialSelectedTopicKey);
     const [topicAttempts, setTopicAttempts] = useState([]);
     const [isTopicHydrated, setIsTopicHydrated] = useState(false);
     const [currentQuestionNumber, setCurrentQuestionNumber] = useState(0);
@@ -207,10 +230,14 @@ export default function ChallengePage() {
     );
 
     useEffect(() => {
-        const profileRaw = localStorage.getItem(profileStorageKey);
+        let resolvedPlayerId = "";
+        let nextAllowLegacyStorageFallback = true;
+        const profileRaw = localStorage.getItem(PROFILE_STORAGE_KEY);
         if (profileRaw) {
             try {
                 const profile = JSON.parse(profileRaw);
+                resolvedPlayerId = getPlayerIdFromProfile(profile);
+                nextAllowLegacyStorageFallback = !hasExplicitPlayerId(profile);
 
                 if (typeof profile?.name === "string" && profile.name.trim()) {
                     setHeaderName(profile.name.trim());
@@ -235,7 +262,15 @@ export default function ChallengePage() {
             }
         }
 
-        const progressRaw = localStorage.getItem(playerProgressKey);
+        const scopedProgressStorageKey = getPlayerScopedStorageKey(PLAYER_PROGRESS_STORAGE_KEY, resolvedPlayerId);
+        const scopedTopicAttemptHistoryKey = getPlayerScopedStorageKey(TOPIC_ATTEMPT_HISTORY_STORAGE_KEY, resolvedPlayerId);
+        setActiveProgressStorageKey(scopedProgressStorageKey);
+        setActiveTopicAttemptHistoryKey(scopedTopicAttemptHistoryKey);
+        setAllowLegacyStorageFallback(nextAllowLegacyStorageFallback);
+
+        const progressRaw = localStorage.getItem(scopedProgressStorageKey) ?? (
+            nextAllowLegacyStorageFallback ? localStorage.getItem(PLAYER_PROGRESS_STORAGE_KEY) : null
+        );
         if (progressRaw) {
             try {
                 const parsedProgress = JSON.parse(progressRaw);
@@ -249,7 +284,10 @@ export default function ChallengePage() {
 
         const restoredTopic = localStorage.getItem(selectedTopicStorageKey);
         const safeTopic = restoredTopic && hasTopic(restoredTopic) ? restoredTopic : DEFAULT_TOPIC_KEY;
-        const historyByTopic = readTopicAttemptHistory();
+        const historyByTopic = readTopicAttemptHistory(
+            scopedTopicAttemptHistoryKey,
+            nextAllowLegacyStorageFallback ? TOPIC_ATTEMPT_HISTORY_STORAGE_KEY : ""
+        );
         const restoredTopicAttempts = Array.isArray(historyByTopic[safeTopic]) ? historyByTopic[safeTopic] : [];
 
         setSelectedTopicKey(safeTopic);
@@ -262,7 +300,10 @@ export default function ChallengePage() {
             return;
         }
 
-        const historyByTopic = readTopicAttemptHistory();
+        const historyByTopic = readTopicAttemptHistory(
+            activeTopicAttemptHistoryKey,
+            allowLegacyStorageFallback ? TOPIC_ATTEMPT_HISTORY_STORAGE_KEY : ""
+        );
         const previousTopicAttempts = Array.isArray(historyByTopic[selectedTopicKey])
             ? historyByTopic[selectedTopicKey]
             : [];
@@ -278,8 +319,12 @@ export default function ChallengePage() {
             [selectedTopicKey]: nextTopicAttempts,
         };
 
-        saveTopicAttemptHistory(nextHistoryByTopic);
-    }, [isTopicHydrated, selectedTopicKey, selectedQuestionIds]);
+        saveTopicAttemptHistory(
+            nextHistoryByTopic,
+            activeTopicAttemptHistoryKey,
+            TOPIC_ATTEMPT_HISTORY_STORAGE_KEY
+        );
+    }, [activeTopicAttemptHistoryKey, allowLegacyStorageFallback, isTopicHydrated, selectedTopicKey, selectedQuestionIds]);
 
     useEffect(() => {
         return () => {
@@ -952,7 +997,9 @@ export default function ChallengePage() {
         }
 
         try {
-            const progressRaw = localStorage.getItem(playerProgressKey);
+            const progressRaw = localStorage.getItem(activeProgressStorageKey) ?? (
+                allowLegacyStorageFallback ? localStorage.getItem(PLAYER_PROGRESS_STORAGE_KEY) : null
+            );
             const parsedProgress = progressRaw ? JSON.parse(progressRaw) : defaultProgressState;
             const safeProgress = parsedProgress && typeof parsedProgress === "object"
                 ? parsedProgress
@@ -1010,14 +1057,26 @@ export default function ChallengePage() {
                 totalXp: Math.max(0, Number(safeProgress.totalXp) || 0) + challengeTotals.totalXp,
             };
 
-            localStorage.setItem(playerProgressKey, JSON.stringify(nextProgress));
+            const serializedProgress = JSON.stringify(nextProgress);
+            localStorage.setItem(activeProgressStorageKey, serializedProgress);
+            if (activeProgressStorageKey !== PLAYER_PROGRESS_STORAGE_KEY) {
+                localStorage.setItem(PLAYER_PROGRESS_STORAGE_KEY, serializedProgress);
+            }
             const { level, title } = getPlayerLevelInfo(nextProgress);
             setHeaderLevelLabel(`Level ${level} • ${title}`);
             setSummaryPersisted(true);
         } catch (error) {
             console.error("Failed to persist challenge summary", error);
         }
-    }, [showSummary, summaryPersisted, selectedTopicKey, challengeTotals, orderedOutcomes]);
+    }, [
+        showSummary,
+        summaryPersisted,
+        selectedTopicKey,
+        challengeTotals,
+        orderedOutcomes,
+        activeProgressStorageKey,
+        allowLegacyStorageFallback,
+    ]);
 
     const isAnswerSelectionEnabled =
         isQuestionContentAvailable &&

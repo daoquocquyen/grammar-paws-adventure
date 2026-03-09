@@ -35,13 +35,20 @@ test.describe("Story 3.2 acceptance", () => {
 
         const metadata = page.getByTestId("challenge-selection-metadata");
         await expect(metadata).toHaveAttribute("data-selected-question-ids", /nouns::/);
-        const correctAnswer = ((await metadata.getAttribute("data-current-correct-answer")) || "").trim().toLowerCase();
         const optionButtons = page.getByTestId("challenge-answer-options").getByRole("button");
         const primaryAction = page.getByTestId("challenge-primary-action");
 
-        const { enabledWrongIndexes: wrongIndexesBeforeRetry } = await findOptionIndexes(page, correctAnswer);
-        if (wrongIndexesBeforeRetry.length === 0) {
-            throw new Error("Could not find first wrong option");
+        let correctAnswer = ((await metadata.getAttribute("data-current-correct-answer")) || "").trim().toLowerCase();
+        let { enabledWrongIndexes: wrongIndexesBeforeRetry } = await findOptionIndexes(page, correctAnswer);
+        for (let retry = 0; retry < 3 && wrongIndexesBeforeRetry.length < 2; retry += 1) {
+            await page.reload();
+            await expect(metadata).toHaveAttribute("data-selected-question-ids", /nouns::/);
+            correctAnswer = ((await metadata.getAttribute("data-current-correct-answer")) || "").trim().toLowerCase();
+            ({ enabledWrongIndexes: wrongIndexesBeforeRetry } = await findOptionIndexes(page, correctAnswer));
+        }
+
+        if (wrongIndexesBeforeRetry.length < 2) {
+            throw new Error("Could not find at least two wrong options for guided retry validation");
         }
 
         await dragOptionToBlank(page, optionButtons.nth(wrongIndexesBeforeRetry[0]));

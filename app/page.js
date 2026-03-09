@@ -8,10 +8,14 @@ import PetOptionCard from "../src/components/PetOptionCard";
 import PrimaryButton from "../src/components/PrimaryButton";
 import { getHeroThemeColor, getPetThemeColor } from "../src/lib/avatarBubbleThemes";
 import { validateOnboardingInput } from "../src/lib/onboardingValidation";
-
-const screen1ProfileKey = "gpa_player_profile_v1";
-const playerProgressKey = "gpa_player_progress_v1";
-const petAccessoriesKey = "gpa_pet_accessories_v1";
+import {
+    PET_ACCESSORIES_STORAGE_KEY,
+    PLAYER_PROGRESS_STORAGE_KEY,
+    PROFILE_STORAGE_KEY,
+    getPlayerIdFromName,
+    hasExplicitPlayerId,
+    getScopedStorageKeyForProfile,
+} from "../src/lib/playerStorage";
 
 const heroes = [
     {
@@ -171,6 +175,22 @@ const defaultAccessoriesState = {
     equippedAccessoryId: null,
 };
 
+const isValidProgressState = (value) =>
+    Boolean(
+        value
+        && typeof value === "object"
+        && Array.isArray(value.completedTopics)
+        && value.topicProgress
+        && typeof value.topicProgress === "object"
+    );
+
+const isValidAccessoriesState = (value) =>
+    Boolean(
+        value
+        && typeof value === "object"
+        && Array.isArray(value.unlockedAccessoryIds)
+    );
+
 export default function Home() {
     const router = useRouter();
     const [playerName, setPlayerName] = useState("");
@@ -211,8 +231,10 @@ export default function Home() {
     );
 
     const persistPlayerProfile = (trimmedName, hero, pet) => {
+        const playerId = getPlayerIdFromName(trimmedName);
         const payload = {
             version: 1,
+            playerId,
             name: trimmedName,
             heroId: hero.id,
             heroName: hero.name,
@@ -224,48 +246,72 @@ export default function Home() {
         };
 
         try {
-            localStorage.setItem(screen1ProfileKey, JSON.stringify(payload));
+            localStorage.setItem(PROFILE_STORAGE_KEY, JSON.stringify(payload));
         } catch (error) {
             console.error("Failed to save player profile", error);
         }
+
+        return payload;
     };
 
-    const ensureReturningState = () => {
+    const ensureReturningState = ({ profile = null, allowLegacyBootstrap = false } = {}) => {
         try {
-            const progressRaw = localStorage.getItem(playerProgressKey);
-            const accessoriesRaw = localStorage.getItem(petAccessoriesKey);
+            const scopedProgressKey = getScopedStorageKeyForProfile(PLAYER_PROGRESS_STORAGE_KEY, profile);
+            const scopedAccessoriesKey = getScopedStorageKeyForProfile(PET_ACCESSORIES_STORAGE_KEY, profile);
 
-            if (!progressRaw) {
-                localStorage.setItem(playerProgressKey, JSON.stringify(defaultProgressState));
-            } else {
-                const parsedProgress = safeParseJson(progressRaw);
-                if (!Array.isArray(parsedProgress?.completedTopics)) {
-                    localStorage.setItem(playerProgressKey, JSON.stringify(defaultProgressState));
-                }
+            const scopedProgressRaw = localStorage.getItem(scopedProgressKey);
+            const scopedAccessoriesRaw = localStorage.getItem(scopedAccessoriesKey);
+
+            const legacyProgressRaw = allowLegacyBootstrap && scopedProgressKey !== PLAYER_PROGRESS_STORAGE_KEY
+                ? localStorage.getItem(PLAYER_PROGRESS_STORAGE_KEY)
+                : null;
+            const legacyAccessoriesRaw = allowLegacyBootstrap && scopedAccessoriesKey !== PET_ACCESSORIES_STORAGE_KEY
+                ? localStorage.getItem(PET_ACCESSORIES_STORAGE_KEY)
+                : null;
+
+            const progressCandidateRaw = scopedProgressRaw ?? legacyProgressRaw;
+            const accessoriesCandidateRaw = scopedAccessoriesRaw ?? legacyAccessoriesRaw;
+
+            const parsedProgress = safeParseJson(progressCandidateRaw);
+            const parsedAccessories = safeParseJson(accessoriesCandidateRaw);
+
+            const nextProgress = isValidProgressState(parsedProgress)
+                ? parsedProgress
+                : defaultProgressState;
+            const nextAccessories = isValidAccessoriesState(parsedAccessories)
+                ? parsedAccessories
+                : defaultAccessoriesState;
+
+            const serializedProgress = JSON.stringify(nextProgress);
+            const serializedAccessories = JSON.stringify(nextAccessories);
+
+            localStorage.setItem(scopedProgressKey, serializedProgress);
+            localStorage.setItem(scopedAccessoriesKey, serializedAccessories);
+
+            // Keep legacy base keys synced to the active player state for backward compatibility.
+            if (scopedProgressKey !== PLAYER_PROGRESS_STORAGE_KEY) {
+                localStorage.setItem(PLAYER_PROGRESS_STORAGE_KEY, serializedProgress);
             }
-
-            if (!accessoriesRaw) {
-                localStorage.setItem(petAccessoriesKey, JSON.stringify(defaultAccessoriesState));
-            } else {
-                const parsedAccessories = safeParseJson(accessoriesRaw);
-                if (!Array.isArray(parsedAccessories?.unlockedAccessoryIds)) {
-                    localStorage.setItem(petAccessoriesKey, JSON.stringify(defaultAccessoriesState));
-                }
+            if (scopedAccessoriesKey !== PET_ACCESSORIES_STORAGE_KEY) {
+                localStorage.setItem(PET_ACCESSORIES_STORAGE_KEY, serializedAccessories);
             }
         } catch (error) {
             console.error("Failed to initialize returning learner state", error);
-            localStorage.setItem(playerProgressKey, JSON.stringify(defaultProgressState));
-            localStorage.setItem(petAccessoriesKey, JSON.stringify(defaultAccessoriesState));
+            localStorage.setItem(PLAYER_PROGRESS_STORAGE_KEY, JSON.stringify(defaultProgressState));
+            localStorage.setItem(PET_ACCESSORIES_STORAGE_KEY, JSON.stringify(defaultAccessoriesState));
         }
     };
 
     useEffect(() => {
-        const screen1ProfileRaw = localStorage.getItem(screen1ProfileKey);
+        const screen1ProfileRaw = localStorage.getItem(PROFILE_STORAGE_KEY);
         if (!screen1ProfileRaw) {
             return;
         }
+
+        let restoredProfile = null;
         try {
             const profile = JSON.parse(screen1ProfileRaw);
+            restoredProfile = profile && typeof profile === "object" ? profile : null;
             if (isValidProfileName(profile?.name)) {
                 const restoredName = profile.name.trim();
                 setPlayerName(restoredName);
@@ -293,7 +339,10 @@ export default function Home() {
             console.error("Failed to parse player profile", error);
         }
 
-        ensureReturningState();
+        ensureReturningState({
+            profile: restoredProfile,
+            allowLegacyBootstrap: !hasExplicitPlayerId(restoredProfile),
+        });
     }, []);
 
     const liveValidationMessage = [nameError, heroError, petError].filter(Boolean).join(" ");
@@ -318,11 +367,12 @@ export default function Home() {
         }
 
         const trimmedName = playerName.trim();
+        let persistedProfile = null;
         if (selectedHero && selectedPet) {
-            persistPlayerProfile(trimmedName, selectedHero, selectedPet);
+            persistedProfile = persistPlayerProfile(trimmedName, selectedHero, selectedPet);
         }
 
-        ensureReturningState();
+        ensureReturningState({ profile: persistedProfile, allowLegacyBootstrap: false });
 
         router.push("/world-map");
     };

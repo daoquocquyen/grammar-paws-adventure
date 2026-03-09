@@ -4,10 +4,14 @@ import { useRouter } from "next/navigation";
 import { useEffect, useMemo, useRef, useState } from "react";
 import HeaderBlock from "../../src/components/HeaderBlock";
 import { DEFAULT_COMPANION_AVATAR } from "../../src/lib/avatarDefaults";
+import {
+    PLAYER_PROGRESS_STORAGE_KEY,
+    PROFILE_STORAGE_KEY,
+    hasExplicitPlayerId,
+    getScopedStorageKeyForProfile,
+} from "../../src/lib/playerStorage";
 import { getPlayerLevelInfo } from "../../src/lib/playerLevel";
 
-const profileStorageKey = "gpa_player_profile_v1";
-const playerProgressKey = "gpa_player_progress_v1";
 const selectedTopicStorageKey = "gpa_selected_topic_v1";
 
 const defaultAvatar = DEFAULT_COMPANION_AVATAR;
@@ -334,10 +338,12 @@ export default function Screen2TopicSelectionPage() {
     }, [playerProgress, selectedPetName]);
 
     useEffect(() => {
-        const profileRaw = localStorage.getItem(profileStorageKey);
+        const profileRaw = localStorage.getItem(PROFILE_STORAGE_KEY);
+        let resolvedProfile = null;
         if (profileRaw) {
             try {
                 const profile = JSON.parse(profileRaw);
+                resolvedProfile = profile && typeof profile === "object" ? profile : null;
                 if (typeof profile?.name === "string" && profile.name.trim()) {
                     setHeaderName(profile.name.trim());
                 }
@@ -370,7 +376,10 @@ export default function Screen2TopicSelectionPage() {
             }
         }
 
-        const progressRaw = localStorage.getItem(playerProgressKey);
+        const scopedProgressKey = getScopedStorageKeyForProfile(PLAYER_PROGRESS_STORAGE_KEY, resolvedProfile);
+        const allowLegacyProgressFallback = !hasExplicitPlayerId(resolvedProfile);
+        const progressRaw = localStorage.getItem(scopedProgressKey)
+            ?? (allowLegacyProgressFallback ? localStorage.getItem(PLAYER_PROGRESS_STORAGE_KEY) : null);
         if (progressRaw) {
             try {
                 const parsedProgress = JSON.parse(progressRaw);
