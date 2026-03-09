@@ -36,6 +36,7 @@ Focus on deterministic gameplay rules:
 - Pass threshold: `score >= 80%`.
 - Anti-repeat question selection over recent attempts.
 - In-challenge question stem uniqueness (same prompt/sentence/correct-answer combo cannot repeat within one challenge run), even when cooldown fallback is used.
+- Answer option text quality guard: no synthetic numeric suffix artifacts (e.g., `am2`, `is2`, `are2`) and no duplicate options per question.
 - Voice settings read/write behavior.
 
 ### Integration

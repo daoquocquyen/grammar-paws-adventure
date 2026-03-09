@@ -25,6 +25,20 @@ const buildSyntheticQuestion = ({ id, aspectId, stemSeed }) => ({
     options: [`answer-${stemSeed}`, `wrong-a-${stemSeed}`, `wrong-b-${stemSeed}`, `wrong-c-${stemSeed}`],
 });
 
+const topicAspectsByTopicKey = {
+    verbs: ["ing-ending", "auxiliary", "time-marker"],
+    nouns: ["common", "proper", "plurality"],
+    pronouns: ["subject", "object", "possessive"],
+    adjectives: ["size", "color", "order"],
+    adverbs: ["how", "when", "where"],
+    prepositions: ["place", "time", "direction"],
+    conjunctions: ["and-but", "because", "or"],
+    articles: ["a", "an", "the"],
+    tenses: ["past", "present", "future"],
+    punctuation: ["period", "question-mark", "comma"],
+    "sentence-structure": ["subject-verb", "complete-thought", "word-order"],
+};
+
 describe("Story 2.2 unit", () => {
     it("creates topic-matched challenge questions with varying content", () => {
         const nounsBank = createTopicQuestionBank("nouns", ["common"]);
@@ -44,6 +58,23 @@ describe("Story 2.2 unit", () => {
         expect(nounsBank[0].whyCorrect).toContain(`"${nounsBank[0].correctAnswer}"`);
         expect(nounsBank[0].whyWrong).toContain(`"${nounsBank[0].correctAnswer}"`);
         expect(nounsBank[0].whyWrong).toContain("The correct answer is");
+    });
+
+    it("keeps generated answer text clean across all supported topics", () => {
+        Object.entries(topicAspectsByTopicKey).forEach(([topicKey, aspectIds]) => {
+            const questionBank = createTopicQuestionBank(topicKey, aspectIds);
+            questionBank.forEach((question) => {
+                expect(question.options).toHaveLength(4);
+
+                const normalizedOptions = question.options.map((option) => String(option).trim().toLowerCase());
+                expect(new Set(normalizedOptions).size).toBe(4);
+
+                normalizedOptions.forEach((option) => {
+                    expect(option).not.toMatch(/[a-z]\d/i);
+                    expect(option).not.toMatch(/\b\d+\b/);
+                });
+            });
+        });
     });
 
     it("selects questions across multiple aspects before repeating", () => {

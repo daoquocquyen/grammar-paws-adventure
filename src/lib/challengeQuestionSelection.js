@@ -2,6 +2,31 @@ import { getChallengeQuestionCount } from "./challengeQuestionCount";
 
 const RECENT_TOPIC_ATTEMPT_COOLDOWN = 2;
 const QUESTIONS_PER_ASPECT = 6;
+const DISTRACTOR_FALLBACK_POOL = [
+    "run",
+    "blue",
+    "happy",
+    "because",
+    "under",
+    "quickly",
+    "place",
+    "thing",
+    "name",
+    "idea",
+    "object",
+    "person",
+    "before",
+    "after",
+    "slowly",
+    "bright",
+];
+const DISTRACTOR_FINAL_FALLBACK_POOL = [
+    "choice alpha",
+    "choice bravo",
+    "choice charlie",
+    "choice delta",
+    "choice echo",
+];
 
 const toSafeString = (value) => (typeof value === "string" ? value.trim() : "");
 const toDisplayLabel = (value) =>
@@ -511,6 +536,41 @@ const shuffleWithRandom = (items, randomFn = Math.random) => {
     return clonedItems;
 };
 
+const collectUniquePoolValues = ({
+    poolValues,
+    startIndex = 0,
+    targetCount = 0,
+    blockedValues = new Set(),
+}) => {
+    const safePool = Array.isArray(poolValues) ? poolValues : [];
+    const safeTargetCount = Math.max(0, Number.isFinite(targetCount) ? Math.floor(targetCount) : 0);
+
+    if (safeTargetCount === 0 || safePool.length === 0) {
+        return [];
+    }
+
+    const normalizedStart =
+        ((Number.isFinite(startIndex) ? Math.floor(startIndex) : 0) % safePool.length + safePool.length) % safePool.length;
+    const selectedValues = [];
+
+    for (let offset = 0; offset < safePool.length && selectedValues.length < safeTargetCount; offset += 1) {
+        const candidateValue = toSafeString(safePool[(normalizedStart + offset) % safePool.length]);
+        if (!candidateValue) {
+            continue;
+        }
+
+        const normalizedCandidate = candidateValue.toLowerCase();
+        if (blockedValues.has(normalizedCandidate)) {
+            continue;
+        }
+
+        blockedValues.add(normalizedCandidate);
+        selectedValues.push(candidateValue);
+    }
+
+    return selectedValues;
+};
+
 const normalizeComparableText = (value) =>
     toSafeString(value)
         .replace(/\s+/g, " ")
@@ -626,46 +686,55 @@ const buildQuestionFromBlueprint = ({ topicKey, aspectId, questionOrdinal, bluep
 
     const correctAnswer = toSafeString(blueprint.correctPool[poolIndex]) || "answer";
     const distractorPool = Array.isArray(blueprint.distractorPool) ? blueprint.distractorPool : [];
-    const safePoolLength = Math.max(1, distractorPool.length);
     const aspectOffset = toSafeString(aspectId).length;
 
-    const pickUniqueDistractor = (startIndex, blockedValues) => {
-        for (let offset = 0; offset < safePoolLength; offset += 1) {
-            const poolValue = toSafeString(distractorPool[(startIndex + offset) % safePoolLength]);
-            if (!poolValue) {
-                continue;
-            }
+    const blockedValues = new Set([correctAnswer.toLowerCase()]);
+    const distractors = [
+        ...collectUniquePoolValues({
+            poolValues: distractorPool,
+            startIndex: safeOrdinal - 1 + aspectOffset,
+            targetCount: 3,
+            blockedValues,
+        }),
+    ];
 
-            const normalizedValue = poolValue.toLowerCase();
-            if (blockedValues.has(normalizedValue)) {
-                continue;
-            }
+    if (distractors.length < 3) {
+        distractors.push(
+            ...collectUniquePoolValues({
+                poolValues: DISTRACTOR_FALLBACK_POOL,
+                startIndex: safeOrdinal + aspectOffset,
+                targetCount: 3 - distractors.length,
+                blockedValues,
+            })
+        );
+    }
 
-            return poolValue;
+    if (distractors.length < 3) {
+        distractors.push(
+            ...collectUniquePoolValues({
+                poolValues: DISTRACTOR_FINAL_FALLBACK_POOL,
+                startIndex: safeOrdinal + aspectOffset + 1,
+                targetCount: 3 - distractors.length,
+                blockedValues,
+            })
+        );
+    }
+
+    while (distractors.length < 3) {
+        const dynamicFallback = `alternative ${String.fromCharCode(97 + distractors.length)}`;
+        if (!blockedValues.has(dynamicFallback)) {
+            blockedValues.add(dynamicFallback);
+            distractors.push(dynamicFallback);
+            continue;
         }
 
-        return "";
-    };
-
-    const blockedValues = new Set([correctAnswer.toLowerCase()]);
-    let distractor = pickUniqueDistractor(safeOrdinal - 1 + aspectOffset, blockedValues) || "option";
-    blockedValues.add(distractor.toLowerCase());
-    let secondaryDistractor =
-        pickUniqueDistractor(safeOrdinal + aspectOffset + 2, blockedValues) || `${distractor} choice`;
-    blockedValues.add(secondaryDistractor.toLowerCase());
-    let tertiaryDistractor =
-        pickUniqueDistractor(safeOrdinal + aspectOffset + 4, blockedValues) || `${secondaryDistractor} 2`;
+        break;
+    }
 
     const sentenceFrame = blueprint.sentenceFrames[frameIndex] ?? { before: "Choose the best answer", after: ":" };
-    if (secondaryDistractor.toLowerCase() === distractor.toLowerCase()) {
-        secondaryDistractor = `${secondaryDistractor} 2`;
-    }
-    if (
-        tertiaryDistractor.toLowerCase() === distractor.toLowerCase() ||
-        tertiaryDistractor.toLowerCase() === secondaryDistractor.toLowerCase()
-    ) {
-        tertiaryDistractor = `${tertiaryDistractor} 3`;
-    }
+    const distractor = distractors[0] ?? "option";
+    const secondaryDistractor = distractors[1] ?? "choice";
+    const tertiaryDistractor = distractors[2] ?? "answer";
     const answerOptions =
         safeOrdinal % 2 === 0
             ? [distractor, correctAnswer, secondaryDistractor, tertiaryDistractor]

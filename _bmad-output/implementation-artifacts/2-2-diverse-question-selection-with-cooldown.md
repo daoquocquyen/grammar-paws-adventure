@@ -83,6 +83,7 @@ GPT-5.3-Codex
 - Implemented round-robin-by-aspect selection to maximize aspect variety before repeats.
 - Added recent-attempt exclusion (`N=2` by default) and fallback selection when pool is insufficient.
 - Added in-challenge stem-level dedupe guard so one challenge run does not repeat equivalent question stems.
+- Reworked distractor fallback generation to prevent synthetic suffix artifacts in answer text (e.g., `am2`, `is2`, `are2`).
 - Wired `app/challenge/page.js` to load selected topic/history from localStorage, prepare challenge question IDs, and persist attempt history for retries.
 - Added Story 2.2 unit/integration/acceptance tests for variety, cooldown exclusion, fallback behavior, and in-challenge stem uniqueness.
 - Manual test steps for this story:
@@ -109,3 +110,4 @@ GPT-5.3-Codex
 - 2026-03-05: Added Story 2.2 unit, integration, and acceptance tests.
 - 2026-03-06: Fixed topic-hydration race in challenge attempt persistence and added integration coverage to prevent cross-topic history pollution.
 - 2026-03-09: Enforced no-duplicate stems within each challenge selection, expanded Story 2.2 unit coverage, and exposed stem uniqueness metadata for integration assertions.
+- 2026-03-09: Eliminated numbered fallback answer artifacts and added automated answer-text hygiene checks across all supported topics.
