@@ -21,6 +21,7 @@ flowchart LR
 ## Runtime Components
 - UI layer (legacy): static HTML in `src/ui/stitch/`.
 - UI layer (new): Next.js App Router pages in `app/`.
+- Topic curriculum metadata: shared catalog in `src/lib/topicCatalog.js`.
 - Styling (legacy): Tailwind via CDN + inline `tailwind.config`.
 - Styling (new): Tailwind CSS via PostCSS build pipeline.
 - State: localStorage keys:
@@ -51,6 +52,7 @@ flowchart LR
 - Keep working, editable copies in `src/ui/stitch/`.
 - Add Next.js scaffold at repo root (`app/`, `package.json`, Tailwind/PostCSS configs) for gradual migration.
 - Migrate Screen 1 behavior first into `app/page.js` while preserving legacy source for verification.
+- Use a shared topic catalog (`src/lib/topicCatalog.js`) so topic-intro and challenge consume the same aspect definitions.
 - Use local-first persistence for MVP (no backend dependency yet).
 - Persist learner return state (name, selected pet, progress, accessories) and restore it on app entry to avoid repeated onboarding.
 - Keep gameplay rules defined in planning artifacts before engine wiring.
@@ -114,7 +116,7 @@ flowchart LR
 - ✅ Canonical clean routes enabled for migrated screens: `/world-map` and `/topic-intro`.
 - ✅ Backward compatibility redirects are configured in `next.config.mjs` for legacy paths `/screen2-world-map-topic-selection` -> `/world-map`, `/screen3-grammar-topic-intro` -> `/topic-intro`, and `/screen4-game-challenge` -> `/challenge`.
 - 🟡 Screen 2 behavior is implemented directly in `app/world-map/page.js` while legacy Stitch source remains for migration traceability.
-- 🟡 Screens 3-4 remain legacy static HTML and are pending migration.
+- 🟡 Screen 3 and Screen 4 have active React routes (`/topic-intro`, `/challenge`) with legacy Stitch files retained for migration traceability and visual reference.
 
 ## Architecture TBDs
 - Data/service boundary for question bank source is TBD.
@@ -133,3 +135,5 @@ flowchart LR
 - `app/page.js`
 - `app/world-map/page.js`
 - `app/topic-intro/page.js`
+- `app/challenge/page.js`
+- `src/lib/topicCatalog.js`

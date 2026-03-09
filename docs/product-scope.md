@@ -36,12 +36,13 @@
 - Multiple pet species.
 - Advanced/custom voice provider integrations.
 
-## Current Implementation Boundary (as of 2026-03-02)
-- Implemented as static Stitch-derived web screens:
-  - Screen 1: onboarding shell + profile hydrate from localStorage.
-  - Screen 2: topic select shell + save selected topic + navigate to screen 3.
-  - Screen 3: topic intro with loading/error/content states + voice controls.
-  - Screen 4: challenge visual shell with static example content.
+## Current Implementation Boundary (as of 2026-03-09)
+- Active Next.js routes exist for:
+  - Screen 1 (`/`): onboarding + profile hydrate from localStorage.
+  - Screen 2 (`/world-map`): topic selection + save selected topic + route to intro.
+  - Screen 3 (`/topic-intro`): loading/error/content states + voice controls + dynamic aspect rendering from shared topic metadata.
+  - Screen 4 (`/challenge`): challenge flow shell with dynamic question selection tied to selected topic aspects.
+- Legacy Stitch screen files remain in `src/ui/stitch` for migration traceability.
 - Profile restore is partial (name/pet hydration exists), but full persisted state (topic progress + pet accessories) is not yet implemented.
 - Not yet implemented in `src/ui/stitch`: results, rewards, pet home, evolution, dashboard.
 
@@ -49,10 +50,9 @@
 - Browser environment supports `localStorage`.
 - Learner returns on the same browser/device profile for MVP persistence behavior.
 - Speech synthesis support varies by browser; text-only fallback is acceptable.
-- UI screens are prototype-first and will be wired into an app scaffold later.
+- Topic definitions and aspect counts are owned by centralized in-repo metadata (`src/lib/topicCatalog.js`).
 
 ## TBD Gaps (Do Not Assume)
-- Final frontend framework and package/tooling (`package.json` not present).
 - Canonical branch/PR policy for solo workflow.
 - Hosting/release target and rollout strategy.
 - Production content pipeline for question bank and copy moderation.
@@ -65,3 +65,6 @@
 - `src/ui/stitch/screen2-world-map-topic-selection.html`
 - `src/ui/stitch/screen3-grammar-topic-intro.html`
 - `src/ui/stitch/screen4-game-challenge.html`
+- `app/topic-intro/page.js`
+- `app/challenge/page.js`
+- `src/lib/topicCatalog.js`

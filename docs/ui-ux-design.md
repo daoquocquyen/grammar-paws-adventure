@@ -130,7 +130,8 @@ Current navigation status:
   - CTA pair: Start Challenge / Back to Map.
 - Interaction behavior:
   - Reads selected topic key from localStorage.
-  - Renders topic content from in-file topic map.
+  - Renders topic content from shared topic catalog (`src/lib/topicCatalog.js`).
+  - Topic aspect count is dynamic per topic and follows curriculum-focused metadata (not fixed card count).
   - Auto-plays speech when available and not muted.
   - Saves voice setting to `gpa_voice_settings_v1`.
   - Main companion avatar resolves from `profile.petImage` (kid-selected pet), with shared fallback avatar from `src/lib/avatarDefaults.js`.
