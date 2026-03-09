@@ -46,4 +46,34 @@ describe("Story 1.5 unit", () => {
             window.SpeechSynthesisUtterance = originalSpeechSynthesisUtterance;
         }
     });
+
+    it("cancels speech on browser page exit events", () => {
+        const originalSpeechSynthesis = window.speechSynthesis;
+        const originalSpeechSynthesisUtterance = window.SpeechSynthesisUtterance;
+        const cancelMock = vi.fn();
+
+        window.localStorage.clear();
+        window.localStorage.setItem("gpa_selected_topic_v1", "nouns");
+        window.speechSynthesis = {
+            cancel: cancelMock,
+            speak: vi.fn(),
+        };
+        window.SpeechSynthesisUtterance = function MockSpeechSynthesisUtterance(text) {
+            this.text = text;
+        };
+
+        try {
+            const { unmount } = render(<TopicIntroPage />);
+            const callsBeforeExit = cancelMock.mock.calls.length;
+
+            window.dispatchEvent(new Event("pagehide"));
+            window.dispatchEvent(new Event("beforeunload"));
+
+            expect(cancelMock.mock.calls.length).toBeGreaterThan(callsBeforeExit);
+            unmount();
+        } finally {
+            window.speechSynthesis = originalSpeechSynthesis;
+            window.SpeechSynthesisUtterance = originalSpeechSynthesisUtterance;
+        }
+    });
 });

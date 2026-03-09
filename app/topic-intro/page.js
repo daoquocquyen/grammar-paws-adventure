@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import HeaderBlock from "../../src/components/HeaderBlock";
 import { DEFAULT_COMPANION_AVATAR } from "../../src/lib/avatarDefaults";
 import { getChallengeQuestionCount } from "../../src/lib/challengeQuestionCount";
@@ -85,12 +85,20 @@ export default function Screen3TopicIntroPage() {
         [topic]
     );
 
+    const stopNarration = useCallback(() => {
+        if (typeof window === "undefined" || !("speechSynthesis" in window)) {
+            return;
+        }
+
+        window.speechSynthesis.cancel();
+    }, []);
+
     const speakTopicIntro = (topicData) => {
         if (!topicData || !voiceSupported || voiceMuted) {
             return;
         }
 
-        window.speechSynthesis.cancel();
+        stopNarration();
         const utterance = new SpeechSynthesisUtterance(`${topicData.title}. ${topicData.summary} ${topicData.petQuote}`);
         utterance.rate = 0.95;
         utterance.pitch = 1;
@@ -179,10 +187,26 @@ export default function Screen3TopicIntroPage() {
     }, [isLoading, topic, voiceMuted, voiceSupported]);
 
     useEffect(() => () => {
-        if (typeof window !== "undefined" && "speechSynthesis" in window) {
-            window.speechSynthesis.cancel();
+        stopNarration();
+    }, [stopNarration]);
+
+    useEffect(() => {
+        if (typeof window === "undefined") {
+            return undefined;
         }
-    }, []);
+
+        const handlePageExit = () => {
+            stopNarration();
+        };
+
+        window.addEventListener("pagehide", handlePageExit);
+        window.addEventListener("beforeunload", handlePageExit);
+
+        return () => {
+            window.removeEventListener("pagehide", handlePageExit);
+            window.removeEventListener("beforeunload", handlePageExit);
+        };
+    }, [stopNarration]);
 
     const handleToggleMute = () => {
         const nextMuted = !voiceMuted;
@@ -190,7 +214,7 @@ export default function Screen3TopicIntroPage() {
         saveVoiceSettings(nextMuted);
 
         if (nextMuted && voiceSupported) {
-            window.speechSynthesis.cancel();
+            stopNarration();
             return;
         }
 
@@ -317,6 +341,7 @@ export default function Screen3TopicIntroPage() {
                             <button
                                 type="button"
                                 onClick={() => {
+                                    stopNarration();
                                     window.location.href = "/challenge";
                                 }}
                                 data-question-count={challengeQuestionCount}
@@ -327,6 +352,7 @@ export default function Screen3TopicIntroPage() {
                             </button>
                             <Link
                                 href="/world-map"
+                                onClick={stopNarration}
                                 className="inline-flex items-center gap-2 rounded-full border-2 border-primary bg-white px-9 py-3.5 text-lg font-black text-primary"
                             >
                                 <span className="material-symbols-outlined text-base">map</span>

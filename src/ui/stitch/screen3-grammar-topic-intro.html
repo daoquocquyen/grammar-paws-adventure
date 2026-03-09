@@ -130,10 +130,10 @@
             </div>
 
             <div class="mt-4 flex flex-wrap items-center justify-center gap-3">
-                <a href="./screen4-challenge-screen.html"
+                <a id="startChallengeLink" href="./screen4-challenge-screen.html"
                     class="px-8 py-2.5 bg-primary text-white rounded-full font-black text-sm shadow-lg shadow-primary/25">Start
                     Challenge</a>
-                <a href="./screen2-world-map-topic-selection.html"
+                <a id="backToMapLink" href="./screen2-world-map-topic-selection.html"
                     class="px-8 py-2.5 border-2 border-primary text-primary rounded-full font-black text-sm bg-white">Back
                     to Map</a>
             </div>
@@ -166,6 +166,8 @@
 
         const muteToggleButton = document.getElementById("muteToggleButton");
         const replayVoiceButton = document.getElementById("replayVoiceButton");
+        const startChallengeLink = document.getElementById("startChallengeLink");
+        const backToMapLink = document.getElementById("backToMapLink");
         const voiceHint = document.getElementById("voiceHint");
         const petAvatarImage = document.getElementById("petAvatarImage");
         const petDisplayName = document.getElementById("petDisplayName");
@@ -209,6 +211,14 @@
 
         let currentTopic = null;
         let voiceMuted = false;
+
+        const stopNarration = () => {
+            if (!("speechSynthesis" in window)) {
+                return;
+            }
+
+            window.speechSynthesis.cancel();
+        };
 
         const hydrateProfile = () => {
             const raw = localStorage.getItem(profileStorageKey);
@@ -311,7 +321,7 @@
             if (!text) {
                 return;
             }
-            window.speechSynthesis.cancel();
+            stopNarration();
             const utterance = new SpeechSynthesisUtterance(text);
             utterance.rate = 0.96;
             utterance.pitch = 1.05;
@@ -324,13 +334,22 @@
             muteToggleButton.classList.toggle("bg-slate-300", voiceMuted);
             saveVoiceSettings();
             if (voiceMuted && "speechSynthesis" in window) {
-                window.speechSynthesis.cancel();
+                stopNarration();
             }
         });
 
         replayVoiceButton.addEventListener("click", () => {
             speakTopic();
         });
+
+        const handlePageExit = () => {
+            stopNarration();
+        };
+
+        window.addEventListener("pagehide", handlePageExit);
+        window.addEventListener("beforeunload", handlePageExit);
+        startChallengeLink?.addEventListener("click", stopNarration);
+        backToMapLink?.addEventListener("click", stopNarration);
 
         hydrateProfile();
         hydrateVoiceSettings();
