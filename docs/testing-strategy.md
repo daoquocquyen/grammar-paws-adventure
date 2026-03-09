@@ -33,7 +33,8 @@ For every developed story, execute tests in this order:
 ### Unit
 Focus on deterministic gameplay rules:
 - Question count formula: `clamp(aspect_count * 3, 6, 15)`.
-- Pass threshold: `score >= 80%`.
+- Pass threshold: `earned_base_xp / max_base_xp >= 80%` (`required_xp_to_pass = ceil(total_questions * 10 * 0.8)`).
+- XP mapping by outcome: first-try `+10`, second-try `+8`, assisted `+3`, skipped `+0`.
 - Anti-repeat question selection over recent attempts.
 - In-challenge question stem uniqueness (same prompt/sentence/correct-answer combo cannot repeat within one challenge run), even when cooldown fallback is used.
 - Answer option text quality guard: no synthetic numeric suffix artifacts (e.g., `am2`, `is2`, `are2`) and no duplicate options per question.
@@ -92,6 +93,7 @@ Focus on user outcomes:
 - [ ] Leaving Screen 3 stops any in-progress narration (no carry-over audio).
 - [ ] Screen 3 `Start Challenge` routes to `/challenge` and remains visually labeled as `Start Challenge`.
 - [ ] Screen 4 displays challenge UI and profile hydration safely.
+- [ ] Screen 4 challenge HUD shows `earned_xp / required_xp_to_pass` and updates as outcomes are recorded.
 
 ## Automation TBDs
 - CI execution pipeline: TBD.

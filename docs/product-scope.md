@@ -9,8 +9,8 @@
 - Make grammar practice feel like short gameplay sessions.
 - Require topic intro before challenge.
 - Provide supportive explanation after each answer.
-- Gate progression with a clear pass threshold (`>= 80%`).
-- Use strict sequential unlocks: challenge `N` unlocks only after challenge `N-1` is passed (`>= 80%`).
+- Gate progression with a clear pass threshold (`earned_base_xp / max_base_xp >= 80%`).
+- Use strict sequential unlocks: challenge `N` unlocks only after challenge `N-1` passes the XP gate (`>= 80%` of max base XP).
 - Tie learning completion to pet rewards/progression.
 
 ## In Scope (MVP Boundary)
@@ -21,7 +21,8 @@
 - Topic intro with aspects and one example per aspect.
 - Challenge flow with aspect-based question count formula: `clamp(aspect_count * 3, 6, 15)`.
 - Right/wrong explanation after each answer.
-- Pass/fail evaluation at `>= 80%`.
+- Pass/fail evaluation at `earned_base_xp / max_base_xp >= 80%` (`required_xp_to_pass = ceil(total_questions * 10 * 0.8)`).
+- Challenge progress HUD shows `earned_xp / required_xp_to_pass` for the active run.
 - Sequential progression guard on world map: no level-based bypass of locked challenges.
 - Reward selection (1 of 3 choices) after pass.
 - Pet customization and milestone evolution.

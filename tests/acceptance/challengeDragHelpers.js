@@ -1,5 +1,8 @@
 export const dragOptionToBlank = async (page, option) => {
     const blank = page.getByTestId("challenge-blank");
+    await option.scrollIntoViewIfNeeded();
+    await blank.scrollIntoViewIfNeeded();
+
     const optionBox = await option.boundingBox();
     const blankBox = await blank.boundingBox();
 

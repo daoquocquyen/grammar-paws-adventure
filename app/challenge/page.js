@@ -45,12 +45,29 @@ const selectedTopicStorageKey = "gpa_selected_topic_v1";
 const defaultAvatar = DEFAULT_COMPANION_AVATAR;
 const toSafeLower = (value) => (typeof value === "string" ? value.trim().toLowerCase() : "");
 const toSafeString = (value) => (typeof value === "string" ? value.trim() : "");
+const getSeededRandom = (seedInput) => {
+    const seedText = toSafeString(seedInput) || "seed";
+    let state = 0;
+
+    for (let index = 0; index < seedText.length; index += 1) {
+        state = (state * 31 + seedText.charCodeAt(index)) >>> 0;
+    }
+
+    if (state === 0) {
+        state = 123456789;
+    }
+
+    return () => {
+        state = (1664525 * state + 1013904223) >>> 0;
+        return state / 4294967296;
+    };
+};
 const getIndicatorXpLabel = (indicatorType) => {
     if (indicatorType === "STAR") {
         return "+10";
     }
     if (indicatorType === "HOLLOW_STAR") {
-        return "+6";
+        return "+8";
     }
     if (indicatorType === "CHECK") {
         return "+3";
@@ -74,15 +91,6 @@ const defaultProgressState = {
     version: 1,
     completedTopics: [],
     topicProgress: {},
-};
-
-const getInitialSelectedTopicKey = () => {
-    if (typeof window === "undefined") {
-        return DEFAULT_TOPIC_KEY;
-    }
-
-    const restoredTopic = window.localStorage.getItem(selectedTopicStorageKey);
-    return restoredTopic && hasTopic(restoredTopic) ? restoredTopic : DEFAULT_TOPIC_KEY;
 };
 
 const readTopicAttemptHistory = (storageKey, legacyFallbackKey = "") => {
@@ -143,7 +151,7 @@ export default function ChallengePage() {
     const [activeTopicAttemptHistoryKey, setActiveTopicAttemptHistoryKey] = useState(TOPIC_ATTEMPT_HISTORY_STORAGE_KEY);
     const [allowLegacyStorageFallback, setAllowLegacyStorageFallback] = useState(true);
 
-    const [selectedTopicKey, setSelectedTopicKey] = useState(getInitialSelectedTopicKey);
+    const [selectedTopicKey, setSelectedTopicKey] = useState(DEFAULT_TOPIC_KEY);
     const [topicAttempts, setTopicAttempts] = useState([]);
     const [isTopicHydrated, setIsTopicHydrated] = useState(false);
     const [currentQuestionNumber, setCurrentQuestionNumber] = useState(0);
@@ -212,6 +220,17 @@ export default function ChallengePage() {
         () => createTopicQuestionBank(selectedTopicKey, aspectIds),
         [selectedTopicKey, aspectIds]
     );
+    const questionSelectionSeed = useMemo(() => {
+        const attemptKeys = Array.isArray(topicAttempts)
+            ? topicAttempts.map((attempt) => {
+                const createdAt = toSafeString(attempt?.createdAt);
+                const questionIds = Array.isArray(attempt?.questionIds) ? attempt.questionIds.join("|") : "";
+                return `${createdAt}:${questionIds}`;
+            })
+            : [];
+
+        return [selectedTopicKey, aspectIds.join("|"), attemptKeys.join("::")].join("||");
+    }, [aspectIds, selectedTopicKey, topicAttempts]);
 
     const { questionCount, selectedQuestions, selectedQuestionIds, recentQuestionIds } = useMemo(
         () =>
@@ -220,8 +239,9 @@ export default function ChallengePage() {
                 aspectCount: aspectIds.length,
                 topicAttempts,
                 cooldownAttemptCount: RECENT_TOPIC_ATTEMPT_COOLDOWN,
+                randomFn: getSeededRandom(questionSelectionSeed),
             }),
-        [topicQuestionBank, aspectIds.length, topicAttempts]
+        [topicQuestionBank, aspectIds.length, topicAttempts, questionSelectionSeed]
     );
     const selectedQuestionStemCount = selectedQuestions.length;
     const uniqueSelectedQuestionStemCount = useMemo(
@@ -411,19 +431,6 @@ export default function ChallengePage() {
     const currentOutcome = questionOutcomes[currentQuestionIndex] ?? null;
     const hasResolvedQuestion = Boolean(currentOutcome);
 
-    const challengeProgressPercent = useMemo(() => {
-        if (progressDisplayTotal <= 0) {
-            return 0;
-        }
-
-        if (progressDisplayTotal === 1) {
-            return 100;
-        }
-
-        const normalizedProgress = currentQuestionIndex / Math.max(1, progressDisplayTotal - 1);
-        return Math.max(0, Math.min(100, normalizedProgress * 100));
-    }, [currentQuestionIndex, progressDisplayTotal]);
-
     const indicatorStates = useMemo(
         () =>
             Array.from({ length: progressDisplayTotal }, (_, questionIndex) =>
@@ -439,6 +446,13 @@ export default function ChallengePage() {
     );
 
     const challengeTotals = useMemo(() => calculateChallengeTotals(orderedOutcomes), [orderedOutcomes]);
+    const passGateProgressPercent = useMemo(
+        () => Math.max(0, Math.min(100, challengeTotals.summary.passProgressRate * 100)),
+        [challengeTotals.summary.passProgressRate]
+    );
+    const xpPassBadgeClass = challengeTotals.summary.passed
+        ? "border-emerald-300 bg-emerald-50 text-emerald-700 shadow-[0_2px_8px_rgba(16,185,129,0.25)]"
+        : "border-primary/40 bg-primary/10 text-primary shadow-[0_2px_10px_rgba(37,157,244,0.28)]";
 
     const primaryAction = useMemo(
         () =>
@@ -1006,7 +1020,7 @@ export default function ChallengePage() {
                 : defaultProgressState;
 
             const existingTopicPercent = extractTopicPercent(safeProgress?.topicProgress?.[selectedTopicKey]);
-            const computedTopicPercent = Math.round(challengeTotals.summary.passRate * 100);
+            const computedTopicPercent = Math.round(challengeTotals.summary.xpPassRate * 100);
             const nextTopicPercent = Math.max(existingTopicPercent, computedTopicPercent);
 
             const existingCompletedTopics = Array.isArray(safeProgress.completedTopics)
@@ -1025,11 +1039,15 @@ export default function ChallengePage() {
                 score: {
                     totalQuestions: challengeTotals.summary.totalQuestions,
                     correctCount: challengeTotals.summary.correctCount,
-                    passRate: challengeTotals.summary.passRate,
+                    accuracyRate: challengeTotals.summary.accuracyRate,
+                    xpPassRate: challengeTotals.summary.xpPassRate,
+                    passRate: challengeTotals.summary.xpPassRate,
                     passed: challengeTotals.summary.passed,
+                    requiredBaseXpToPass: challengeTotals.summary.requiredBaseXpToPass,
                 },
                 xp: {
                     base: challengeTotals.summary.baseXp,
+                    maxBase: challengeTotals.summary.maxBaseXp,
                     bonus: challengeTotals.totalBonusXp,
                     total: challengeTotals.totalXp,
                 },
@@ -1120,12 +1138,23 @@ export default function ChallengePage() {
                     data-recent-question-ids={Array.from(recentQuestionIds).join(",")}
                     data-current-correct-answer={toSafeString(correctAnswer)}
                 >
-                    <div className="flex items-center justify-between gap-3">
+                    <div className="grid grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)] items-center gap-2">
                         <div className="inline-flex items-center gap-2 text-[13px] font-black uppercase tracking-[0.14em] text-slate-600">
                             <span className="material-symbols-outlined text-primary text-base">tactic</span>
                             Challenge Progress
                         </div>
-                        <span className="rounded-full bg-primary/10 px-3 py-1 text-sm font-black text-primary" data-testid="challenge-progress-text">
+                        <span
+                            className={`justify-self-center whitespace-nowrap rounded-full border px-2.5 py-1 text-[11px] font-black ${xpPassBadgeClass}`}
+                            data-testid="challenge-xp-pass-progress-text"
+                            aria-label={`Pass XP progress ${challengeTotals.summary.baseXp} out of ${challengeTotals.summary.maxBaseXp}, ${challengeTotals.summary.requiredBaseXpToPass} to pass`}
+                        >
+                            XP {challengeTotals.summary.baseXp}/{challengeTotals.summary.maxBaseXp}{" "}
+                            <span className="text-emerald-700">({challengeTotals.summary.requiredBaseXpToPass} to pass)</span>
+                        </span>
+                        <span
+                            className="justify-self-end rounded-full bg-primary/10 px-3 py-1 text-sm font-black text-primary"
+                            data-testid="challenge-progress-text"
+                        >
                             {progressDisplayTotal > 0 ? currentQuestionIndex + 1 : 0}/{progressDisplayTotal}
                         </span>
                     </div>
@@ -1133,31 +1162,33 @@ export default function ChallengePage() {
                     <div className="mt-3 h-4 overflow-hidden rounded-full bg-slate-100" data-testid="challenge-progress-bar-track">
                         <div
                             className="h-full rounded-full bg-primary shadow-[0_0_14px_rgba(56,189,248,0.6)] transition-all"
-                            style={{ width: `${challengeProgressPercent}%` }}
+                            style={{ width: `${passGateProgressPercent}%` }}
                             data-testid="challenge-progress-bar-fill"
                         />
                     </div>
 
-                    <div className="mt-3 flex w-full items-center justify-between gap-1.5 md:gap-2" data-testid="challenge-indicator-row" aria-label="Question quality indicators">
-                        {indicatorStates.map((indicatorType, index) => {
-                            const xpLabel = getIndicatorXpLabel(indicatorType);
-                            const hasOutcome = Boolean(xpLabel);
-                            const isActiveQuestion = !showSummary && index === currentQuestionIndex;
-                            return (
-                                <span
-                                    key={`indicator-${index}`}
-                                    className={`inline-flex h-7 w-7 shrink-0 items-center justify-center rounded-full border-2 text-[10px] font-black transition md:h-8 md:w-8 md:text-xs ${
-                                        hasOutcome
-                                            ? `border-sky-400 bg-sky-50 shadow-[0_2px_10px_rgba(56,189,248,0.35)] ${getIndicatorXpTextClass(indicatorType)}`
-                                            : "border-sky-300 border-dotted bg-white text-slate-300 shadow-[0_1px_6px_rgba(56,189,248,0.2)]"
-                                    } ${isActiveQuestion ? "scale-105 ring-2 ring-sky-300 shadow-[0_0_16px_rgba(56,189,248,0.75)]" : ""}`}
-                                    data-testid={`challenge-indicator-${index}`}
-                                    data-indicator-type={indicatorType}
-                                >
-                                    {xpLabel}
-                                </span>
-                            );
-                        })}
+                    <div className="mt-3 flex w-full items-center gap-2" data-testid="challenge-indicator-row" aria-label="Question quality indicators">
+                        <div className="flex min-w-0 flex-1 items-center justify-between">
+                            {indicatorStates.map((indicatorType, index) => {
+                                const xpLabel = getIndicatorXpLabel(indicatorType);
+                                const hasOutcome = Boolean(xpLabel);
+                                const isActiveQuestion = !showSummary && index === currentQuestionIndex;
+                                return (
+                                    <span
+                                        key={`indicator-${index}`}
+                                        className={`inline-flex h-7 w-7 shrink-0 items-center justify-center rounded-full border-2 text-[10px] font-black transition md:h-8 md:w-8 md:text-xs ${
+                                            hasOutcome
+                                                ? `border-sky-400 bg-sky-50 shadow-[0_2px_10px_rgba(56,189,248,0.35)] ${getIndicatorXpTextClass(indicatorType)}`
+                                                : "border-sky-300 border-dotted bg-white text-slate-300 shadow-[0_1px_6px_rgba(56,189,248,0.2)]"
+                                        } ${isActiveQuestion ? "scale-105 ring-2 ring-sky-300 shadow-[0_0_16px_rgba(56,189,248,0.75)]" : ""}`}
+                                        data-testid={`challenge-indicator-${index}`}
+                                        data-indicator-type={indicatorType}
+                                    >
+                                        {xpLabel}
+                                    </span>
+                                );
+                            })}
+                        </div>
                     </div>
                 </section>
 
@@ -1367,7 +1398,11 @@ export default function ChallengePage() {
                         </div>
 
                         <div className="mt-4 rounded-2xl border border-slate-200 bg-white p-4 text-sm font-semibold text-slate-700">
-                            <p data-testid="challenge-summary-score">Score: {challengeTotals.summary.correctCount}/{challengeTotals.summary.totalQuestions} correct ({Math.round(challengeTotals.summary.passRate * 100)}%)</p>
+                            <p data-testid="challenge-summary-score">
+                                XP Gate: {challengeTotals.summary.baseXp}/{challengeTotals.summary.requiredBaseXpToPass} required
+                                ({Math.round(challengeTotals.summary.passProgressRate * 100)}%)
+                            </p>
+                            <p className="mt-1">Accuracy: {challengeTotals.summary.correctCount}/{challengeTotals.summary.totalQuestions} ({Math.round(challengeTotals.summary.accuracyRate * 100)}%)</p>
                             <p className="mt-1">First-try accuracy: {Math.round(challengeTotals.firstTryAccuracy * 100)}%</p>
                             <p className="mt-1">Corrected mistakes: {challengeTotals.summary.correctedMistakeCount}</p>
                         </div>

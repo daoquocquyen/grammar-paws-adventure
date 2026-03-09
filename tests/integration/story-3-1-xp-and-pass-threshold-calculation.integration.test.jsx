@@ -63,4 +63,19 @@ describe("Story 3.1 integration", () => {
         expect(savedProgress.latestChallenge.score.passed).toBe(true);
         expect(savedProgress.latestChallenge.xp.total).toBe(125);
     }, 15000);
+
+    it("shows current earned XP against required XP-to-pass in challenge progress UI", async () => {
+        render(<ChallengePage />);
+
+        expect(screen.getByTestId("challenge-xp-pass-progress-text")).toHaveTextContent("XP 0/90 (72 to pass)");
+        expect(screen.getByTestId("challenge-progress-bar-fill")).toHaveStyle({ width: "0%" });
+
+        await completeQuestionWithCorrectAnswer();
+
+        expect(screen.getByTestId("challenge-xp-pass-progress-text")).toHaveTextContent("XP 10/90 (72 to pass)");
+        const passProgressFill = screen.getByTestId("challenge-progress-bar-fill");
+        const passProgressWidth = Number.parseFloat((passProgressFill.style.width || "0").replace("%", ""));
+        expect(passProgressWidth).toBeGreaterThan(13);
+        expect(passProgressWidth).toBeLessThan(14);
+    });
 });

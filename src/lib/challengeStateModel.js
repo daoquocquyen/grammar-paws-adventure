@@ -129,7 +129,7 @@ export const getPetFeedbackText = ({ phase, hasResolvedQuestion, outcomeClass, a
     }
 
     if (outcomeClass === OUTCOME_CLASSES.SECOND_TRY_CORRECT) {
-        return "Nice fix. +6 XP!";
+        return "Nice fix. +8 XP!";
     }
 
     if (outcomeClass === OUTCOME_CLASSES.ASSISTED) {
@@ -169,7 +169,7 @@ export const getXpMessageForOutcome = (outcomeClass) => {
     }
 
     if (outcomeClass === OUTCOME_CLASSES.SECOND_TRY_CORRECT) {
-        return "+6 XP! You fixed it!";
+        return "+8 XP! You fixed it!";
     }
 
     if (outcomeClass === OUTCOME_CLASSES.ASSISTED) {

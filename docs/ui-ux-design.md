@@ -156,8 +156,10 @@ Current navigation status:
 - Key components:
   - Top progress zone:
     - Question progress counter (`current/total`).
+    - XP gate badge centered in the first row: `XP earned/max (required to pass)`.
+    - Required-to-pass segment (`to pass`) uses success green emphasis for quick scan.
     - Glowing progress bar.
-    - Per-question performance indicators (`⭐`, `☆`, `✓`).
+    - Per-question performance indicators (`⭐`, `☆`, `✓`) spread across the full row.
   - Center challenge zone:
     - Single sentence with one blank.
     - 4 answer options per question.

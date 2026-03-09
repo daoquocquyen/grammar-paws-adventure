@@ -75,17 +75,19 @@ test.describe("Story 3.1 acceptance", () => {
         await expect.poll(findEnabledCorrectIndex).not.toBe(-1);
         await dragOptionToBlank(page, optionButtons.nth(await findEnabledCorrectIndex()));
 
-        await expect(page.getByTestId("challenge-pet-message")).toContainText("+6 XP!");
+        await expect(page.getByTestId("challenge-pet-message")).toContainText("+8 XP!");
         await expect(primaryAction).toContainText("Next");
         await expect(primaryAction).toBeEnabled();
         await primaryAction.click();
 
         await expect(page.getByTestId("challenge-progress-text")).toHaveText("2/9");
+        await expect(page.getByTestId("challenge-xp-pass-progress-text")).toHaveText("XP 8/90 (72 to pass)");
 
         await dragCurrentCorrectAnswer(page);
         await expect(page.getByTestId("challenge-pet-message")).toContainText("+10 XP!");
         await expect(primaryAction).toBeEnabled();
         await primaryAction.click();
+        await expect(page.getByTestId("challenge-xp-pass-progress-text")).toHaveText("XP 18/90 (72 to pass)");
 
         for (let index = 0; index < 7; index += 1) {
             await dragCurrentCorrectAnswer(page);
@@ -96,7 +98,7 @@ test.describe("Story 3.1 acceptance", () => {
 
         await expect(page.getByTestId("challenge-summary")).toBeVisible();
         await expect(page.getByTestId("challenge-summary-pass-fail")).toContainText("Pass achieved");
-        await expect(page.getByTestId("challenge-summary-score")).toContainText("9/9");
-        await expect(page.getByTestId("challenge-summary-total-xp")).toHaveText("121");
+        await expect(page.getByTestId("challenge-summary-score")).toContainText("XP Gate: 88/72");
+        await expect(page.getByTestId("challenge-summary-total-xp")).toHaveText("123");
     });
 });

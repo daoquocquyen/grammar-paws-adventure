@@ -58,7 +58,7 @@ describe("Story 2.5 integration", () => {
         await waitFor(() => expect(primaryAction).toHaveTextContent("Next"));
         await waitFor(() => expect(primaryAction).toBeEnabled());
         await waitFor(() =>
-            expect(screen.getByTestId("challenge-pet-message")).toHaveTextContent("+6 XP!")
+            expect(screen.getByTestId("challenge-pet-message")).toHaveTextContent("+8 XP!")
         );
 
         expect(correctButton).toHaveAttribute("data-option-state", "correct");
