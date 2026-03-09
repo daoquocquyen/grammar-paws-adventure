@@ -24,4 +24,13 @@ describe("Story 1.5 integration", () => {
         expect(screen.getByText("We couldn't load this topic.")).toBeInTheDocument();
         expect(screen.getByRole("link", { name: "Back to Map" })).toHaveAttribute("href", "/world-map");
     });
+
+    it("renders all configured aspects for topics with variable aspect counts", () => {
+        window.localStorage.setItem("gpa_selected_topic_v1", "verbs");
+
+        render(<TopicIntroPage />);
+
+        expect(screen.getByText("To Be (Am, Is, Are)")).toBeInTheDocument();
+        expect(screen.getByText("Present Simple")).toBeInTheDocument();
+    });
 });

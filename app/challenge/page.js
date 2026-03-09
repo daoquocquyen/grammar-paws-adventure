@@ -30,6 +30,7 @@ import {
 } from "../../src/lib/challengeStateModel";
 import { calculateChallengeTotals } from "../../src/lib/challengeScoring";
 import { getPlayerLevelInfo } from "../../src/lib/playerLevel";
+import { DEFAULT_TOPIC_KEY, getTopicAspectIds, hasTopic } from "../../src/lib/topicCatalog";
 
 const profileStorageKey = "gpa_player_profile_v1";
 const playerProgressKey = "gpa_player_progress_v1";
@@ -68,20 +69,6 @@ const defaultProgressState = {
     version: 1,
     completedTopics: [],
     topicProgress: {},
-};
-
-const topicAspectsByTopicKey = {
-    verbs: ["ing-ending", "auxiliary", "time-marker"],
-    nouns: ["common", "proper", "plurality"],
-    pronouns: ["subject", "object", "possessive"],
-    adjectives: ["size", "color", "order"],
-    adverbs: ["how", "when", "where"],
-    prepositions: ["place", "time", "direction"],
-    conjunctions: ["and-but", "because", "or"],
-    articles: ["a", "an", "the"],
-    tenses: ["past", "present", "future"],
-    punctuation: ["period", "question-mark", "comma"],
-    "sentence-structure": ["subject-verb", "complete-thought", "word-order"],
 };
 
 const readTopicAttemptHistory = () => {
@@ -133,7 +120,7 @@ export default function ChallengePage() {
     const [heroBubbleBorderColor, setHeroBubbleBorderColor] = useState(DEFAULT_HERO_THEME_COLOR);
     const [petBubbleBorderColor, setPetBubbleBorderColor] = useState(DEFAULT_PET_THEME_COLOR);
 
-    const [selectedTopicKey, setSelectedTopicKey] = useState("verbs");
+    const [selectedTopicKey, setSelectedTopicKey] = useState(DEFAULT_TOPIC_KEY);
     const [topicAttempts, setTopicAttempts] = useState([]);
     const [isTopicHydrated, setIsTopicHydrated] = useState(false);
     const [currentQuestionNumber, setCurrentQuestionNumber] = useState(0);
@@ -196,10 +183,7 @@ export default function ChallengePage() {
     });
     const suppressClickRef = useRef(false);
 
-    const aspectIds = useMemo(
-        () => topicAspectsByTopicKey[selectedTopicKey] ?? topicAspectsByTopicKey.verbs,
-        [selectedTopicKey]
-    );
+    const aspectIds = useMemo(() => getTopicAspectIds(selectedTopicKey), [selectedTopicKey]);
 
     const topicQuestionBank = useMemo(
         () => createTopicQuestionBank(selectedTopicKey, aspectIds),
@@ -264,7 +248,7 @@ export default function ChallengePage() {
         }
 
         const restoredTopic = localStorage.getItem(selectedTopicStorageKey);
-        const safeTopic = restoredTopic && topicAspectsByTopicKey[restoredTopic] ? restoredTopic : "verbs";
+        const safeTopic = restoredTopic && hasTopic(restoredTopic) ? restoredTopic : DEFAULT_TOPIC_KEY;
         const historyByTopic = readTopicAttemptHistory();
         const restoredTopicAttempts = Array.isArray(historyByTopic[safeTopic]) ? historyByTopic[safeTopic] : [];
 

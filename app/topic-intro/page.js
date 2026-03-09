@@ -6,6 +6,7 @@ import HeaderBlock from "../../src/components/HeaderBlock";
 import { DEFAULT_COMPANION_AVATAR } from "../../src/lib/avatarDefaults";
 import { getChallengeQuestionCount } from "../../src/lib/challengeQuestionCount";
 import { getPlayerLevelInfo } from "../../src/lib/playerLevel";
+import { DEFAULT_TOPIC_KEY, getTopicByKey, hasTopic } from "../../src/lib/topicCatalog";
 
 const profileStorageKey = "gpa_player_profile_v1";
 const playerProgressKey = "gpa_player_progress_v1";
@@ -13,119 +14,6 @@ const selectedTopicStorageKey = "gpa_selected_topic_v1";
 const voiceSettingsKey = "gpa_voice_settings_v1";
 
 const defaultAvatar = DEFAULT_COMPANION_AVATAR;
-
-const topics = {
-    verbs: {
-        title: "Present Continuous",
-        summary: "Learn how to describe things happening right now!",
-        petQuote: "Meow! Let's learn how to talk about what's happening right this second!",
-        aspects: [
-            { rule: "The -ing Ending", example: "I am playing with my pet.", highlightWords: ["playing"] },
-            { rule: "Am, Is, Are", example: "The puppy is sleeping.", highlightWords: ["is", "sleeping"] },
-            { rule: "Now / Right Now", example: "She is drawing now.", highlightWords: ["drawing", "now"] },
-        ],
-    },
-    nouns: {
-        title: "Nouns",
-        summary: "Learn the names of people, places, animals, and things.",
-        petQuote: "Let's find naming words together!",
-        aspects: [
-            { rule: "Common Nouns", example: "The dog runs fast.", highlightWords: ["dog"] },
-            { rule: "Proper Nouns", example: "Mia visits Ha Noi.", highlightWords: ["Mia", "Ha Noi"] },
-            { rule: "Singular and Plural", example: "One apple, two apples.", highlightWords: ["apple", "apples"] },
-        ],
-    },
-    pronouns: {
-        title: "Pronouns",
-        summary: "Use helper words that replace nouns.",
-        petQuote: "Pronouns are shortcut words, and shortcuts are awesome!",
-        aspects: [
-            { rule: "Subject Pronouns", example: "She likes music.", highlightWords: ["She"] },
-            { rule: "Object Pronouns", example: "I saw him at school.", highlightWords: ["him"] },
-            { rule: "Possessive Pronouns", example: "The blue bag is mine.", highlightWords: ["mine"] },
-        ],
-    },
-    adjectives: {
-        title: "Adjectives",
-        summary: "Describe nouns with words that add color and detail.",
-        petQuote: "Let's paint our sentences with describing words!",
-        aspects: [
-            { rule: "Describing Size", example: "The tiny kitten slept.", highlightWords: ["tiny"] },
-            { rule: "Describing Color", example: "I found a red ball.", highlightWords: ["red"] },
-            { rule: "Order of Adjectives", example: "She has a small blue bag.", highlightWords: ["small", "blue"] },
-        ],
-    },
-    adverbs: {
-        title: "Adverbs",
-        summary: "Tell how, when, or where an action happens.",
-        petQuote: "Zoom quickly, learn happily!",
-        aspects: [
-            { rule: "How", example: "He runs quickly.", highlightWords: ["quickly"] },
-            { rule: "When", example: "We will practice tomorrow.", highlightWords: ["tomorrow"] },
-            { rule: "Where", example: "The dog waits outside.", highlightWords: ["outside"] },
-        ],
-    },
-    prepositions: {
-        title: "Prepositions",
-        summary: "Show the relationship between words in a sentence.",
-        petQuote: "Look under, over, and beside for meaning clues!",
-        aspects: [
-            { rule: "Place", example: "The book is on the table.", highlightWords: ["on"] },
-            { rule: "Time", example: "Class starts at nine.", highlightWords: ["at"] },
-            { rule: "Direction", example: "We walked into the room.", highlightWords: ["into"] },
-        ],
-    },
-    conjunctions: {
-        title: "Conjunctions",
-        summary: "Join words and ideas into smoother sentences.",
-        petQuote: "Connect ideas like puzzle pieces!",
-        aspects: [
-            { rule: "And / But", example: "I like tea and juice.", highlightWords: ["and"] },
-            { rule: "Because", example: "She smiled because she won.", highlightWords: ["because"] },
-            { rule: "Or", example: "Do you want rice or noodles?", highlightWords: ["or"] },
-        ],
-    },
-    articles: {
-        title: "Articles",
-        summary: "Use a, an, and the with confidence.",
-        petQuote: "Tiny words, big difference!",
-        aspects: [
-            { rule: "A", example: "I saw a cat.", highlightWords: ["a"] },
-            { rule: "An", example: "She ate an apple.", highlightWords: ["an"] },
-            { rule: "The", example: "The moon is bright.", highlightWords: ["The"] },
-        ],
-    },
-    tenses: {
-        title: "Tenses",
-        summary: "Choose verb forms for past, present, and future.",
-        petQuote: "Time travel with verbs!",
-        aspects: [
-            { rule: "Past", example: "We played yesterday.", highlightWords: ["played", "yesterday"] },
-            { rule: "Present", example: "I play every day.", highlightWords: ["play"] },
-            { rule: "Future", example: "They will play tomorrow.", highlightWords: ["will", "tomorrow"] },
-        ],
-    },
-    punctuation: {
-        title: "Punctuation",
-        summary: "Use marks to make writing clear and expressive.",
-        petQuote: "Commas pause, periods stop, and questions ask!",
-        aspects: [
-            { rule: "Period", example: "I love reading.", highlightWords: ["."] },
-            { rule: "Question Mark", example: "Are you ready?", highlightWords: ["?"] },
-            { rule: "Comma", example: "We packed books, pens, and snacks.", highlightWords: [","] },
-        ],
-    },
-    "sentence-structure": {
-        title: "Sentence Structure",
-        summary: "Build complete sentences with clear word order.",
-        petQuote: "Strong sentences are built one block at a time!",
-        aspects: [
-            { rule: "Subject + Verb", example: "Birds sing.", highlightWords: ["Birds", "sing"] },
-            { rule: "Complete Thought", example: "The baby laughed loudly.", highlightWords: ["baby", "laughed"] },
-            { rule: "Word Order", example: "My friend reads books.", highlightWords: ["friend", "reads", "books"] },
-        ],
-    },
-};
 
 const aspectIcons = [
     "category",
@@ -180,14 +68,14 @@ export default function Screen3TopicIntroPage() {
     const [companionAvatar, setCompanionAvatar] = useState(defaultAvatar);
     const [headerLevelLabel, setHeaderLevelLabel] = useState("Level 1 • Explorer");
 
-    const [selectedTopicKey, setSelectedTopicKey] = useState("verbs");
+    const [selectedTopicKey, setSelectedTopicKey] = useState(DEFAULT_TOPIC_KEY);
     const [isLoading, setIsLoading] = useState(true);
     const [loadError, setLoadError] = useState("");
 
     const [voiceSupported, setVoiceSupported] = useState(false);
     const [voiceMuted, setVoiceMuted] = useState(false);
 
-    const topic = useMemo(() => topics[selectedTopicKey] ?? null, [selectedTopicKey]);
+    const topic = useMemo(() => getTopicByKey(selectedTopicKey), [selectedTopicKey]);
     const challengeQuestionCount = useMemo(
         () => getChallengeQuestionCount(topic?.aspects?.length ?? 0),
         [topic]
@@ -265,10 +153,10 @@ export default function Screen3TopicIntroPage() {
         }
 
         const selectedTopic = localStorage.getItem(selectedTopicStorageKey);
-        if (selectedTopic && topics[selectedTopic]) {
+        if (selectedTopic && hasTopic(selectedTopic)) {
             setSelectedTopicKey(selectedTopic);
             setLoadError("");
-        } else if (selectedTopic && !topics[selectedTopic]) {
+        } else if (selectedTopic && !hasTopic(selectedTopic)) {
             setLoadError("We couldn't load this topic. Please go back to map and choose another topic.");
         }
 

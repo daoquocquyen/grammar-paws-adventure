@@ -31,7 +31,7 @@ const topicDefinitions = [
     {
         topicKey: "verbs",
         title: "Verbs",
-        summary: "Practice action words and helping words in simple sentences.",
+        summary: "Use am/is/are and simple present forms for everyday actions.",
     },
     {
         topicKey: "articles",
@@ -46,7 +46,7 @@ const topicDefinitions = [
     {
         topicKey: "prepositions",
         title: "Prepositions",
-        summary: "Show relationships in place, time, and direction clearly.",
+        summary: "Use place words like in/on/under and relative positions clearly.",
     },
     {
         topicKey: "adverbs",
@@ -71,7 +71,7 @@ const topicDefinitions = [
     {
         topicKey: "tenses",
         title: "Tenses",
-        summary: "Talk about past, present, and future events with confidence.",
+        summary: "Compare actions happening now with actions that happen regularly.",
     },
 ];
 
