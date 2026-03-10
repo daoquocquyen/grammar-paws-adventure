@@ -33,6 +33,7 @@ test.describe("Story 3.3 acceptance", () => {
         const primaryAction = page.getByTestId("challenge-primary-action");
         await expect(primaryAction).toContainText("Next");
         await expect(primaryAction).toBeDisabled();
+        await expect(page.getByTestId("challenge-finish-indicator")).toHaveAttribute("data-finish-state", "inactive");
 
         for (let index = 0; index < 9; index += 1) {
             await dragCurrentCorrectAnswer(page);
@@ -43,5 +44,6 @@ test.describe("Story 3.3 acceptance", () => {
         await expect(page.getByTestId("challenge-summary")).toBeVisible();
         await expect(page.getByTestId("challenge-progress-text")).toHaveText("9/9");
         await expect(page.getByTestId("challenge-progress-bar-fill")).toHaveAttribute("style", /width: 100%/);
+        await expect(page.getByTestId("challenge-finish-indicator")).toHaveAttribute("data-finish-state", "active");
     });
 });
