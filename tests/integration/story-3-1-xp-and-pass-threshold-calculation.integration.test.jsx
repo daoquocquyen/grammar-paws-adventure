@@ -51,6 +51,8 @@ describe("Story 3.1 integration", () => {
         await waitFor(() => expect(screen.getByTestId("challenge-summary")).toBeInTheDocument());
 
         expect(screen.getByTestId("challenge-summary-total-xp")).toHaveTextContent("90");
+        expect(screen.getByTestId("challenge-summary-max-xp")).toHaveTextContent("90");
+        expect(screen.queryByText("Base XP")).not.toBeInTheDocument();
         expect(screen.queryByTestId("challenge-summary-bonus-xp")).not.toBeInTheDocument();
         expect(screen.getByTestId("challenge-summary-pass-fail")).toHaveTextContent(/Pass achieved/i);
 

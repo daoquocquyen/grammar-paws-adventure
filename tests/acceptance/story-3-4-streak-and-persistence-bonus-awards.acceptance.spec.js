@@ -40,6 +40,8 @@ test.describe("Story 3.4 acceptance", () => {
 
         await expect(page.getByTestId("challenge-summary")).toBeVisible();
         await expect(page.getByTestId("challenge-summary-total-xp")).toHaveText("90");
+        await expect(page.getByTestId("challenge-summary-max-xp")).toHaveText("90");
+        await expect(page.getByText("Base XP")).toHaveCount(0);
         await expect(page.getByTestId("challenge-summary-bonus-xp")).toHaveCount(0);
         await expect(page.getByTestId("challenge-summary-bonus-list")).toHaveCount(0);
     });
