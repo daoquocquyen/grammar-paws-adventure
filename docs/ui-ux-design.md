@@ -155,11 +155,18 @@ Current navigation status:
 - UX goal: teach grammar through guided correction while preserving confidence.
 - Key components:
   - Top progress zone:
-    - Question progress counter (`current/total`).
-    - XP gate badge centered in the first row: `XP earned/max (required to pass)`.
-    - Required-to-pass segment (`to pass`) uses success green emphasis for quick scan.
-    - Glowing progress bar.
-    - Per-question performance indicators (`⭐`, `☆`, `✓`) spread across the full row.
+    - `Challenge Progress` panel title with two compact summary pills:
+      - `Earned` (`base_xp / max_base_xp`)
+      - `Goal` (`required_xp_to_pass`)
+    - Hidden machine-readable counters remain exposed for test/state assertions:
+      - `XP earned/max (required to pass)`
+      - Question counter (`current/total`)
+    - Horizontal milestone rail with:
+      - completed questions shown as filled blue milestones with XP labels,
+      - current question shown as active outlined milestone,
+      - future questions shown as locked milestones,
+      - terminal `Finish` trophy marker (switches to active blue on level completion).
+    - XP pass progress fill remains mapped to the challenge pass-gate percentage.
   - Center challenge zone:
     - Single sentence with one blank.
     - 4 answer options per question.
