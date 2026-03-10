@@ -74,7 +74,7 @@ test.describe("Story 1.4 acceptance", () => {
         }).first();
 
         await expect(nounsCard.getByText("80%")).toBeVisible();
-        await expect(nounsCard.getByText("72/90 XP")).toBeVisible();
+        await expect(nounsCard.getByText("72/90 XP")).toHaveCount(0);
         await expect(nounsCard.getByText("STRONG")).toBeVisible();
         await expect(page.getByText("38/90 XP")).toHaveCount(0);
     });

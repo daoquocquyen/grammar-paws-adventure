@@ -116,7 +116,7 @@ Current navigation status:
   - Focused topic card is emphasized via border glow/ring (without card scaling).
   - Main companion avatar resolves from `profile.petImage` (kid-selected pet), with shared fallback avatar from `src/lib/avatarDefaults.js`.
   - Topic mastery bars use per-topic XP snapshots (`earned_base_xp / max_base_xp`) to derive the displayed percent; completed topics are not auto-forced to `100%` when the stored XP ratio is lower.
-  - The `XP/max XP` detail line is shown on passed (`done`) topic cards only; non-passed topics show percent-only progress.
+  - Topic cards use percent-only progress text; the `XP/max XP` detail line is hidden in the topic box for all states.
   - Mastery badge copy on unlocked cards maps to percent tiers: `IN PROGRESS` (0-24), `BUILDING` (25-49), `GROWING` (50-79), `STRONG` (80-99), `MASTERED` (100).
 - CTA hierarchy:
   - Primary: `Start Topic` on ongoing cards.

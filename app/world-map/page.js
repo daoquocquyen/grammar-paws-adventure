@@ -299,9 +299,6 @@ export default function Screen2TopicSelectionPage() {
                 ...topic,
                 progress,
                 progressRounded,
-                progressXpText: status === "done" && storedProgressMetrics?.maxBaseXp && hasStoredProgress
-                    ? `${Math.round(storedProgressMetrics.earnedBaseXp ?? 0)}/${Math.round(storedProgressMetrics.maxBaseXp)} XP`
-                    : "",
                 masteryLabel: status === "locked" ? "LOCKED" : getMasteryLabelByPercent(progressRounded),
                 status,
                 topicIcon: getTopicIconName(selectedPetName, topic.topicKey),
@@ -652,12 +649,6 @@ export default function Screen2TopicSelectionPage() {
                                                     {card.progressRounded}%
                                                 </span>
                                             </div>
-                                            {card.progressXpText && (
-                                                <p className={`mt-1 text-[11px] font-semibold ${isLocked ? "text-slate-400" : "text-slate-500"}`}>
-                                                    {card.progressXpText}
-                                                </p>
-                                            )}
-
                                             <div className="mt-4 flex items-center justify-between">
                                                 <span className={`inline-flex items-center gap-1 rounded-full px-2.5 py-1 text-[10px] font-black ${avatar.containerClass}`}>
                                                     <span className="material-symbols-outlined text-sm">{avatar.icon}</span>

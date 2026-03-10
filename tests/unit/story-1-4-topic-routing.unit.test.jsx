@@ -180,7 +180,7 @@ describe("Story 1.4 unit", () => {
         const nounsCard = getTopicCard("Nouns");
         expect(nounsCard).toBeTruthy();
         expect(within(nounsCard).getByText("80%")).toBeInTheDocument();
-        expect(within(nounsCard).getByText("72/90 XP")).toBeInTheDocument();
+        expect(within(nounsCard).queryByText("72/90 XP")).not.toBeInTheDocument();
         expect(within(nounsCard).getByText("STRONG")).toBeInTheDocument();
     });
 
