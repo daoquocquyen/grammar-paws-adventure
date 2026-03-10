@@ -11,6 +11,7 @@ import {
     getScopedStorageKeyForProfile,
 } from "../../src/lib/playerStorage";
 import { getPlayerLevelInfo } from "../../src/lib/playerLevel";
+import { clampPercent, extractTopicProgressMetrics, getMasteryLabelByPercent } from "../../src/lib/topicProgress";
 
 const selectedTopicStorageKey = "gpa_selected_topic_v1";
 
@@ -179,56 +180,17 @@ const petTopicIconSets = {
     ],
 };
 
-const isFiniteNumber = (value) => typeof value === "number" && Number.isFinite(value);
-
-const clampPercent = (value) => {
-    if (!isFiniteNumber(value)) {
-        return 0;
-    }
-
-    return Math.max(0, Math.min(100, value));
-};
-
-const extractTopicPercent = (topicProgressValue) => {
-    if (isFiniteNumber(topicProgressValue)) {
-        return clampPercent(topicProgressValue);
-    }
-
-    if (!topicProgressValue || typeof topicProgressValue !== "object") {
-        return 0;
-    }
-
-    if (isFiniteNumber(topicProgressValue.percent)) {
-        return clampPercent(topicProgressValue.percent);
-    }
-
-    if (isFiniteNumber(topicProgressValue.progress)) {
-        return clampPercent(topicProgressValue.progress);
-    }
-
-    if (isFiniteNumber(topicProgressValue.completionPercent)) {
-        return clampPercent(topicProgressValue.completionPercent);
-    }
-
-    return 0;
-};
-
 const normalizeTopicProgress = (progressState) => {
     const normalizedProgress = {};
-
-    const completedTopics = Array.isArray(progressState?.completedTopics) ? progressState.completedTopics : [];
-    completedTopics.forEach((topicKey) => {
-        if (typeof topicKey === "string" && topicKey.trim()) {
-            normalizedProgress[topicKey.trim()] = 100;
-        }
-    });
 
     const topicProgress = progressState?.topicProgress;
     if (topicProgress && typeof topicProgress === "object") {
         Object.entries(topicProgress).forEach(([topicKey, topicProgressValue]) => {
-            const existingValue = normalizedProgress[topicKey] ?? 0;
-            const nextValue = extractTopicPercent(topicProgressValue);
-            normalizedProgress[topicKey] = Math.max(existingValue, nextValue);
+            if (typeof topicKey !== "string" || !topicKey.trim()) {
+                return;
+            }
+
+            normalizedProgress[topicKey.trim()] = extractTopicProgressMetrics(topicProgressValue);
         });
     }
 
@@ -317,7 +279,12 @@ export default function Screen2TopicSelectionPage() {
         );
 
         return topicDefinitions.map((topic, index) => {
-            const progress = clampPercent(normalizedProgress[topic.topicKey] ?? 0);
+            const storedProgressMetrics = normalizedProgress[topic.topicKey] ?? null;
+            const hasStoredProgress = Boolean(storedProgressMetrics);
+            const progress = clampPercent(
+                storedProgressMetrics?.percent ?? (completedTopicSet.has(topic.topicKey) ? 100 : 0)
+            );
+            const progressRounded = Math.round(progress);
             const prerequisiteTopic = index > 0 ? topicDefinitions[index - 1] : null;
             const isUnlocked = index === 0 || (prerequisiteTopic && completedTopicSet.has(prerequisiteTopic.topicKey));
 
@@ -330,7 +297,12 @@ export default function Screen2TopicSelectionPage() {
 
             return {
                 ...topic,
-                progress: status === "done" ? 100 : progress,
+                progress,
+                progressRounded,
+                progressXpText: status === "done" && storedProgressMetrics?.maxBaseXp && hasStoredProgress
+                    ? `${Math.round(storedProgressMetrics.earnedBaseXp ?? 0)}/${Math.round(storedProgressMetrics.maxBaseXp)} XP`
+                    : "",
+                masteryLabel: status === "locked" ? "LOCKED" : getMasteryLabelByPercent(progressRounded),
                 status,
                 topicIcon: getTopicIconName(selectedPetName, topic.topicKey),
             };
@@ -677,14 +649,19 @@ export default function Screen2TopicSelectionPage() {
                                                     <div className={`h-full rounded-full ${getProgressColorClass(card.status)}`} style={{ width: `${card.progress}%` }} />
                                                 </div>
                                                 <span className={`text-xs font-bold ${isDone ? "text-emerald-600" : card.status === "ongoing" ? "text-primary" : "text-slate-400"}`}>
-                                                    {card.progress}%
+                                                    {card.progressRounded}%
                                                 </span>
                                             </div>
+                                            {card.progressXpText && (
+                                                <p className={`mt-1 text-[11px] font-semibold ${isLocked ? "text-slate-400" : "text-slate-500"}`}>
+                                                    {card.progressXpText}
+                                                </p>
+                                            )}
 
                                             <div className="mt-4 flex items-center justify-between">
                                                 <span className={`inline-flex items-center gap-1 rounded-full px-2.5 py-1 text-[10px] font-black ${avatar.containerClass}`}>
                                                     <span className="material-symbols-outlined text-sm">{avatar.icon}</span>
-                                                    {isDone ? "MASTERED" : isLocked ? "LOCKED" : "IN PROGRESS"}
+                                                    {card.masteryLabel}
                                                 </span>
 
                                                 {!isLocked && isFocused && (

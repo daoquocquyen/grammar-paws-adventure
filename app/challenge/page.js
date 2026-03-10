@@ -39,6 +39,7 @@ import {
 } from "../../src/lib/playerStorage";
 import { getPlayerLevelInfo } from "../../src/lib/playerLevel";
 import { DEFAULT_TOPIC_KEY, getTopicAspectIds, hasTopic } from "../../src/lib/topicCatalog";
+import { extractTopicProgressMetrics } from "../../src/lib/topicProgress";
 
 const selectedTopicStorageKey = "gpa_selected_topic_v1";
 
@@ -125,24 +126,6 @@ const saveTopicAttemptHistory = (historyByTopic, storageKey, legacyMirrorKey = "
     } catch (error) {
         console.error("Failed to persist topic attempt history", error);
     }
-};
-
-const extractTopicPercent = (progressValue) => {
-    if (typeof progressValue === "number" && Number.isFinite(progressValue)) {
-        return Math.max(0, Math.min(100, progressValue));
-    }
-
-    if (!progressValue || typeof progressValue !== "object") {
-        return 0;
-    }
-
-    const percent =
-        (typeof progressValue.percent === "number" && progressValue.percent) ||
-        (typeof progressValue.progress === "number" && progressValue.progress) ||
-        (typeof progressValue.completionPercent === "number" && progressValue.completionPercent) ||
-        0;
-
-    return Math.max(0, Math.min(100, percent));
 };
 
 export default function ChallengePage() {
@@ -1041,9 +1024,27 @@ export default function ChallengePage() {
                 ? parsedProgress
                 : defaultProgressState;
 
-            const existingTopicPercent = extractTopicPercent(safeProgress?.topicProgress?.[selectedTopicKey]);
+            const existingTopicProgress = extractTopicProgressMetrics(safeProgress?.topicProgress?.[selectedTopicKey]);
+            const existingTopicPercent = existingTopicProgress.percent;
             const computedTopicPercent = Math.round(challengeTotals.summary.xpPassRate * 100);
             const nextTopicPercent = Math.max(existingTopicPercent, computedTopicPercent);
+            const shouldKeepExistingProgress = existingTopicPercent >= computedTopicPercent;
+            const rawExistingTopicProgressEntry = safeProgress?.topicProgress?.[selectedTopicKey];
+            const existingTopicProgressEntry = rawExistingTopicProgressEntry && typeof rawExistingTopicProgressEntry === "object"
+                ? rawExistingTopicProgressEntry
+                : {};
+            const nextTopicProgressEntry = shouldKeepExistingProgress
+                ? {
+                    ...existingTopicProgressEntry,
+                    percent: nextTopicPercent,
+                    earnedBaseXp: existingTopicProgress.earnedBaseXp,
+                    maxBaseXp: existingTopicProgress.maxBaseXp,
+                }
+                : {
+                    percent: nextTopicPercent,
+                    earnedBaseXp: challengeTotals.summary.baseXp,
+                    maxBaseXp: challengeTotals.summary.maxBaseXp,
+                };
 
             const existingCompletedTopics = Array.isArray(safeProgress.completedTopics)
                 ? safeProgress.completedTopics.filter((topicKey) => typeof topicKey === "string" && topicKey.trim())
@@ -1086,7 +1087,7 @@ export default function ChallengePage() {
                 completedTopics: Array.from(completedTopicSet),
                 topicProgress: {
                     ...(safeProgress.topicProgress && typeof safeProgress.topicProgress === "object" ? safeProgress.topicProgress : {}),
-                    [selectedTopicKey]: nextTopicPercent,
+                    [selectedTopicKey]: nextTopicProgressEntry,
                 },
                 latestChallenge: challengeSnapshot,
                 challengeHistoryByTopic: {
@@ -1445,12 +1446,12 @@ export default function ChallengePage() {
 
                         <div className="mt-6 grid grid-cols-1 gap-3 rounded-2xl border border-slate-200 bg-slate-50 p-4 md:grid-cols-3">
                             <div className="rounded-xl bg-white p-3 text-center">
-                                <p className="text-xs font-bold uppercase tracking-wide text-slate-500">Total XP</p>
+                                <p className="text-xs font-bold uppercase tracking-wide text-slate-500">Earned XP</p>
                                 <p className="mt-1 text-3xl font-black text-primary" data-testid="challenge-summary-total-xp">{challengeTotals.totalXp}</p>
                             </div>
                             <div className="rounded-xl bg-white p-3 text-center">
-                                <p className="text-xs font-bold uppercase tracking-wide text-slate-500">Base XP</p>
-                                <p className="mt-1 text-3xl font-black text-emerald-600">{challengeTotals.summary.baseXp}</p>
+                                <p className="text-xs font-bold uppercase tracking-wide text-slate-500">Max XP</p>
+                                <p className="mt-1 text-3xl font-black text-emerald-600" data-testid="challenge-summary-max-xp">{challengeTotals.summary.maxBaseXp}</p>
                             </div>
                             <div className="rounded-xl bg-white p-3 text-center">
                                 <p className="text-xs font-bold uppercase tracking-wide text-slate-500">Required XP</p>

@@ -30,6 +30,20 @@ describe("player level mapping", () => {
         expect(level).toBe(4);
     });
 
+    it("counts topics at 100% when derived from XP snapshot values", () => {
+        const progressState = {
+            version: 1,
+            completedTopics: ["nouns"],
+            topicProgress: {
+                pronouns: { earnedBaseXp: 90, maxBaseXp: 90 },
+                verbs: { earnedBaseXp: 72, maxBaseXp: 90 },
+            },
+        };
+
+        const { level } = getPlayerLevelInfo(progressState);
+        expect(level).toBe(3);
+    });
+
     it("returns level 1 when progress state is missing", () => {
         const { level, title } = getPlayerLevelInfo(null);
 

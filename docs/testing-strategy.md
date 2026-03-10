@@ -48,6 +48,7 @@ Focus on feature seams between screens and storage:
 - Screen 2 topic selection -> localStorage (`gpa_selected_topic_v1`) + route.
 - Screen 2 default focus resolves to the latest unlocked topic card from progress state.
 - Screen 2 carousel auto-scroll keeps the focused latest unlocked card visible on initial load.
+- Screen 2 mastery bars derive percent from topic XP snapshots (`earned_base_xp / max_base_xp`) when available and apply range-based mastery wording (`IN PROGRESS`, `BUILDING`, `GROWING`, `STRONG`, `MASTERED`); non-passed topics keep percent-only progress text (no `XP/max XP` detail line).
 - Screen 3 hydrates selected topic + renders aspects + voice controls.
 - Screen 3 cancels active narration when route changes/unmount occurs.
 - Screen 4 consumes profile context without crash.
@@ -85,6 +86,8 @@ Focus on user outcomes:
 - [ ] Screen 2 `Start Topic` stores selected topic and opens screen 3.
 - [ ] Screen 2 default focused card is the latest unlocked topic for the current progress state.
 - [ ] Screen 2 auto-scroll reveals the default focused card when it is outside the first visible 4-card viewport.
+- [ ] Screen 2 topic mastery bars reflect stored topic XP ratio (`earned_base_xp / max_base_xp`) and mastery badge wording matches the configured percent tier.
+- [ ] Screen 2 non-passed topics display percent-only progress text (do not show `XP/max XP` detail line).
 - [ ] Screen 1 persists learner name + selected pet and survives hard refresh.
 - [ ] Progress and accessory state keys restore expected UI context on next visit.
 - [ ] Corrupt/missing persisted data degrades safely to first-time flow without crash.
@@ -96,6 +99,7 @@ Focus on user outcomes:
 - [ ] Screen 4 challenge HUD shows `earned_xp / required_xp_to_pass` and updates as outcomes are recorded.
 - [ ] Screen 4 milestone rail fill updates by question progression (`completed_questions / total_questions`) and reaches 100% at summary.
 - [ ] Screen 4 `Finish` marker switches to active when the final question is resolved and remains active on summary.
+- [ ] Screen 4 summary cards show non-duplicated XP metrics (`Earned XP`, `Max XP`, `Required XP`) with no `Base XP` duplicate card.
 
 ## Automation TBDs
 - CI execution pipeline: TBD.

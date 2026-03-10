@@ -152,4 +152,67 @@ describe("Story 1.4 unit", () => {
             scrollWidthSpy.mockRestore();
         }
     });
+
+    it("renders mastery percent from topic XP snapshot instead of forcing 100 for completed topics", () => {
+        window.localStorage.clear();
+        pushMock.mockReset();
+        window.localStorage.setItem(
+            "gpa_player_profile_v1",
+            JSON.stringify({ version: 1, name: "Mia", heroName: "Mia", petName: "Golden Retriever" })
+        );
+        window.localStorage.setItem(
+            "gpa_player_progress_v1",
+            JSON.stringify({
+                version: 1,
+                completedTopics: ["nouns"],
+                topicProgress: {
+                    nouns: {
+                        earnedBaseXp: 72,
+                        maxBaseXp: 90,
+                        percent: 100,
+                    },
+                },
+            })
+        );
+
+        render(<WorldMapPage />);
+
+        const nounsCard = getTopicCard("Nouns");
+        expect(nounsCard).toBeTruthy();
+        expect(within(nounsCard).getByText("80%")).toBeInTheDocument();
+        expect(within(nounsCard).getByText("72/90 XP")).toBeInTheDocument();
+        expect(within(nounsCard).getByText("STRONG")).toBeInTheDocument();
+    });
+
+    it("uses mastery wording tiers by percent range", () => {
+        window.localStorage.clear();
+        pushMock.mockReset();
+        window.localStorage.setItem(
+            "gpa_player_profile_v1",
+            JSON.stringify({ version: 1, name: "Mia", heroName: "Mia", petName: "Golden Retriever" })
+        );
+        window.localStorage.setItem(
+            "gpa_player_progress_v1",
+            JSON.stringify({
+                version: 1,
+                completedTopics: ["nouns", "pronouns", "verbs", "articles"],
+                topicProgress: {
+                    nouns: { earnedBaseXp: 90, maxBaseXp: 90 },
+                    pronouns: { earnedBaseXp: 81, maxBaseXp: 90 },
+                    verbs: { earnedBaseXp: 54, maxBaseXp: 90 },
+                    articles: { earnedBaseXp: 27, maxBaseXp: 90 },
+                    adjectives: { earnedBaseXp: 9, maxBaseXp: 90 },
+                },
+            })
+        );
+
+        render(<WorldMapPage />);
+
+        expect(within(getTopicCard("Nouns")).getByText("MASTERED")).toBeInTheDocument();
+        expect(within(getTopicCard("Pronouns")).getByText("STRONG")).toBeInTheDocument();
+        expect(within(getTopicCard("Verbs")).getByText("GROWING")).toBeInTheDocument();
+        expect(within(getTopicCard("Articles")).getByText("BUILDING")).toBeInTheDocument();
+        expect(within(getTopicCard("Adjectives")).getByText("IN PROGRESS")).toBeInTheDocument();
+        expect(within(getTopicCard("Adjectives")).queryByText("9/90 XP")).not.toBeInTheDocument();
+    });
 });

@@ -115,6 +115,9 @@ Current navigation status:
   - Locked topics are non-interactive.
   - Focused topic card is emphasized via border glow/ring (without card scaling).
   - Main companion avatar resolves from `profile.petImage` (kid-selected pet), with shared fallback avatar from `src/lib/avatarDefaults.js`.
+  - Topic mastery bars use per-topic XP snapshots (`earned_base_xp / max_base_xp`) to derive the displayed percent; completed topics are not auto-forced to `100%` when the stored XP ratio is lower.
+  - The `XP/max XP` detail line is shown on passed (`done`) topic cards only; non-passed topics show percent-only progress.
+  - Mastery badge copy on unlocked cards maps to percent tiers: `IN PROGRESS` (0-24), `BUILDING` (25-49), `GROWING` (50-79), `STRONG` (80-99), `MASTERED` (100).
 - CTA hierarchy:
   - Primary: `Start Topic` on ongoing cards.
   - Secondary: `Review` on done cards.
@@ -169,7 +172,7 @@ Current navigation status:
     - Milestone rail fill uses question progression (`completed_questions / total_questions`), not XP percentage.
   - Level summary zone:
     - Summary totals are base-XP only (bonus XP and bonus breakdown sections are removed).
-    - Summary shows total earned XP, base XP, and required XP-to-pass context.
+    - Summary shows earned XP, max XP, and required XP-to-pass context (no duplicate base-vs-total cards).
   - Center challenge zone:
     - Single sentence with one blank.
     - 4 answer options per question.
