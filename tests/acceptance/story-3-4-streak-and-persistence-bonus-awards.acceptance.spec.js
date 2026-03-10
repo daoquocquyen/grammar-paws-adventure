@@ -20,7 +20,7 @@ const dragCurrentCorrectAnswer = async (page) => {
 };
 
 test.describe("Story 3.4 acceptance", () => {
-    test("shows streak and end-of-level bonuses in summary", async ({ page }) => {
+    test("shows base-only totals in summary without bonus sections", async ({ page }) => {
         await page.goto("/");
 
         await page.evaluate(() => {
@@ -39,11 +39,8 @@ test.describe("Story 3.4 acceptance", () => {
         }
 
         await expect(page.getByTestId("challenge-summary")).toBeVisible();
-        await expect(page.getByTestId("challenge-summary-total-xp")).toHaveText("125");
-        await expect(page.getByTestId("challenge-summary-bonus-xp")).toHaveText("35");
-
-        await expect(page.getByTestId("challenge-summary-bonus-list")).toContainText("First-try streak bonus");
-        await expect(page.getByTestId("challenge-summary-bonus-list")).toContainText("First-try accuracy bonus");
-        await expect(page.getByTestId("challenge-summary-bonus-list")).toContainText("Persistence bonus");
+        await expect(page.getByTestId("challenge-summary-total-xp")).toHaveText("90");
+        await expect(page.getByTestId("challenge-summary-bonus-xp")).toHaveCount(0);
+        await expect(page.getByTestId("challenge-summary-bonus-list")).toHaveCount(0);
     });
 });

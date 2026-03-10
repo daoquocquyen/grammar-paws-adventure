@@ -167,6 +167,9 @@ Current navigation status:
       - future questions shown as locked milestones,
       - terminal `Finish` trophy marker (switches to active blue on level completion).
     - XP pass progress fill remains mapped to the challenge pass-gate percentage.
+  - Level summary zone:
+    - Summary totals are base-XP only (bonus XP and bonus breakdown sections are removed).
+    - Summary shows total earned XP, base XP, and required XP-to-pass context.
   - Center challenge zone:
     - Single sentence with one blank.
     - 4 answer options per question.

@@ -34,7 +34,7 @@ describe("Story 3.4 integration", () => {
         cleanup();
     });
 
-    it("renders bonus breakdown and keeps persistence award idempotent across summary rerender", async () => {
+    it("shows base-only summary totals and keeps persistence idempotent across summary rerender", async () => {
         const renderResult = render(<ChallengePage />);
 
         for (let index = 0; index < 9; index += 1) {
@@ -42,12 +42,9 @@ describe("Story 3.4 integration", () => {
         }
 
         await waitFor(() => expect(screen.getByTestId("challenge-summary")).toBeInTheDocument());
-        expect(screen.getByTestId("challenge-summary-bonus-xp")).toHaveTextContent("35");
-
-        const bonusList = screen.getByTestId("challenge-summary-bonus-list").textContent || "";
-        expect(bonusList).toContain("First-try streak bonus");
-        expect(bonusList).toContain("First-try accuracy bonus");
-        expect(bonusList).toContain("Persistence bonus");
+        expect(screen.getByTestId("challenge-summary-total-xp")).toHaveTextContent("90");
+        expect(screen.queryByTestId("challenge-summary-bonus-xp")).not.toBeInTheDocument();
+        expect(screen.queryByTestId("challenge-summary-bonus-list")).not.toBeInTheDocument();
 
         const beforeRerender = JSON.parse(window.localStorage.getItem("gpa_player_progress_v1") || "{}");
         const beforeTotalXp = beforeRerender.totalXp;

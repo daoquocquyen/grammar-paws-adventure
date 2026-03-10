@@ -50,8 +50,8 @@ describe("Story 3.1 integration", () => {
 
         await waitFor(() => expect(screen.getByTestId("challenge-summary")).toBeInTheDocument());
 
-        expect(screen.getByTestId("challenge-summary-total-xp")).toHaveTextContent("125");
-        expect(screen.getByTestId("challenge-summary-bonus-xp")).toHaveTextContent("35");
+        expect(screen.getByTestId("challenge-summary-total-xp")).toHaveTextContent("90");
+        expect(screen.queryByTestId("challenge-summary-bonus-xp")).not.toBeInTheDocument();
         expect(screen.getByTestId("challenge-summary-pass-fail")).toHaveTextContent(/Pass achieved/i);
 
         const progressRaw = window.localStorage.getItem("gpa_player_progress_v1");
@@ -61,7 +61,8 @@ describe("Story 3.1 integration", () => {
         expect(savedProgress.latestChallenge.outcomes).toHaveLength(9);
         expect(savedProgress.latestChallenge.score.correctCount).toBe(9);
         expect(savedProgress.latestChallenge.score.passed).toBe(true);
-        expect(savedProgress.latestChallenge.xp.total).toBe(125);
+        expect(savedProgress.latestChallenge.xp.total).toBe(90);
+        expect(savedProgress.latestChallenge.xp.bonus).toBeUndefined();
     }, 15000);
 
     it("shows current earned XP against required XP-to-pass in challenge progress UI", async () => {

@@ -99,6 +99,6 @@ test.describe("Story 3.1 acceptance", () => {
         await expect(page.getByTestId("challenge-summary")).toBeVisible();
         await expect(page.getByTestId("challenge-summary-pass-fail")).toContainText("Pass achieved");
         await expect(page.getByTestId("challenge-summary-score")).toContainText("XP Gate: 88/72");
-        await expect(page.getByTestId("challenge-summary-total-xp")).toHaveText("123");
+        await expect(page.getByTestId("challenge-summary-total-xp")).toHaveText("88");
     });
 });

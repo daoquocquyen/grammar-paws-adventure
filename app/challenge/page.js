@@ -1059,7 +1059,6 @@ export default function ChallengePage() {
                 xp: {
                     base: challengeTotals.summary.baseXp,
                     maxBase: challengeTotals.summary.maxBaseXp,
-                    bonus: challengeTotals.totalBonusXp,
                     total: challengeTotals.totalXp,
                 },
             };
@@ -1443,20 +1442,9 @@ export default function ChallengePage() {
                                 <p className="mt-1 text-3xl font-black text-emerald-600">{challengeTotals.summary.baseXp}</p>
                             </div>
                             <div className="rounded-xl bg-white p-3 text-center">
-                                <p className="text-xs font-bold uppercase tracking-wide text-slate-500">Bonus XP</p>
-                                <p className="mt-1 text-3xl font-black text-amber-500" data-testid="challenge-summary-bonus-xp">{challengeTotals.totalBonusXp}</p>
+                                <p className="text-xs font-bold uppercase tracking-wide text-slate-500">Required XP</p>
+                                <p className="mt-1 text-3xl font-black text-sky-600">{challengeTotals.summary.requiredBaseXpToPass}</p>
                             </div>
-                        </div>
-
-                        <div className="mt-4 rounded-2xl border border-slate-200 bg-white p-4">
-                            <p className="text-sm font-black text-slate-700">Bonus Breakdown</p>
-                            <ul className="mt-2 space-y-2 text-sm text-slate-700" data-testid="challenge-summary-bonus-list">
-                                {challengeTotals.bonusItems.map((bonusItem) => (
-                                    <li key={bonusItem.key} className="rounded-xl bg-slate-50 px-3 py-2">
-                                        <span className="font-black text-slate-900">{bonusItem.label}</span>: +{bonusItem.xp} XP. {bonusItem.message}
-                                    </li>
-                                ))}
-                            </ul>
                         </div>
 
                         <div className="mt-4 rounded-2xl border border-slate-200 bg-white p-4 text-sm font-semibold text-slate-700">
@@ -1465,7 +1453,7 @@ export default function ChallengePage() {
                                 ({Math.round(challengeTotals.summary.passProgressRate * 100)}%)
                             </p>
                             <p className="mt-1">Accuracy: {challengeTotals.summary.correctCount}/{challengeTotals.summary.totalQuestions} ({Math.round(challengeTotals.summary.accuracyRate * 100)}%)</p>
-                            <p className="mt-1">First-try accuracy: {Math.round(challengeTotals.firstTryAccuracy * 100)}%</p>
+                            <p className="mt-1">First-try accuracy: {Math.round(challengeTotals.summary.firstTryAccuracy * 100)}%</p>
                             <p className="mt-1">Corrected mistakes: {challengeTotals.summary.correctedMistakeCount}</p>
                         </div>
 

@@ -112,10 +112,10 @@ flowchart LR
   - `second_try_correct` -> `☆`
   - `assisted_resolution` -> `✓`
 - Scoring model:
-  - Base XP: first try 10, second try 6, assisted 3, skip 0.
-  - Streak bonuses and persistence bonus computed at run-end and merged into progress update.
+  - Base XP: first try 10, second try 8, assisted 3, skip 0.
+  - End-of-level XP equals earned base XP (no bonus XP layer).
 - Persistence additions:
-  - `gpa_player_progress_v1__player__{playerId}` should store per-question outcome class and streak context required for bonus computation.
+  - `gpa_player_progress_v1__player__{playerId}` should store per-question outcome class plus challenge summary/base-XP snapshots.
 
 ## Migration Status
 - ✅ Next.js app scaffold created (`package.json`, `app/layout.js`, `app/globals.css`, `app/page.js`).
