@@ -52,6 +52,8 @@ Focus on feature seams between screens and storage:
 - Screen 3 hydrates selected topic + renders aspects + voice controls.
 - Screen 3 cancels active narration when route changes/unmount occurs.
 - Screen 4 consumes profile context without crash.
+- Screen 4 auto-narrates hero message + question at each new question start (when voice is available and not muted), then narrates only hero-message updates within the same question.
+- Screen 4 cancels active narration when route changes/unmount/page-exit occurs.
 - Returning session boot restores saved name/pet/progress/accessories without forcing onboarding re-entry.
 
 ### Acceptance (E2E User Flow)
@@ -61,6 +63,7 @@ Focus on user outcomes:
 - Fail path shows supportive retry and no dead-end (planned behavior).
 - Pass path enables reward flow (planned behavior).
 - Voice unsupported browser still allows gameplay flow.
+- Challenge narration remains usable: each new question reads hero then question, while same-question hero updates read hero only.
 
 ## Coverage Targets
 - Current targets:
@@ -96,6 +99,8 @@ Focus on user outcomes:
 - [ ] Leaving Screen 3 stops any in-progress narration (no carry-over audio).
 - [ ] Screen 3 `Start Challenge` routes to `/challenge` and remains visually labeled as `Start Challenge`.
 - [ ] Screen 4 displays challenge UI and profile hydration safely.
+- [ ] Screen 4 new-question narration reads hero message then question (when voice is available and not muted).
+- [ ] Screen 4 same-question hero-message updates are narrated without replaying the current question sentence.
 - [ ] Screen 4 challenge HUD shows `earned_xp / required_xp_to_pass` and updates as outcomes are recorded.
 - [ ] Screen 4 milestone rail fill updates by question progression (`completed_questions / total_questions`) and reaches 100% at summary.
 - [ ] Screen 4 `Finish` marker switches to active when the final question is resolved and remains active on summary.

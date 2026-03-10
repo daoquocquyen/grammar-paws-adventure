@@ -185,6 +185,9 @@ Current navigation status:
     - `Next` across all challenge states (enabled only when progression is allowed).
 - Interaction behavior:
   - Profile hydration from `gpa_player_profile_v1`.
+  - Voice narration follows `gpa_voice_settings_v1` when browser speech is available.
+  - On each new question start, narration reads hero message first, then the current question sentence.
+  - On hero-message changes within the same question, narration replays only the updated hero message (no repeated question readback).
   - Guided attempt model:
     - Attempt 1: full options.
     - Attempt 2: previously chosen incorrect option disabled.

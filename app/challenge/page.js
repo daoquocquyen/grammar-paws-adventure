@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import CharacterSpeechBubble from "../../src/components/CharacterSpeechBubble";
 import HeaderBlock from "../../src/components/HeaderBlock";
 import { DEFAULT_COMPANION_AVATAR } from "../../src/lib/avatarDefaults";
@@ -42,10 +42,50 @@ import { DEFAULT_TOPIC_KEY, getTopicAspectIds, hasTopic } from "../../src/lib/to
 import { extractTopicProgressMetrics } from "../../src/lib/topicProgress";
 
 const selectedTopicStorageKey = "gpa_selected_topic_v1";
+const voiceSettingsKey = "gpa_voice_settings_v1";
 
 const defaultAvatar = DEFAULT_COMPANION_AVATAR;
 const toSafeLower = (value) => (typeof value === "string" ? value.trim().toLowerCase() : "");
 const toSafeString = (value) => (typeof value === "string" ? value.trim() : "");
+const canUseSpeechSynthesis = () => (
+    typeof window !== "undefined"
+    && "speechSynthesis" in window
+    && typeof window.SpeechSynthesisUtterance === "function"
+);
+const buildChallengeQuestionNarration = (questionPrefix, questionSuffix) => {
+    const safePrefix = toSafeString(questionPrefix) || "The";
+    const safeSuffix = toSafeString(questionSuffix) || "is sleeping.";
+    return `${safePrefix} blank ${safeSuffix}`.replace(/\s+/g, " ").trim();
+};
+const speakMessagesSequentially = (messages) => {
+    if (!canUseSpeechSynthesis()) {
+        return;
+    }
+
+    const safeMessages = (Array.isArray(messages) ? messages : [])
+        .map((message) => toSafeString(message))
+        .filter(Boolean);
+    if (safeMessages.length === 0) {
+        return;
+    }
+
+    const speakAtIndex = (index) => {
+        if (index >= safeMessages.length) {
+            return;
+        }
+
+        const utterance = new window.SpeechSynthesisUtterance(safeMessages[index]);
+        utterance.rate = 0.95;
+        utterance.pitch = 1;
+        if (index < safeMessages.length - 1) {
+            utterance.onend = () => speakAtIndex(index + 1);
+            utterance.onerror = () => speakAtIndex(index + 1);
+        }
+        window.speechSynthesis.speak(utterance);
+    };
+
+    speakAtIndex(0);
+};
 const getSeededRandom = (seedInput) => {
     const seedText = toSafeString(seedInput) || "seed";
     let state = 0;
@@ -139,6 +179,8 @@ export default function ChallengePage() {
     const [activeProgressStorageKey, setActiveProgressStorageKey] = useState(PLAYER_PROGRESS_STORAGE_KEY);
     const [activeTopicAttemptHistoryKey, setActiveTopicAttemptHistoryKey] = useState(TOPIC_ATTEMPT_HISTORY_STORAGE_KEY);
     const [allowLegacyStorageFallback, setAllowLegacyStorageFallback] = useState(true);
+    const [voiceSupported, setVoiceSupported] = useState(false);
+    const [voiceMuted, setVoiceMuted] = useState(false);
 
     const [selectedTopicKey, setSelectedTopicKey] = useState(DEFAULT_TOPIC_KEY);
     const [topicAttempts, setTopicAttempts] = useState([]);
@@ -202,6 +244,8 @@ export default function ChallengePage() {
         mouseUp: null,
     });
     const suppressClickRef = useRef(false);
+    const lastNarratedQuestionKeyRef = useRef("");
+    const lastNarratedHeroMessageRef = useRef("");
 
     const aspectIds = useMemo(() => getTopicAspectIds(selectedTopicKey), [selectedTopicKey]);
 
@@ -237,6 +281,36 @@ export default function ChallengePage() {
         () => new Set(selectedQuestions.map((question) => getQuestionStemKey(question)).filter(Boolean)).size,
         [selectedQuestions]
     );
+
+    const stopNarration = useCallback(() => {
+        if (!canUseSpeechSynthesis()) {
+            return;
+        }
+
+        window.speechSynthesis.cancel();
+    }, []);
+
+    useEffect(() => {
+        const canSpeak = canUseSpeechSynthesis();
+        setVoiceSupported(canSpeak);
+
+        if (!canSpeak) {
+            return;
+        }
+
+        const voiceRaw = localStorage.getItem(voiceSettingsKey);
+        if (!voiceRaw) {
+            setVoiceMuted(false);
+            return;
+        }
+
+        try {
+            const parsedVoiceSettings = JSON.parse(voiceRaw);
+            setVoiceMuted(Boolean(parsedVoiceSettings?.muted));
+        } catch {
+            setVoiceMuted(false);
+        }
+    }, []);
 
     useEffect(() => {
         let resolvedPlayerId = "";
@@ -337,6 +411,7 @@ export default function ChallengePage() {
 
     useEffect(() => {
         return () => {
+            stopNarration();
             if (explanationTimerRef.current) {
                 clearTimeout(explanationTimerRef.current);
             }
@@ -370,7 +445,25 @@ export default function ChallengePage() {
                 dragListenersRef.current.mouseUp = null;
             }
         };
-    }, []);
+    }, [stopNarration]);
+
+    useEffect(() => {
+        if (typeof window === "undefined") {
+            return undefined;
+        }
+
+        const handlePageExit = () => {
+            stopNarration();
+        };
+
+        window.addEventListener("pagehide", handlePageExit);
+        window.addEventListener("beforeunload", handlePageExit);
+
+        return () => {
+            window.removeEventListener("pagehide", handlePageExit);
+            window.removeEventListener("beforeunload", handlePageExit);
+        };
+    }, [stopNarration]);
 
     const progressDisplayTotal = questionCount;
     const maxQuestionIndex = useMemo(() => Math.max(0, progressDisplayTotal - 1), [progressDisplayTotal]);
@@ -416,6 +509,28 @@ export default function ChallengePage() {
     const currentQuestionPrefix = currentQuestion?.sentencePrefix ?? "The";
     const currentQuestionSuffix = currentQuestion?.sentenceSuffix ?? "is sleeping.";
     const isQuestionContentAvailable = progressDisplayTotal > 0 && currentQuestion !== null;
+    const currentQuestionNarrationKey = useMemo(() => {
+        if (!isQuestionContentAvailable) {
+            return "";
+        }
+
+        const questionId = toSafeString(currentQuestion?.id);
+        if (questionId) {
+            return `id::${questionId}`;
+        }
+
+        return [
+            currentQuestionIndex,
+            toSafeString(currentQuestionPrefix),
+            toSafeString(currentQuestionSuffix),
+        ].join("::");
+    }, [
+        currentQuestion,
+        currentQuestionIndex,
+        currentQuestionPrefix,
+        currentQuestionSuffix,
+        isQuestionContentAvailable,
+    ]);
 
     const currentOutcome = questionOutcomes[currentQuestionIndex] ?? null;
     const hasResolvedQuestion = Boolean(currentOutcome);
@@ -486,6 +601,55 @@ export default function ChallengePage() {
         () => getPetFeedbackText({ phase, hasResolvedQuestion, outcomeClass: currentOutcome, attemptCount }),
         [phase, hasResolvedQuestion, currentOutcome, attemptCount]
     );
+
+    useEffect(() => {
+        if (!voiceSupported || voiceMuted || showSummary || !isQuestionContentAvailable) {
+            return;
+        }
+
+        const safeHeroMessage = toSafeString(heroMessage);
+        const questionNarration = buildChallengeQuestionNarration(currentQuestionPrefix, currentQuestionSuffix);
+        const hasQuestionChanged = Boolean(currentQuestionNarrationKey)
+            && currentQuestionNarrationKey !== lastNarratedQuestionKeyRef.current;
+
+        if (hasQuestionChanged) {
+            const narrationMessages = [];
+            if (safeHeroMessage) {
+                narrationMessages.push(safeHeroMessage);
+            }
+            if (questionNarration) {
+                narrationMessages.push(questionNarration);
+            }
+
+            if (narrationMessages.length === 0) {
+                return;
+            }
+
+            stopNarration();
+            lastNarratedQuestionKeyRef.current = currentQuestionNarrationKey;
+            lastNarratedHeroMessageRef.current = safeHeroMessage;
+            speakMessagesSequentially(narrationMessages);
+            return;
+        }
+
+        if (!safeHeroMessage || safeHeroMessage === lastNarratedHeroMessageRef.current) {
+            return;
+        }
+
+        stopNarration();
+        lastNarratedHeroMessageRef.current = safeHeroMessage;
+        speakMessagesSequentially([safeHeroMessage]);
+    }, [
+        currentQuestionNarrationKey,
+        currentQuestionPrefix,
+        currentQuestionSuffix,
+        heroMessage,
+        isQuestionContentAvailable,
+        showSummary,
+        stopNarration,
+        voiceMuted,
+        voiceSupported,
+    ]);
 
     const clearExplanationTimer = () => {
         if (explanationTimerRef.current) {

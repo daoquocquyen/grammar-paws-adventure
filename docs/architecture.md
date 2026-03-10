@@ -16,6 +16,7 @@ flowchart LR
   S3 --> LS
   S4Actual --> LS
   S3 --> SS[speechSynthesis API]
+  S4Actual --> SS
 ```
 
 ## Runtime Components
@@ -36,7 +37,7 @@ flowchart LR
     - `gpa_player_progress_v1__player__{playerId}`
     - `gpa_pet_accessories_v1__player__{playerId}`
     - `gpa_topic_attempt_history_v1__player__{playerId}`
-- Voice: browser `speechSynthesis` in topic intro screen.
+- Voice: browser `speechSynthesis` in topic intro and challenge screens.
 - Navigation (legacy): relative links and `window.location.href`.
 - Navigation (new): Next.js route navigation (`next/navigation`).
 
@@ -107,6 +108,7 @@ flowchart LR
   - Pre-answer hero message is hint-only (non-revealing).
   - Post-answer hero message is explanation-oriented and includes correct-answer reasoning when needed.
   - Pet copy is emotional encouragement and never punitive.
+  - Challenge narration reads hero text then question text at each new question start; same-question hero updates narrate hero only.
 - UI indicator model:
   - `first_try_correct` -> `⭐`
   - `second_try_correct` -> `☆`
