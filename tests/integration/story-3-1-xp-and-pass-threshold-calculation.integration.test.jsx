@@ -65,7 +65,7 @@ describe("Story 3.1 integration", () => {
         expect(savedProgress.latestChallenge.xp.bonus).toBeUndefined();
     }, 15000);
 
-    it("shows current earned XP against required XP-to-pass in challenge progress UI", async () => {
+    it("shows XP gate text and question-count progress fill in challenge progress UI", async () => {
         render(<ChallengePage />);
 
         expect(screen.getByTestId("challenge-xp-pass-progress-text")).toHaveTextContent("XP 0/90 (72 to pass)");
@@ -74,9 +74,9 @@ describe("Story 3.1 integration", () => {
         await completeQuestionWithCorrectAnswer();
 
         expect(screen.getByTestId("challenge-xp-pass-progress-text")).toHaveTextContent("XP 10/90 (72 to pass)");
-        const passProgressFill = screen.getByTestId("challenge-progress-bar-fill");
-        const passProgressWidth = Number.parseFloat((passProgressFill.style.width || "0").replace("%", ""));
-        expect(passProgressWidth).toBeGreaterThan(13);
-        expect(passProgressWidth).toBeLessThan(14);
+        const questionProgressFill = screen.getByTestId("challenge-progress-bar-fill");
+        const questionProgressWidth = Number.parseFloat((questionProgressFill.style.width || "0").replace("%", ""));
+        expect(questionProgressWidth).toBeGreaterThan(11);
+        expect(questionProgressWidth).toBeLessThan(12);
     });
 });

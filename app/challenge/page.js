@@ -452,9 +452,20 @@ export default function ChallengePage() {
     );
 
     const challengeTotals = useMemo(() => calculateChallengeTotals(orderedOutcomes), [orderedOutcomes]);
-    const passGateProgressPercent = useMemo(
-        () => Math.max(0, Math.min(100, challengeTotals.summary.passProgressRate * 100)),
-        [challengeTotals.summary.passProgressRate]
+    const completedQuestionCount = useMemo(() => {
+        if (showSummary) {
+            return progressDisplayTotal;
+        }
+
+        return Array.from({ length: progressDisplayTotal }, (_, index) => questionOutcomes[index])
+            .filter(Boolean)
+            .length;
+    }, [showSummary, progressDisplayTotal, questionOutcomes]);
+    const questionProgressPercent = useMemo(
+        () => (progressDisplayTotal > 0
+            ? Math.max(0, Math.min(100, (completedQuestionCount / progressDisplayTotal) * 100))
+            : 0),
+        [completedQuestionCount, progressDisplayTotal]
     );
     const progressCounterText = `${progressDisplayTotal > 0 ? currentQuestionIndex + 1 : 0}/${progressDisplayTotal}`;
     const xpPassProgressText = `XP ${challengeTotals.summary.baseXp}/${challengeTotals.summary.maxBaseXp} (${challengeTotals.summary.requiredBaseXpToPass} to pass)`;
@@ -1192,7 +1203,7 @@ export default function ChallengePage() {
                                 <div className="absolute left-[26px] right-[26px] top-[19px] h-[3px] rounded-full bg-slate-200" data-testid="challenge-progress-bar-track">
                                     <div
                                         className="h-full rounded-full bg-primary shadow-[0_0_12px_rgba(56,189,248,0.42)] transition-all"
-                                        style={{ width: `${passGateProgressPercent}%` }}
+                                        style={{ width: `${questionProgressPercent}%` }}
                                         data-testid="challenge-progress-bar-fill"
                                     />
                                 </div>

@@ -82,6 +82,11 @@ test.describe("Story 3.1 acceptance", () => {
 
         await expect(page.getByTestId("challenge-progress-text")).toHaveText("2/9");
         await expect(page.getByTestId("challenge-xp-pass-progress-text")).toHaveText("XP 8/90 (72 to pass)");
+        const progressFillStyleAfterFirstQuestion = await page.getByTestId("challenge-progress-bar-fill").getAttribute("style");
+        const firstQuestionWidthMatch = (progressFillStyleAfterFirstQuestion || "").match(/width:\s*([0-9.]+)%/);
+        const firstQuestionWidth = firstQuestionWidthMatch ? Number.parseFloat(firstQuestionWidthMatch[1]) : Number.NaN;
+        expect(firstQuestionWidth).toBeGreaterThan(11);
+        expect(firstQuestionWidth).toBeLessThan(12);
 
         await dragCurrentCorrectAnswer(page);
         await expect(page.getByTestId("challenge-pet-message")).toContainText("+10 XP!");

@@ -94,6 +94,7 @@ Focus on user outcomes:
 - [ ] Screen 3 `Start Challenge` routes to `/challenge` and remains visually labeled as `Start Challenge`.
 - [ ] Screen 4 displays challenge UI and profile hydration safely.
 - [ ] Screen 4 challenge HUD shows `earned_xp / required_xp_to_pass` and updates as outcomes are recorded.
+- [ ] Screen 4 milestone rail fill updates by question progression (`completed_questions / total_questions`) and reaches 100% at summary.
 
 ## Automation TBDs
 - CI execution pipeline: TBD.

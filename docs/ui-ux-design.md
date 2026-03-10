@@ -166,7 +166,7 @@ Current navigation status:
       - current question shown as active outlined milestone,
       - future questions shown as locked milestones,
       - terminal `Finish` trophy marker (switches to active blue on level completion).
-    - XP pass progress fill remains mapped to the challenge pass-gate percentage.
+    - Milestone rail fill uses question progression (`completed_questions / total_questions`), not XP percentage.
   - Level summary zone:
     - Summary totals are base-XP only (bonus XP and bonus breakdown sections are removed).
     - Summary shows total earned XP, base XP, and required XP-to-pass context.
