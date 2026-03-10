@@ -113,13 +113,18 @@ describe("Story 3.3 integration", () => {
         expect(screen.getByTestId("challenge-progress-text")).toHaveTextContent("1/9");
         expect(screen.getByTestId("challenge-progress-bar-fill")).toHaveStyle({ width: "0%" });
         expect(screen.getByTestId("challenge-finish-indicator")).toHaveAttribute("data-finish-state", "inactive");
+        const primaryAction = screen.getByTestId("challenge-primary-action");
 
-        for (let index = 0; index < 9; index += 1) {
+        for (let index = 0; index < 8; index += 1) {
             clickCorrectOption();
-            const primaryAction = screen.getByTestId("challenge-primary-action");
             await waitFor(() => expect(primaryAction).toBeEnabled());
             fireEvent.click(primaryAction);
         }
+
+        clickCorrectOption();
+        await waitFor(() => expect(primaryAction).toBeEnabled());
+        expect(screen.getByTestId("challenge-finish-indicator")).toHaveAttribute("data-finish-state", "active");
+        fireEvent.click(primaryAction);
 
         await waitFor(() => expect(screen.getByTestId("challenge-summary")).toBeInTheDocument());
         expect(screen.getByTestId("challenge-progress-text")).toHaveTextContent("9/9");

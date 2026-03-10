@@ -165,7 +165,7 @@ Current navigation status:
       - completed questions shown as filled blue milestones with XP labels,
       - current question shown as active outlined milestone,
       - future questions shown as locked milestones,
-      - terminal `Finish` trophy marker (switches to active blue on level completion).
+      - terminal `Finish` trophy marker (switches to active blue when all questions in the run are resolved and remains active on summary).
     - Milestone rail fill uses question progression (`completed_questions / total_questions`), not XP percentage.
   - Level summary zone:
     - Summary totals are base-XP only (bonus XP and bonus breakdown sections are removed).

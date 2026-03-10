@@ -35,11 +35,16 @@ test.describe("Story 3.3 acceptance", () => {
         await expect(primaryAction).toBeDisabled();
         await expect(page.getByTestId("challenge-finish-indicator")).toHaveAttribute("data-finish-state", "inactive");
 
-        for (let index = 0; index < 9; index += 1) {
+        for (let index = 0; index < 8; index += 1) {
             await dragCurrentCorrectAnswer(page);
             await expect(primaryAction).toBeEnabled();
             await primaryAction.click();
         }
+
+        await dragCurrentCorrectAnswer(page);
+        await expect(primaryAction).toBeEnabled();
+        await expect(page.getByTestId("challenge-finish-indicator")).toHaveAttribute("data-finish-state", "active");
+        await primaryAction.click();
 
         await expect(page.getByTestId("challenge-summary")).toBeVisible();
         await expect(page.getByTestId("challenge-progress-text")).toHaveText("9/9");

@@ -471,7 +471,7 @@ export default function ChallengePage() {
     const xpPassProgressText = `XP ${challengeTotals.summary.baseXp}/${challengeTotals.summary.maxBaseXp} (${challengeTotals.summary.requiredBaseXpToPass} to pass)`;
     const indicatorColumnCount = progressDisplayTotal + 1;
     const indicatorRailMinWidth = Math.max(560, indicatorColumnCount * 74);
-    const isFinishMarkerActive = showSummary;
+    const isFinishMarkerActive = progressDisplayTotal > 0 && completedQuestionCount >= progressDisplayTotal;
     const xpPassBadgeClass = challengeTotals.summary.passed
         ? "border-emerald-300 bg-emerald-50 text-emerald-700 shadow-[0_2px_8px_rgba(16,185,129,0.25)]"
         : "border-primary/40 bg-primary/10 text-primary shadow-[0_2px_10px_rgba(37,157,244,0.28)]";

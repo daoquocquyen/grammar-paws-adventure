@@ -95,6 +95,7 @@ Focus on user outcomes:
 - [ ] Screen 4 displays challenge UI and profile hydration safely.
 - [ ] Screen 4 challenge HUD shows `earned_xp / required_xp_to_pass` and updates as outcomes are recorded.
 - [ ] Screen 4 milestone rail fill updates by question progression (`completed_questions / total_questions`) and reaches 100% at summary.
+- [ ] Screen 4 `Finish` marker switches to active when the final question is resolved and remains active on summary.
 
 ## Automation TBDs
 - CI execution pipeline: TBD.
