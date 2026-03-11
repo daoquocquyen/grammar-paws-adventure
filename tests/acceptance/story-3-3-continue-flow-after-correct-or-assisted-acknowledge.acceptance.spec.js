@@ -47,8 +47,20 @@ test.describe("Story 3.3 acceptance", () => {
         await primaryAction.click();
 
         await expect(page.getByTestId("challenge-summary")).toBeVisible();
-        await expect(page.getByTestId("challenge-progress-text")).toHaveText("9/9");
-        await expect(page.getByTestId("challenge-progress-bar-fill")).toHaveAttribute("style", /width: 100%/);
-        await expect(page.getByTestId("challenge-finish-indicator")).toHaveAttribute("data-finish-state", "active");
+        await expect(page.getByTestId("challenge-progress-text")).toHaveCount(0);
+        await expect(page.getByTestId("challenge-progress-bar-fill")).toHaveCount(0);
+        await expect(page.getByTestId("challenge-finish-indicator")).toHaveCount(0);
+        await expect(page.getByTestId("challenge-summary-percentage")).toHaveText("100%");
+        await expect(page.getByTestId("challenge-summary-xp-gate")).toHaveText("90/72");
+        await expect(page.getByTestId("challenge-summary-pet-message")).toContainText("unlocked the next topic");
+        await expect(page.getByTestId("challenge-summary-accuracy")).toHaveText("100%");
+        await expect(page.getByTestId("challenge-summary-first-try-accuracy")).toHaveText("100%");
+        await expect(page.getByTestId("challenge-summary-corrected-mistakes")).toHaveText("0");
+        await expect(page.getByTestId("challenge-summary-accuracy-card")).toHaveAttribute("data-performance-tone", "excellent");
+        await expect(page.getByTestId("challenge-summary-first-try-accuracy-card")).toHaveAttribute("data-performance-tone", "excellent");
+        await expect(page.getByTestId("challenge-summary-corrected-mistakes-card")).toHaveAttribute("data-performance-tone", "excellent");
+        await expect(page.getByTestId("challenge-summary-next-topic-action")).toHaveAttribute("href", "/world-map");
+        await expect(page.getByTestId("challenge-summary-world-map-action")).toHaveAttribute("href", "/world-map");
+        await expect(page.getByTestId("challenge-summary-retry-action")).toHaveCount(0);
     });
 });

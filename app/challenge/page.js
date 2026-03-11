@@ -133,6 +133,63 @@ const getResolvedIndicatorIcon = (indicatorType) => {
     }
     return "check";
 };
+const PERFORMANCE_TONE_STYLES = Object.freeze({
+    excellent: {
+        cardClass: "border-emerald-200 bg-emerald-50/70",
+        valueClass: "text-emerald-700",
+        labelClass: "text-emerald-700",
+    },
+    good: {
+        cardClass: "border-sky-200 bg-sky-50/70",
+        valueClass: "text-sky-700",
+        labelClass: "text-sky-700",
+    },
+    fair: {
+        cardClass: "border-amber-200 bg-amber-50/80",
+        valueClass: "text-amber-700",
+        labelClass: "text-amber-700",
+    },
+    needs_practice: {
+        cardClass: "border-rose-200 bg-rose-50/80",
+        valueClass: "text-rose-700",
+        labelClass: "text-rose-700",
+    },
+});
+const getPercentageToneKey = (percentValue) => {
+    const safePercentValue = Number.isFinite(percentValue) ? Math.max(0, Math.min(100, Math.round(percentValue))) : 0;
+
+    if (safePercentValue >= 90) {
+        return "excellent";
+    }
+    if (safePercentValue >= 75) {
+        return "good";
+    }
+    if (safePercentValue >= 50) {
+        return "fair";
+    }
+    return "needs_practice";
+};
+const getCorrectedMistakesToneKey = (correctedMistakeCount, totalQuestions) => {
+    const safeCorrectedMistakeCount = Number.isFinite(correctedMistakeCount)
+        ? Math.max(0, Math.round(correctedMistakeCount))
+        : 0;
+    const safeTotalQuestions = Number.isFinite(totalQuestions)
+        ? Math.max(0, Math.round(totalQuestions))
+        : 0;
+
+    if (safeTotalQuestions <= 0 || safeCorrectedMistakeCount <= 0) {
+        return "excellent";
+    }
+
+    const correctionRatio = safeCorrectedMistakeCount / safeTotalQuestions;
+    if (correctionRatio <= 0.15) {
+        return "good";
+    }
+    if (correctionRatio <= 0.35) {
+        return "fair";
+    }
+    return "needs_practice";
+};
 
 const defaultProgressState = {
     version: 1,
@@ -573,6 +630,26 @@ export default function ChallengePage() {
     const xpPassBadgeClass = challengeTotals.summary.passed
         ? "border-emerald-300 bg-emerald-50 text-emerald-700 shadow-[0_2px_8px_rgba(16,185,129,0.25)]"
         : "border-primary/40 bg-primary/10 text-primary shadow-[0_2px_10px_rgba(37,157,244,0.28)]";
+    const summaryPercentage = Math.round(challengeTotals.summary.xpPassRate * 100);
+    const summaryXpGateText = `${challengeTotals.summary.baseXp}/${challengeTotals.summary.requiredBaseXpToPass}`;
+    const summaryUnlockStateText = challengeTotals.summary.passed ? "Unlocked" : "Locked";
+    const summaryAccuracyPercent = Math.round(challengeTotals.summary.accuracyRate * 100);
+    const summaryFirstTryAccuracyPercent = Math.round(challengeTotals.summary.firstTryAccuracy * 100);
+    const summaryAccuracyToneKey = getPercentageToneKey(summaryAccuracyPercent);
+    const summaryFirstTryAccuracyToneKey = getPercentageToneKey(summaryFirstTryAccuracyPercent);
+    const summaryCorrectedMistakesToneKey = getCorrectedMistakesToneKey(
+        challengeTotals.summary.correctedMistakeCount,
+        challengeTotals.summary.totalQuestions
+    );
+    const summaryAccuracyToneStyles = PERFORMANCE_TONE_STYLES[summaryAccuracyToneKey];
+    const summaryFirstTryAccuracyToneStyles = PERFORMANCE_TONE_STYLES[summaryFirstTryAccuracyToneKey];
+    const summaryCorrectedMistakesToneStyles = PERFORMANCE_TONE_STYLES[summaryCorrectedMistakesToneKey];
+    const summaryPetResultMessage = challengeTotals.summary.passed
+        ? "Congratulations! You unlocked the next topic. Let's keep exploring."
+        : "Cheerful effort! Earn a little more XP to unlock the next topic.";
+    const summaryPassFailMessage = challengeTotals.summary.passed
+        ? "Pass achieved! Great effort and focus."
+        : "Keep practicing. You are getting stronger each round.";
 
     const primaryAction = useMemo(
         () =>
@@ -1174,6 +1251,14 @@ export default function ChallengePage() {
         }
     };
 
+    const handleRetryChallenge = useCallback(() => {
+        if (typeof window === "undefined") {
+            return;
+        }
+
+        window.location.assign(`/challenge?retry=${Date.now()}`);
+    }, []);
+
     useEffect(() => {
         if (!showSummary || summaryPersisted) {
             return;
@@ -1314,120 +1399,122 @@ export default function ChallengePage() {
                 onDragStartCapture={preventNativeDragStart}
                 onDropCapture={preventNativeDragStart}
             >
-                <section
-                    className="rounded-[24px] border border-primary/15 bg-white/95 px-5 py-4 shadow-sm"
-                    data-testid="challenge-selection-metadata"
-                    data-question-count={questionCount}
-                    data-selected-question-ids={selectedQuestionIds.join(",")}
-                    data-selected-question-stem-count={selectedQuestionStemCount}
-                    data-selected-unique-stem-count={uniqueSelectedQuestionStemCount}
-                    data-recent-question-ids={Array.from(recentQuestionIds).join(",")}
-                    data-current-correct-answer={toSafeString(correctAnswer)}
-                >
-                    <div className="flex flex-col gap-4">
-                        <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
-                            <div className="inline-flex items-center gap-2 text-[13px] font-black uppercase tracking-[0.14em] text-slate-600">
-                                <span className="material-symbols-outlined text-base text-primary">tactic</span>
-                                Challenge Progress
-                            </div>
-                            <div className="flex flex-wrap items-center gap-2 md:justify-end">
-                                <span className={`inline-flex items-center gap-2 rounded-full border px-3 py-1.5 ${xpPassBadgeClass}`}>
-                                    <span className="material-symbols-outlined text-[16px]">workspace_premium</span>
-                                    <span className="flex flex-col leading-none">
-                                        <span className="text-[9px] font-black uppercase tracking-[0.08em]">Earned</span>
-                                        <span className="text-sm font-black text-slate-700">
-                                            {challengeTotals.summary.baseXp} / {challengeTotals.summary.maxBaseXp}
-                                        </span>
-                                    </span>
-                                </span>
-                                <span className="inline-flex items-center gap-2 rounded-full border border-emerald-200 bg-emerald-50 px-3 py-1.5 text-emerald-700 shadow-[0_2px_8px_rgba(16,185,129,0.2)]">
-                                    <span className="material-symbols-outlined text-[16px]">flag</span>
-                                    <span className="flex flex-col leading-none">
-                                        <span className="text-[9px] font-black uppercase tracking-[0.08em]">Goal</span>
-                                        <span className="text-sm font-black">{challengeTotals.summary.requiredBaseXpToPass} XP</span>
-                                    </span>
-                                </span>
-                            </div>
-                        </div>
-                        <span
-                            className="sr-only"
-                            data-testid="challenge-xp-pass-progress-text"
-                            aria-label={`Pass XP progress ${challengeTotals.summary.baseXp} out of ${challengeTotals.summary.maxBaseXp}, ${challengeTotals.summary.requiredBaseXpToPass} to pass`}
-                        >
-                            {xpPassProgressText}
-                        </span>
-                        <span
-                            className="sr-only"
-                            data-testid="challenge-progress-text"
-                        >
-                            {progressCounterText}
-                        </span>
-
-                        <div className="overflow-x-auto pb-1" data-testid="challenge-indicator-row" aria-label="Question quality indicators">
-                            <div className="relative mx-auto w-full px-1" style={{ minWidth: `${indicatorRailMinWidth}px` }}>
-                                <div className="absolute left-[26px] right-[26px] top-[19px] h-[3px] rounded-full bg-slate-200" data-testid="challenge-progress-bar-track">
-                                    <div
-                                        className="h-full rounded-full bg-primary shadow-[0_0_12px_rgba(56,189,248,0.42)] transition-all"
-                                        style={{ width: `${questionProgressPercent}%` }}
-                                        data-testid="challenge-progress-bar-fill"
-                                    />
+                {!showSummary && (
+                    <section
+                        className="rounded-[24px] border border-primary/15 bg-white/95 px-5 py-4 shadow-sm"
+                        data-testid="challenge-selection-metadata"
+                        data-question-count={questionCount}
+                        data-selected-question-ids={selectedQuestionIds.join(",")}
+                        data-selected-question-stem-count={selectedQuestionStemCount}
+                        data-selected-unique-stem-count={uniqueSelectedQuestionStemCount}
+                        data-recent-question-ids={Array.from(recentQuestionIds).join(",")}
+                        data-current-correct-answer={toSafeString(correctAnswer)}
+                    >
+                        <div className="flex flex-col gap-4">
+                            <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
+                                <div className="inline-flex items-center gap-2 text-[13px] font-black uppercase tracking-[0.14em] text-slate-600">
+                                    <span className="material-symbols-outlined text-base text-primary">tactic</span>
+                                    Challenge Progress
                                 </div>
-                                <div className="relative flex items-start justify-between gap-2">
-                                    {indicatorStates.map((indicatorType, index) => {
-                                        const outcomeClass = questionOutcomes[index] ?? null;
-                                        const isResolved = Boolean(outcomeClass);
-                                        const isActiveQuestion = !showSummary && index === currentQuestionIndex && !isResolved;
-                                        const xpLabel = getIndicatorXpLabel(indicatorType);
-                                        const labelText = isResolved ? (xpLabel ? `${xpLabel} XP` : "+0 XP") : (isActiveQuestion ? "ACTIVE" : "Locked");
-                                        const labelClassName = isResolved
-                                            ? `text-[10px] font-black uppercase tracking-[0.05em] ${xpLabel ? getIndicatorXpTextClass(indicatorType) : "text-slate-400"}`
-                                            : (isActiveQuestion
-                                                ? "text-[10px] font-black uppercase tracking-[0.08em] text-primary"
-                                                : "text-[10px] font-semibold text-slate-400");
-                                        const iconName = isResolved ? getResolvedIndicatorIcon(indicatorType) : (isActiveQuestion ? "pets" : "lock");
-                                        const indicatorClassName = isResolved
-                                            ? "border-primary bg-primary text-white shadow-[0_2px_10px_rgba(37,157,244,0.36)]"
-                                            : (isActiveQuestion
-                                                ? "border-primary bg-white text-primary shadow-[0_0_0_2px_rgba(37,157,244,0.18)]"
-                                                : "border-slate-200 bg-slate-100 text-slate-400");
-
-                                        return (
-                                            <div key={`indicator-${index}`} className="flex min-w-[62px] flex-col items-center gap-1.5">
-                                                <span
-                                                    className={`inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-full border-2 transition ${indicatorClassName}`}
-                                                    data-testid={`challenge-indicator-${index}`}
-                                                    data-indicator-type={indicatorType}
-                                                >
-                                                    <span className="material-symbols-outlined text-[16px]">{iconName}</span>
-                                                </span>
-                                                <span className={labelClassName}>{labelText}</span>
-                                            </div>
-                                        );
-                                    })}
-
-                                    <div className="flex min-w-[62px] flex-col items-center gap-1.5">
-                                        <span
-                                            className={`inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-full border-2 transition ${
-                                                isFinishMarkerActive
-                                                    ? "border-primary bg-primary text-white shadow-[0_2px_10px_rgba(37,157,244,0.36)]"
-                                                    : "border-slate-300 bg-slate-50 text-slate-500"
-                                            }`}
-                                            data-testid="challenge-finish-indicator"
-                                            data-finish-state={isFinishMarkerActive ? "active" : "inactive"}
-                                        >
-                                            <span className="material-symbols-outlined text-[16px]">emoji_events</span>
+                                <div className="flex flex-wrap items-center gap-2 md:justify-end">
+                                    <span className={`inline-flex items-center gap-2 rounded-full border px-3 py-1.5 ${xpPassBadgeClass}`}>
+                                        <span className="material-symbols-outlined text-[16px]">workspace_premium</span>
+                                        <span className="flex flex-col leading-none">
+                                            <span className="text-[9px] font-black uppercase tracking-[0.08em]">Earned</span>
+                                            <span className="text-sm font-black text-slate-700">
+                                                {challengeTotals.summary.baseXp} / {challengeTotals.summary.maxBaseXp}
+                                            </span>
                                         </span>
-                                        <span
-                                            className={`text-[10px] ${isFinishMarkerActive ? "font-black uppercase tracking-[0.05em] text-primary" : "font-semibold text-slate-500"}`}
-                                        >
-                                            Finish
+                                    </span>
+                                    <span className="inline-flex items-center gap-2 rounded-full border border-emerald-200 bg-emerald-50 px-3 py-1.5 text-emerald-700 shadow-[0_2px_8px_rgba(16,185,129,0.2)]">
+                                        <span className="material-symbols-outlined text-[16px]">flag</span>
+                                        <span className="flex flex-col leading-none">
+                                            <span className="text-[9px] font-black uppercase tracking-[0.08em]">Goal</span>
+                                            <span className="text-sm font-black">{challengeTotals.summary.requiredBaseXpToPass} XP</span>
                                         </span>
+                                    </span>
+                                </div>
+                            </div>
+                            <span
+                                className="sr-only"
+                                data-testid="challenge-xp-pass-progress-text"
+                                aria-label={`Pass XP progress ${challengeTotals.summary.baseXp} out of ${challengeTotals.summary.maxBaseXp}, ${challengeTotals.summary.requiredBaseXpToPass} to pass`}
+                            >
+                                {xpPassProgressText}
+                            </span>
+                            <span
+                                className="sr-only"
+                                data-testid="challenge-progress-text"
+                            >
+                                {progressCounterText}
+                            </span>
+
+                            <div className="overflow-x-auto pb-1" data-testid="challenge-indicator-row" aria-label="Question quality indicators">
+                                <div className="relative mx-auto w-full px-1" style={{ minWidth: `${indicatorRailMinWidth}px` }}>
+                                    <div className="absolute left-[26px] right-[26px] top-[19px] h-[3px] rounded-full bg-slate-200" data-testid="challenge-progress-bar-track">
+                                        <div
+                                            className="h-full rounded-full bg-primary shadow-[0_0_12px_rgba(56,189,248,0.42)] transition-all"
+                                            style={{ width: `${questionProgressPercent}%` }}
+                                            data-testid="challenge-progress-bar-fill"
+                                        />
+                                    </div>
+                                    <div className="relative flex items-start justify-between gap-2">
+                                        {indicatorStates.map((indicatorType, index) => {
+                                            const outcomeClass = questionOutcomes[index] ?? null;
+                                            const isResolved = Boolean(outcomeClass);
+                                            const isActiveQuestion = !showSummary && index === currentQuestionIndex && !isResolved;
+                                            const xpLabel = getIndicatorXpLabel(indicatorType);
+                                            const labelText = isResolved ? (xpLabel ? `${xpLabel} XP` : "+0 XP") : (isActiveQuestion ? "ACTIVE" : "Locked");
+                                            const labelClassName = isResolved
+                                                ? `text-[10px] font-black uppercase tracking-[0.05em] ${xpLabel ? getIndicatorXpTextClass(indicatorType) : "text-slate-400"}`
+                                                : (isActiveQuestion
+                                                    ? "text-[10px] font-black uppercase tracking-[0.08em] text-primary"
+                                                    : "text-[10px] font-semibold text-slate-400");
+                                            const iconName = isResolved ? getResolvedIndicatorIcon(indicatorType) : (isActiveQuestion ? "pets" : "lock");
+                                            const indicatorClassName = isResolved
+                                                ? "border-primary bg-primary text-white shadow-[0_2px_10px_rgba(37,157,244,0.36)]"
+                                                : (isActiveQuestion
+                                                    ? "border-primary bg-white text-primary shadow-[0_0_0_2px_rgba(37,157,244,0.18)]"
+                                                    : "border-slate-200 bg-slate-100 text-slate-400");
+
+                                            return (
+                                                <div key={`indicator-${index}`} className="flex min-w-[62px] flex-col items-center gap-1.5">
+                                                    <span
+                                                        className={`inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-full border-2 transition ${indicatorClassName}`}
+                                                        data-testid={`challenge-indicator-${index}`}
+                                                        data-indicator-type={indicatorType}
+                                                    >
+                                                        <span className="material-symbols-outlined text-[16px]">{iconName}</span>
+                                                    </span>
+                                                    <span className={labelClassName}>{labelText}</span>
+                                                </div>
+                                            );
+                                        })}
+
+                                        <div className="flex min-w-[62px] flex-col items-center gap-1.5">
+                                            <span
+                                                className={`inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-full border-2 transition ${
+                                                    isFinishMarkerActive
+                                                        ? "border-primary bg-primary text-white shadow-[0_2px_10px_rgba(37,157,244,0.36)]"
+                                                        : "border-slate-300 bg-slate-50 text-slate-500"
+                                                }`}
+                                                data-testid="challenge-finish-indicator"
+                                                data-finish-state={isFinishMarkerActive ? "active" : "inactive"}
+                                            >
+                                                <span className="material-symbols-outlined text-[16px]">emoji_events</span>
+                                            </span>
+                                            <span
+                                                className={`text-[10px] ${isFinishMarkerActive ? "font-black uppercase tracking-[0.05em] text-primary" : "font-semibold text-slate-500"}`}
+                                            >
+                                                Finish
+                                            </span>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
                         </div>
-                    </div>
-                </section>
+                    </section>
+                )}
 
                 {!showSummary && (
                     <>
@@ -1601,14 +1688,26 @@ export default function ChallengePage() {
 
                 {showSummary && (
                     <section className="mx-auto mt-10 w-full max-w-3xl rounded-[30px] border border-primary/20 bg-white/95 px-6 py-7 shadow-sm" data-testid="challenge-summary">
-                        <h2 className="text-center text-3xl font-black text-slate-900">Level Complete</h2>
+                        <h2 className="text-center text-3xl font-black text-slate-900">Challenge Summary</h2>
                         <p className="mt-2 text-center text-sm font-semibold text-slate-600" data-testid="challenge-summary-pass-fail">
-                            {challengeTotals.summary.passed
-                                ? "Pass achieved! Great effort and focus."
-                                : "Keep practicing. You are getting stronger each round."}
+                            {summaryPassFailMessage}
                         </p>
 
-                        <div className="mt-6 grid grid-cols-1 gap-3 rounded-2xl border border-slate-200 bg-slate-50 p-4 md:grid-cols-3">
+                        <div className="mt-6 flex items-center gap-3 rounded-2xl border border-primary/20 bg-primary/5 p-4">
+                            <div className="size-[82px] shrink-0 overflow-hidden rounded-full border-4 border-white bg-slate-200 shadow-sm">
+                                <img className="h-full w-full object-cover" src={companionAvatar} alt="Companion avatar" />
+                            </div>
+                            <CharacterSpeechBubble
+                                message={summaryPetResultMessage}
+                                tailSide="left"
+                                borderColor={petBubbleBorderColor}
+                                className="bg-white/95"
+                                textClassName="text-sm font-black text-slate-700 md:text-base"
+                                testId="challenge-summary-pet-message"
+                            />
+                        </div>
+
+                        <div className="mt-6 grid grid-cols-1 gap-3 rounded-2xl border border-slate-200 bg-slate-50 p-4 md:grid-cols-4">
                             <div className="rounded-xl bg-white p-3 text-center">
                                 <p className="text-xs font-bold uppercase tracking-wide text-slate-500">Earned XP</p>
                                 <p className="mt-1 text-3xl font-black text-primary" data-testid="challenge-summary-total-xp">{challengeTotals.totalXp}</p>
@@ -1618,24 +1717,86 @@ export default function ChallengePage() {
                                 <p className="mt-1 text-3xl font-black text-emerald-600" data-testid="challenge-summary-max-xp">{challengeTotals.summary.maxBaseXp}</p>
                             </div>
                             <div className="rounded-xl bg-white p-3 text-center">
-                                <p className="text-xs font-bold uppercase tracking-wide text-slate-500">Required XP</p>
-                                <p className="mt-1 text-3xl font-black text-sky-600">{challengeTotals.summary.requiredBaseXpToPass}</p>
+                                <p className="text-xs font-bold uppercase tracking-wide text-slate-500">Percentage</p>
+                                <p className="mt-1 text-3xl font-black text-sky-600" data-testid="challenge-summary-percentage">{summaryPercentage}%</p>
+                            </div>
+                            <div className="rounded-xl bg-white p-3 text-center">
+                                <p className="text-xs font-bold uppercase tracking-wide text-slate-500">XP Gate</p>
+                                <p className="mt-1 text-2xl font-black text-violet-700" data-testid="challenge-summary-xp-gate">{summaryXpGateText}</p>
                             </div>
                         </div>
 
-                        <div className="mt-4 rounded-2xl border border-slate-200 bg-white p-4 text-sm font-semibold text-slate-700">
-                            <p data-testid="challenge-summary-score">
-                                XP Gate: {challengeTotals.summary.baseXp}/{challengeTotals.summary.requiredBaseXpToPass} required
-                                ({Math.round(challengeTotals.summary.passProgressRate * 100)}%)
-                            </p>
-                            <p className="mt-1">Accuracy: {challengeTotals.summary.correctCount}/{challengeTotals.summary.totalQuestions} ({Math.round(challengeTotals.summary.accuracyRate * 100)}%)</p>
-                            <p className="mt-1">First-try accuracy: {Math.round(challengeTotals.summary.firstTryAccuracy * 100)}%</p>
-                            <p className="mt-1">Corrected mistakes: {challengeTotals.summary.correctedMistakeCount}</p>
+                        <p className="mt-4 text-center text-sm font-semibold text-slate-700" data-testid="challenge-summary-score">
+                            XP Gate: {summaryXpGateText} ({summaryUnlockStateText})
+                        </p>
+
+                        <div className="mt-4 grid grid-cols-1 gap-3 rounded-2xl border border-slate-200 bg-white p-4 text-center md:grid-cols-3">
+                            <div
+                                className={`rounded-xl border p-3 ${summaryAccuracyToneStyles.cardClass}`}
+                                data-testid="challenge-summary-accuracy-card"
+                                data-performance-tone={summaryAccuracyToneKey}
+                            >
+                                <p className={`text-xs font-bold uppercase tracking-wide ${summaryAccuracyToneStyles.labelClass}`}>Accuracy</p>
+                                <p
+                                    className={`mt-1 text-2xl font-black ${summaryAccuracyToneStyles.valueClass}`}
+                                    data-testid="challenge-summary-accuracy"
+                                >
+                                    {summaryAccuracyPercent}%
+                                </p>
+                            </div>
+                            <div
+                                className={`rounded-xl border p-3 ${summaryFirstTryAccuracyToneStyles.cardClass}`}
+                                data-testid="challenge-summary-first-try-accuracy-card"
+                                data-performance-tone={summaryFirstTryAccuracyToneKey}
+                            >
+                                <p className={`text-xs font-bold uppercase tracking-wide ${summaryFirstTryAccuracyToneStyles.labelClass}`}>First-try Accuracy</p>
+                                <p
+                                    className={`mt-1 text-2xl font-black ${summaryFirstTryAccuracyToneStyles.valueClass}`}
+                                    data-testid="challenge-summary-first-try-accuracy"
+                                >
+                                    {summaryFirstTryAccuracyPercent}%
+                                </p>
+                            </div>
+                            <div
+                                className={`rounded-xl border p-3 ${summaryCorrectedMistakesToneStyles.cardClass}`}
+                                data-testid="challenge-summary-corrected-mistakes-card"
+                                data-performance-tone={summaryCorrectedMistakesToneKey}
+                            >
+                                <p className={`text-xs font-bold uppercase tracking-wide ${summaryCorrectedMistakesToneStyles.labelClass}`}>Corrected Mistakes</p>
+                                <p
+                                    className={`mt-1 text-2xl font-black ${summaryCorrectedMistakesToneStyles.valueClass}`}
+                                    data-testid="challenge-summary-corrected-mistakes"
+                                >
+                                    {challengeTotals.summary.correctedMistakeCount}
+                                </p>
+                            </div>
                         </div>
 
                         <div className="mt-6 flex items-center justify-center gap-3">
-                            <Link href="/world-map" className="inline-flex items-center rounded-full bg-primary px-6 py-3 text-sm font-black text-white shadow-primary/25 shadow-lg">
-                                Back to Map
+                            {challengeTotals.summary.passed ? (
+                                <Link
+                                    href="/world-map"
+                                    data-testid="challenge-summary-next-topic-action"
+                                    className="inline-flex items-center rounded-full bg-primary px-6 py-3 text-sm font-black text-white shadow-primary/25 shadow-lg"
+                                >
+                                    Next Topic
+                                </Link>
+                            ) : (
+                                <button
+                                    type="button"
+                                    data-testid="challenge-summary-retry-action"
+                                    onClick={handleRetryChallenge}
+                                    className="inline-flex items-center rounded-full bg-primary px-6 py-3 text-sm font-black text-white shadow-primary/25 shadow-lg"
+                                >
+                                    Retry Challenge
+                                </button>
+                            )}
+                            <Link
+                                href="/world-map"
+                                data-testid="challenge-summary-world-map-action"
+                                className="inline-flex items-center rounded-full border border-primary/40 bg-white px-6 py-3 text-sm font-black text-primary shadow-sm"
+                            >
+                                World Map
                             </Link>
                         </div>
                     </section>

@@ -52,9 +52,22 @@ describe("Story 3.1 integration", () => {
 
         expect(screen.getByTestId("challenge-summary-total-xp")).toHaveTextContent("90");
         expect(screen.getByTestId("challenge-summary-max-xp")).toHaveTextContent("90");
+        expect(screen.getByTestId("challenge-summary-percentage")).toHaveTextContent("100%");
+        expect(screen.getByTestId("challenge-summary-xp-gate")).toHaveTextContent("90/72");
+        expect(screen.getByTestId("challenge-summary-pet-message")).toHaveTextContent(/unlocked the next topic/i);
+        expect(screen.getByTestId("challenge-summary-accuracy")).toHaveTextContent("100%");
+        expect(screen.getByTestId("challenge-summary-first-try-accuracy")).toHaveTextContent("100%");
+        expect(screen.getByTestId("challenge-summary-corrected-mistakes")).toHaveTextContent("0");
+        expect(screen.getByTestId("challenge-summary-accuracy-card")).toHaveAttribute("data-performance-tone", "excellent");
+        expect(screen.getByTestId("challenge-summary-first-try-accuracy-card")).toHaveAttribute("data-performance-tone", "excellent");
+        expect(screen.getByTestId("challenge-summary-corrected-mistakes-card")).toHaveAttribute("data-performance-tone", "excellent");
+        expect(screen.getByTestId("challenge-summary-next-topic-action")).toHaveAttribute("href", "/world-map");
+        expect(screen.getByTestId("challenge-summary-world-map-action")).toHaveAttribute("href", "/world-map");
+        expect(screen.queryByTestId("challenge-summary-retry-action")).not.toBeInTheDocument();
         expect(screen.queryByText("Base XP")).not.toBeInTheDocument();
         expect(screen.queryByTestId("challenge-summary-bonus-xp")).not.toBeInTheDocument();
         expect(screen.getByTestId("challenge-summary-pass-fail")).toHaveTextContent(/Pass achieved/i);
+        expect(screen.queryByTestId("challenge-progress-text")).not.toBeInTheDocument();
 
         const progressRaw = window.localStorage.getItem("gpa_player_progress_v1");
         expect(progressRaw).toBeTruthy();

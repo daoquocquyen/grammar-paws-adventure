@@ -21,6 +21,42 @@ const clickCorrectOption = () => {
     fireEvent.click(button);
 };
 
+const getCurrentCorrectAnswer = () => (
+    (screen.getByTestId("challenge-selection-metadata").getAttribute("data-current-correct-answer") || "")
+        .trim()
+        .toLowerCase()
+);
+
+const findEnabledWrongButton = () => {
+    const correctAnswer = getCurrentCorrectAnswer();
+    const optionButtons = within(screen.getByTestId("challenge-answer-options")).getAllByRole("button");
+    return optionButtons.find(
+        (button) => !button.disabled && (button.textContent || "").trim().toLowerCase() !== correctAnswer
+    );
+};
+
+const resolveCurrentQuestionAsSkipped = async () => {
+    const primaryAction = screen.getByTestId("challenge-primary-action");
+
+    for (let attempt = 0; attempt < 3; attempt += 1) {
+        const wrongButton = findEnabledWrongButton();
+        if (!wrongButton) {
+            throw new Error(`Missing enabled wrong option for skip attempt ${attempt + 1}`);
+        }
+        fireEvent.click(wrongButton);
+
+        if (attempt < 2) {
+            await waitFor(() => {
+                const nextWrongButton = findEnabledWrongButton();
+                expect(nextWrongButton).toBeDefined();
+            });
+        }
+    }
+
+    await waitFor(() => expect(primaryAction).toBeEnabled());
+    fireEvent.click(primaryAction);
+};
+
 describe("Story 3.3 integration", () => {
     beforeEach(() => {
         window.localStorage.clear();
@@ -127,8 +163,43 @@ describe("Story 3.3 integration", () => {
         fireEvent.click(primaryAction);
 
         await waitFor(() => expect(screen.getByTestId("challenge-summary")).toBeInTheDocument());
-        expect(screen.getByTestId("challenge-progress-text")).toHaveTextContent("9/9");
-        expect(screen.getByTestId("challenge-progress-bar-fill")).toHaveStyle({ width: "100%" });
-        expect(screen.getByTestId("challenge-finish-indicator")).toHaveAttribute("data-finish-state", "active");
+        expect(screen.queryByTestId("challenge-progress-text")).not.toBeInTheDocument();
+        expect(screen.queryByTestId("challenge-progress-bar-fill")).not.toBeInTheDocument();
+        expect(screen.queryByTestId("challenge-finish-indicator")).not.toBeInTheDocument();
+        expect(screen.getByTestId("challenge-summary-percentage")).toHaveTextContent("100%");
+        expect(screen.getByTestId("challenge-summary-xp-gate")).toHaveTextContent("90/72");
+        expect(screen.getByTestId("challenge-summary-pet-message")).toHaveTextContent(/unlocked the next topic/i);
+        expect(screen.getByTestId("challenge-summary-next-topic-action")).toHaveAttribute("href", "/world-map");
+        expect(screen.getByTestId("challenge-summary-world-map-action")).toHaveAttribute("href", "/world-map");
+        expect(screen.queryByTestId("challenge-summary-retry-action")).not.toBeInTheDocument();
+        expect(screen.getByTestId("challenge-summary-accuracy")).toHaveTextContent("100%");
+        expect(screen.getByTestId("challenge-summary-first-try-accuracy")).toHaveTextContent("100%");
+        expect(screen.getByTestId("challenge-summary-corrected-mistakes")).toHaveTextContent("0");
+        expect(screen.getByTestId("challenge-summary-accuracy-card")).toHaveAttribute("data-performance-tone", "excellent");
+        expect(screen.getByTestId("challenge-summary-first-try-accuracy-card")).toHaveAttribute("data-performance-tone", "excellent");
+        expect(screen.getByTestId("challenge-summary-corrected-mistakes-card")).toHaveAttribute("data-performance-tone", "excellent");
     }, 15000);
+
+    it("shows retry action and fail metrics when pass threshold is not met", async () => {
+        window.localStorage.setItem("gpa_selected_topic_v1", "verbs");
+        render(<ChallengePage />);
+
+        for (let index = 0; index < 6; index += 1) {
+            await resolveCurrentQuestionAsSkipped();
+        }
+
+        await waitFor(() => expect(screen.getByTestId("challenge-summary")).toBeInTheDocument());
+        expect(screen.getByTestId("challenge-summary-pass-fail")).toHaveTextContent(/Keep practicing/i);
+        expect(screen.getByTestId("challenge-summary-xp-gate")).toHaveTextContent("0/48");
+        expect(screen.getByTestId("challenge-summary-percentage")).toHaveTextContent("0%");
+        expect(screen.getByTestId("challenge-summary-accuracy")).toHaveTextContent("0%");
+        expect(screen.getByTestId("challenge-summary-first-try-accuracy")).toHaveTextContent("0%");
+        expect(screen.getByTestId("challenge-summary-corrected-mistakes")).toHaveTextContent("0");
+        expect(screen.getByTestId("challenge-summary-accuracy-card")).toHaveAttribute("data-performance-tone", "needs_practice");
+        expect(screen.getByTestId("challenge-summary-first-try-accuracy-card")).toHaveAttribute("data-performance-tone", "needs_practice");
+        expect(screen.getByTestId("challenge-summary-corrected-mistakes-card")).toHaveAttribute("data-performance-tone", "excellent");
+        expect(screen.getByTestId("challenge-summary-retry-action")).toBeInTheDocument();
+        expect(screen.getByTestId("challenge-summary-world-map-action")).toHaveAttribute("href", "/world-map");
+        expect(screen.queryByTestId("challenge-summary-next-topic-action")).not.toBeInTheDocument();
+    }, 30000);
 });

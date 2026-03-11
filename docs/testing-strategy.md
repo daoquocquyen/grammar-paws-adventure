@@ -102,9 +102,12 @@ Focus on user outcomes:
 - [ ] Screen 4 new-question narration reads hero message then question (when voice is available and not muted).
 - [ ] Screen 4 same-question hero-message updates are narrated without replaying the current question sentence.
 - [ ] Screen 4 challenge HUD shows `earned_xp / required_xp_to_pass` and updates as outcomes are recorded.
-- [ ] Screen 4 milestone rail fill updates by question progression (`completed_questions / total_questions`) and reaches 100% at summary.
-- [ ] Screen 4 `Finish` marker switches to active when the final question is resolved and remains active on summary.
-- [ ] Screen 4 summary cards show non-duplicated XP metrics (`Earned XP`, `Max XP`, `Required XP`) with no `Base XP` duplicate card.
+- [ ] Screen 4 milestone rail fill updates by question progression (`completed_questions / total_questions`) and reaches 100% before summary transition.
+- [ ] Screen 4 `Finish` marker switches to active when the final question is resolved, then the progress panel is hidden on summary.
+- [ ] Screen 4 summary shows `Earned XP`, `Max XP`, `Percentage`, `XP Gate`, `Accuracy`, `First-try Accuracy`, and `Corrected Mistakes` plus the pet-avatar unlock guidance message (with no `Base XP` duplicate card).
+- [ ] Screen 4 `Accuracy`, `First-try Accuracy`, and `Corrected Mistakes` cards apply range-based color states (`excellent`, `good`, `fair`, `needs_practice`) for the shown values.
+- [ ] Screen 4 summary action is conditional: `Next Topic` when passed, `Retry Challenge` when failed.
+- [ ] Screen 4 summary always includes a `World Map` button in both pass and fail states.
 
 ## Automation TBDs
 - CI execution pipeline: TBD.

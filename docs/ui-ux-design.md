@@ -168,11 +168,17 @@ Current navigation status:
       - completed questions shown as filled blue milestones with XP labels,
       - current question shown as active outlined milestone,
       - future questions shown as locked milestones,
-      - terminal `Finish` trophy marker (switches to active blue when all questions in the run are resolved and remains active on summary).
+      - terminal `Finish` trophy marker (switches to active blue when all questions in the run are resolved).
     - Milestone rail fill uses question progression (`completed_questions / total_questions`), not XP percentage.
+    - Top progress zone is hidden once the screen switches to summary mode.
   - Level summary zone:
     - Summary totals are base-XP only (bonus XP and bonus breakdown sections are removed).
-    - Summary shows earned XP, max XP, and required XP-to-pass context (no duplicate base-vs-total cards).
+    - Summary shows challenge metrics cards for `Earned XP`, `Max XP`, `Percentage`, and `XP Gate`.
+    - Summary also shows `Accuracy`, `First-try Accuracy`, and `Corrected Mistakes`.
+    - Performance metric cards are color-coded by range (`excellent`, `good`, `fair`, `needs_practice`).
+    - Summary includes a pet-avatar speech bubble with pass/fail encouragement and next-topic unlock guidance.
+    - Summary primary action is conditional: `Next Topic` when passed, `Retry Challenge` when failed.
+    - Summary always includes a secondary `World Map` button in both pass/fail states.
   - Center challenge zone:
     - Single sentence with one blank.
     - 4 answer options per question.
