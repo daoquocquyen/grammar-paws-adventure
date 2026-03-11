@@ -10,7 +10,7 @@
 ## Branch Protection for `main`
 Enable branch protection and configure:
 - Require pull request before merging
-- Require approvals: 1
+- Require approvals: 0 (solo-maintainer default)
 - Dismiss stale approvals on new commits: enabled
 - Require status checks before merging: enabled
 - Required checks:
