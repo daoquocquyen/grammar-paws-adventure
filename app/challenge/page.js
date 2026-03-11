@@ -303,6 +303,7 @@ export default function ChallengePage() {
     const suppressClickRef = useRef(false);
     const lastNarratedQuestionKeyRef = useRef("");
     const lastNarratedHeroMessageRef = useRef("");
+    const lastNarratedSummaryMessageRef = useRef("");
 
     const aspectIds = useMemo(() => getTopicAspectIds(selectedTopicKey), [selectedTopicKey]);
 
@@ -727,6 +728,26 @@ export default function ChallengePage() {
         voiceMuted,
         voiceSupported,
     ]);
+
+    useEffect(() => {
+        if (!showSummary) {
+            lastNarratedSummaryMessageRef.current = "";
+            return;
+        }
+
+        if (!voiceSupported || voiceMuted) {
+            return;
+        }
+
+        const safeSummaryMessage = toSafeString(summaryPetResultMessage);
+        if (!safeSummaryMessage || safeSummaryMessage === lastNarratedSummaryMessageRef.current) {
+            return;
+        }
+
+        stopNarration();
+        lastNarratedSummaryMessageRef.current = safeSummaryMessage;
+        speakMessagesSequentially([safeSummaryMessage]);
+    }, [showSummary, summaryPetResultMessage, stopNarration, voiceMuted, voiceSupported]);
 
     const clearExplanationTimer = () => {
         if (explanationTimerRef.current) {

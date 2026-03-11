@@ -71,6 +71,14 @@ const findCorrectAnswerButton = ({ mustBeEnabled = false } = {}) => {
     return correctButton;
 };
 
+const resolveCurrentQuestionCorrectly = async () => {
+    const primaryAction = screen.getByTestId("challenge-primary-action");
+
+    fireEvent.click(findCorrectAnswerButton());
+    await waitFor(() => expect(primaryAction).toBeEnabled());
+    fireEvent.click(primaryAction);
+};
+
 describe("Story 3.5 integration", () => {
     beforeEach(() => {
         window.localStorage.clear();
@@ -135,4 +143,26 @@ describe("Story 3.5 integration", () => {
             restore();
         }
     });
+
+    it("reads summary pet message once when challenge summary appears", async () => {
+        const { speakMock, restore } = buildSpeechMock();
+
+        try {
+            render(<ChallengePage />);
+
+            for (let index = 0; index < 9; index += 1) {
+                await resolveCurrentQuestionCorrectly();
+            }
+
+            await waitFor(() => expect(screen.getByTestId("challenge-summary")).toBeInTheDocument());
+            const allSpokenTexts = speakMock.mock.calls.map((call) => String(call[0]?.text || "").toLowerCase());
+            const summaryNarrationCount = allSpokenTexts.filter((text) =>
+                text.includes("congratulations! you unlocked the next topic")
+            ).length;
+
+            expect(summaryNarrationCount).toBe(1);
+        } finally {
+            restore();
+        }
+    }, 20000);
 });

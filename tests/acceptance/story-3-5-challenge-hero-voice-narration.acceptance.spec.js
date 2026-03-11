@@ -95,5 +95,19 @@ test.describe("Story 3.5 acceptance", () => {
             const speechLog = await page.evaluate(() => window.__challengeSpeechLog.slice());
             return speechLog.filter((entry) => String(entry).toLowerCase().includes("blank")).length;
         }).toBe(2);
+
+        for (let index = 0; index < 8; index += 1) {
+            await dragCurrentAnswerByMatch(page, { shouldBeCorrect: true });
+            await expect(primaryAction).toBeEnabled();
+            await primaryAction.click();
+        }
+
+        await expect(page.getByTestId("challenge-summary")).toBeVisible();
+        await expect.poll(async () => {
+            const speechLog = await page.evaluate(() => window.__challengeSpeechLog.slice());
+            return speechLog.filter((entry) =>
+                String(entry).toLowerCase().includes("congratulations! you unlocked the next topic")
+            ).length;
+        }).toBe(1);
     });
 });

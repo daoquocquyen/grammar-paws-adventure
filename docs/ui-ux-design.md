@@ -189,11 +189,12 @@ Current navigation status:
     - Hero avatar bubble (hint pre-answer, explanation post-answer).
   - Primary actions:
     - `Next` across all challenge states (enabled only when progression is allowed).
-- Interaction behavior:
+  - Interaction behavior:
   - Profile hydration from `gpa_player_profile_v1`.
   - Voice narration follows `gpa_voice_settings_v1` when browser speech is available.
   - On each new question start, narration reads hero message first, then the current question sentence.
   - On hero-message changes within the same question, narration replays only the updated hero message (no repeated question readback).
+  - On summary display, narration reads the pet result speech-bubble message once (when voice is available and not muted).
   - Guided attempt model:
     - Attempt 1: full options.
     - Attempt 2: previously chosen incorrect option disabled.
