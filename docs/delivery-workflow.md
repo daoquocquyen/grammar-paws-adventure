@@ -22,7 +22,7 @@
 - Extended non-required quality check: `Extended Quality / integration-and-acceptance`.
 - Security checks:
   - `dependency-review` on pull requests.
-  - CodeQL and npm audit on push/schedule/manual runs.
+  - CodeQL and npm audit on schedule/manual runs.
 
 ### Required Test Sequence Per Story
 1. Implement story functionality.
