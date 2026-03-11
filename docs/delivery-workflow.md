@@ -23,6 +23,8 @@
 - Security checks:
   - `dependency-review` on pull requests.
   - CodeQL and npm audit on schedule/manual runs.
+- Node runtime policy for GitHub-hosted JavaScript actions:
+  - Workflows set `FORCE_JAVASCRIPT_ACTIONS_TO_NODE24=true` to validate Node 24 compatibility ahead of enforced platform migration.
 
 ### Required Test Sequence Per Story
 1. Implement story functionality.
