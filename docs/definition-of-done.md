@@ -45,7 +45,7 @@
 - [ ] Requirements traced to source artifact (PRD/FR/slice).
 - [ ] UI behavior documented in `docs/feature-file-map.md` and relevant screen files.
 - [ ] Security baseline checklist completed.
-- [ ] Required GitHub checks pass on PR (`CI / build-and-unit`, `Security / dependency-review`).
+- [ ] Required GitHub checks pass on PR (`build-and-unit`, `dependency-review`).
 - [ ] Unit, integration, and acceptance tests are created/updated for changed behavior.
 - [ ] Manual test steps are printed in the story implementation artifact before manual validation.
 - [ ] Unit tests pass before manual testing begins.

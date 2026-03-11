@@ -18,10 +18,10 @@
 - Dev-story post-manual regression: `npm run dev-story:post-manual`.
 
 ### GitHub Actions (Current)
-- Required pull request gate: `CI / build-and-unit`.
+- Required pull request gate: `build-and-unit`.
 - Extended non-required quality check: `Extended Quality / integration-and-acceptance`.
 - Security checks:
-  - `Security / dependency-review` on pull requests.
+  - `dependency-review` on pull requests.
   - CodeQL and npm audit on push/schedule/manual runs.
 
 ### Required Test Sequence Per Story
@@ -64,7 +64,7 @@
 - [ ] Route targets are valid (no broken screen links).
 - [ ] Security baseline checklist reviewed.
 - [ ] Unit tests executed and passing.
-- [ ] Required GitHub checks are green on PR (`CI / build-and-unit`, `Security / dependency-review`).
+- [ ] Required GitHub checks are green on PR (`build-and-unit`, `dependency-review`).
 - [ ] Manual regression checklist executed.
 - [ ] Integration + acceptance tests executed after manual checks.
 - [ ] Any deferred test level has explicit user approval and documented follow-up command.
@@ -111,7 +111,7 @@ Minimum quality bar:
 
 ## Workflow Defaults
 - Branching: trunk-based with short-lived branches merging into protected `main`.
-- Required checks: `CI / build-and-unit`, `Security / dependency-review`.
+- Required checks: `build-and-unit`, `dependency-review`.
 - Deployment target: Vercel (production branch `main`).
 - Rollback process: redeploy previous successful Vercel build and revert offending merge commit.
 

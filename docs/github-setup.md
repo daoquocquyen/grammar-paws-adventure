@@ -14,8 +14,8 @@ Enable branch protection and configure:
 - Dismiss stale approvals on new commits: enabled
 - Require status checks before merging: enabled
 - Required checks:
-  - `CI / build-and-unit`
-  - `Security / dependency-review`
+  - `build-and-unit`
+  - `dependency-review`
 - Require conversation resolution before merging: enabled
 - Require linear history: enabled
 - Restrict force pushes: enabled
