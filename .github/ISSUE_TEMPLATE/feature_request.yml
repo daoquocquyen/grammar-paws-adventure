@@ -1,0 +1,35 @@
+name: Feature request
+description: Propose a new capability or improvement
+labels:
+  - type:feature
+body:
+  - type: input
+    id: summary
+    attributes:
+      label: Summary
+      placeholder: Add caregiver progress dashboard filters
+    validations:
+      required: true
+  - type: textarea
+    id: problem
+    attributes:
+      label: Problem to solve
+      description: What user pain or goal does this address?
+    validations:
+      required: true
+  - type: textarea
+    id: proposal
+    attributes:
+      label: Proposed solution
+      description: Describe the expected behavior
+    validations:
+      required: true
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Alternatives considered
+  - type: textarea
+    id: acceptance
+    attributes:
+      label: Acceptance criteria
+      description: List testable outcomes

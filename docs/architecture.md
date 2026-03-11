@@ -74,7 +74,7 @@ flowchart LR
 
 ## Constraints
 - Framework migration is in progress: legacy static pages and new React routes coexist.
-- No CI pipeline or workflow automation defined in repo.
+- CI/security automation is GitHub Actions based (`ci.yml`, `extended-quality.yml`, `security.yml`).
 - External CDN dependency for style/fonts/icons and image assets.
 - Screen naming inconsistency exists:
   - Link target in screen 3: `screen4-challenge-screen.html`
@@ -129,7 +129,6 @@ flowchart LR
 
 ## Architecture TBDs
 - Data/service boundary for question bank source is TBD.
-- Production deployment topology is TBD.
 - Error telemetry and analytics instrumentation are TBD.
 
 ## Source References

@@ -26,7 +26,7 @@ Frontend/browser security baseline for the current static MVP codebase.
 
 ## Mandatory Checklist: Dependencies and External Assets
 - [ ] Review every external script/font/image domain before adding.
-- [ ] Prefer pinning dependency versions where possible (currently TBD).
+- [ ] Prefer pinned dependency versions and commit lockfile updates with dependency changes.
 - [ ] Add integrity/CSP strategy when production bundling is introduced (TBD).
 - [ ] Minimize third-party domains to reduce supply-chain risk.
 
@@ -41,10 +41,13 @@ Frontend/browser security baseline for the current static MVP codebase.
 - If backend/API is introduced later:
   - use server-side secret storage only,
   - provide public config via safe runtime vars,
-  - keep secret scanning in CI (TBD until CI exists).
+  - keep secret scanning in CI (GitHub security workflow + secret scanning).
 
 ## Dependency Hygiene Policy
-- Current status: package manager manifest is absent; automated dependency scanning is TBD.
+- Current status:
+  - npm manifest and lockfile are present.
+  - Dependabot is configured for npm and GitHub Actions.
+  - Dependency review is enforced on pull requests via GitHub Actions.
 - Interim control:
   - track all CDN endpoints in architecture docs,
   - review external changes during each release,
@@ -53,7 +56,6 @@ Frontend/browser security baseline for the current static MVP codebase.
 ## Current Gaps to Close Next
 - CSP policy: TBD.
 - Subresource Integrity for CDN scripts: TBD.
-- Automated vulnerability scanning: TBD.
 - Security test automation: TBD.
 
 ## Source References

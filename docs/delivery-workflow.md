@@ -3,6 +3,8 @@
 ## Current Delivery Model
 - Repository now includes a Next.js application scaffold plus legacy static prototype screens.
 - Build pipeline exists for Next.js app runtime; automated test runners are configured.
+- GitHub Actions workflows are active for CI, extended quality checks, and security scanning.
+- Deployment model is Vercel native Git integration (preview deploys on pull requests, production deploys from `main`).
 
 ## Build and Test Commands
 
@@ -14,6 +16,13 @@
 - Acceptance test command: `npm run test:acceptance`.
 - Dev-story quick validation: `npm run dev-story:validate`.
 - Dev-story post-manual regression: `npm run dev-story:post-manual`.
+
+### GitHub Actions (Current)
+- Required pull request gate: `build-and-unit`.
+- Extended non-required quality check: `Extended Quality / integration-and-acceptance`.
+- Security checks:
+  - `dependency-review` on pull requests.
+  - CodeQL and npm audit on push/schedule/manual runs.
 
 ### Required Test Sequence Per Story
 1. Implement story functionality.
@@ -55,6 +64,7 @@
 - [ ] Route targets are valid (no broken screen links).
 - [ ] Security baseline checklist reviewed.
 - [ ] Unit tests executed and passing.
+- [ ] Required GitHub checks are green on PR (`build-and-unit`, `dependency-review`).
 - [ ] Manual regression checklist executed.
 - [ ] Integration + acceptance tests executed after manual checks.
 - [ ] Any deferred test level has explicit user approval and documented follow-up command.
@@ -96,14 +106,14 @@ Minimum quality bar:
 4. Run integration and acceptance tests after manual checks pass.
 5. If user explicitly requests deferral, document the deferral and pending commands in the story artifact.
 6. Resolve all blocking checklist items.
-7. Tag release notes manually (`TBD` tag strategy).
-8. Publish static files to chosen hosting target (`TBD` platform).
+7. Merge into `main` after required checks pass.
+8. Confirm Vercel production deployment health and attach release notes/changelog updates.
 
-## Workflow TBDs
-- Branch naming policy: TBD.
-- CI checks and required gates: TBD.
-- Environment matrix (dev/staging/prod): TBD.
-- Hosting platform and rollback process: TBD.
+## Workflow Defaults
+- Branching: trunk-based with short-lived branches merging into protected `main`.
+- Required checks: `build-and-unit`, `dependency-review`.
+- Deployment target: Vercel (production branch `main`).
+- Rollback process: redeploy previous successful Vercel build and revert offending merge commit.
 
 ## Source References
 - `_bmad-output/planning-artifacts/implementation-slices-feature-and-screen-plan.md`
