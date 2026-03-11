@@ -5,6 +5,9 @@
   - Unit + integration: Vitest + Testing Library (`npm run test`)
   - Acceptance (E2E): Playwright (`npm run test:acceptance` / `npm run test:e2e`)
 - Baseline validation includes staged automated checks plus manual browser flow checks.
+- GitHub automation baseline:
+  - Required PR gate: `CI / build-and-unit` (runs `npm run build` + `npm run test:unit`).
+  - Extended quality check: `Extended Quality / integration-and-acceptance` (runs on `main`, nightly schedule, and manual dispatch).
 
 ## Required Story Test Execution Order
 For every developed story, execute tests in this order:
@@ -112,9 +115,14 @@ Focus on user outcomes:
 - [ ] Screen 4 summary action is conditional: `Next Topic` when passed, `Retry Challenge` when failed.
 - [ ] Screen 4 summary always includes a `World Map` button in both pass and fail states.
 
-## Automation TBDs
-- CI execution pipeline: TBD.
-- Artifact for test reports/coverage: TBD.
+## Automation Baseline
+- CI workflow: `.github/workflows/ci.yml`
+  - Trigger: pull requests and pushes to `main`.
+  - Required status check target: `CI / build-and-unit`.
+- Extended quality workflow: `.github/workflows/extended-quality.yml`
+  - Trigger: pushes to `main`, nightly schedule, and manual dispatch.
+  - Coverage: integration + acceptance suites.
+  - Artifacts: Playwright report and test-results uploaded on every run.
 
 ## Source References
 - `_bmad-output/planning-artifacts/functional-requirements-mvp.md`

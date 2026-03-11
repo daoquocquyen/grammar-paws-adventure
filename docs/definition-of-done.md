@@ -45,6 +45,7 @@
 - [ ] Requirements traced to source artifact (PRD/FR/slice).
 - [ ] UI behavior documented in `docs/feature-file-map.md` and relevant screen files.
 - [ ] Security baseline checklist completed.
+- [ ] Required GitHub checks pass on PR (`CI / build-and-unit`, `Security / dependency-review`).
 - [ ] Unit, integration, and acceptance tests are created/updated for changed behavior.
 - [ ] Manual test steps are printed in the story implementation artifact before manual validation.
 - [ ] Unit tests pass before manual testing begins.
@@ -67,6 +68,8 @@
 - [ ] All applicable story-level DoD boxes are complete.
 - [ ] No critical route mismatches remain.
 - [ ] Manual end-to-end smoke path passes.
+- [ ] Required PR checks are green and merged to protected `main`.
+- [ ] Production deployment health is verified in Vercel after merge.
 - [ ] Open risks are explicitly accepted or resolved.
 
 ## Source References

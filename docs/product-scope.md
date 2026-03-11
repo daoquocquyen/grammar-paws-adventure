@@ -55,8 +55,6 @@
 - Topic definitions and aspect counts are owned by centralized in-repo metadata (`src/lib/topicCatalog.js`).
 
 ## TBD Gaps (Do Not Assume)
-- Canonical branch/PR policy for solo workflow.
-- Hosting/release target and rollout strategy.
 - Production content pipeline for question bank and copy moderation.
 
 ## Source References

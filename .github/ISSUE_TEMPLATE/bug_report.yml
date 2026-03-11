@@ -1,0 +1,41 @@
+name: Bug report
+description: Report a reproducible problem
+labels:
+  - type:bug
+body:
+  - type: markdown
+    attributes:
+      value: "Please include exact steps and expected behavior."
+  - type: input
+    id: summary
+    attributes:
+      label: Summary
+      description: One-line description of the bug
+      placeholder: World map does not load after onboarding
+    validations:
+      required: true
+  - type: textarea
+    id: steps
+    attributes:
+      label: Steps to reproduce
+      description: Provide exact numbered steps
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected behavior
+    validations:
+      required: true
+  - type: textarea
+    id: actual
+    attributes:
+      label: Actual behavior
+    validations:
+      required: true
+  - type: input
+    id: environment
+    attributes:
+      label: Environment
+      description: Browser, OS, and app branch/commit
+      placeholder: Chrome 124, macOS, main@abcdef
