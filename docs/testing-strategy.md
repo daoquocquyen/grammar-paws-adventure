@@ -6,7 +6,7 @@
   - Acceptance (E2E): Playwright (`npm run test:acceptance` / `npm run test:e2e`)
 - Baseline validation includes staged automated checks plus manual browser flow checks.
 - GitHub automation baseline:
-  - Required PR gate: `CI / build-and-unit` (runs `npm run build` + `npm run test:unit`).
+  - Required PR gate: `build-and-unit` (runs `npm run build` + `npm run test:unit`).
   - Extended quality check: `Extended Quality / integration-and-acceptance` (runs on `main`, nightly schedule, and manual dispatch).
 
 ## Required Story Test Execution Order
@@ -118,7 +118,7 @@ Focus on user outcomes:
 ## Automation Baseline
 - CI workflow: `.github/workflows/ci.yml`
   - Trigger: pull requests and pushes to `main`.
-  - Required status check target: `CI / build-and-unit`.
+  - Required status check target: `build-and-unit`.
 - Extended quality workflow: `.github/workflows/extended-quality.yml`
   - Trigger: pushes to `main`, nightly schedule, and manual dispatch.
   - Coverage: integration + acceptance suites.
