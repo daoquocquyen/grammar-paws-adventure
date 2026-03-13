@@ -2,7 +2,7 @@ import { expect, test } from "@playwright/test";
 
 test.describe("Story 1.4 acceptance", () => {
     test("routes from world map to topic intro and persists selected topic", async ({ page }) => {
-        await page.goto("/");
+        await page.goto("/onboarding");
 
         await page.evaluate(() => {
             window.localStorage.setItem(
@@ -32,7 +32,7 @@ test.describe("Story 1.4 acceptance", () => {
     });
 
     test("renders mastery from topic XP snapshot with range-based wording", async ({ page }) => {
-        await page.goto("/");
+        await page.goto("/onboarding");
 
         await page.evaluate(() => {
             window.localStorage.setItem(

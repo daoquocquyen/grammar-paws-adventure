@@ -57,40 +57,56 @@ Planning artifacts were used only to identify intended behavior and mark gaps.
   - `contentState`
 - Other screens mostly show static visual variants (locked/in-progress/completed), not dynamic state transitions.
 
-## End-to-End User Journey (Screens 1-4)
-1. **Home / Start Journey**: child sees game intro, name input, pet options, and start CTA.
-2. **World Map / Topic Selection**: child sees topic progression cards; selected in-progress topic starts.
-3. **Grammar Topic Intro**: selected topic loads, aspects/examples displayed, voice narration controls available.
-4. **Game Challenge**: child answers question with progress context and supportive helper copy.
+## End-to-End User Journey (Screens 1-5)
+1. **Home / Player Select**: child sees existing learner cards (name + hero + pet avatar) and can continue directly.
+2. **Onboarding / Start Journey**: child creates a new learner profile (name + hero + pet) when tapping `New User`.
+3. **World Map / Topic Selection**: child sees topic progression cards; selected in-progress topic starts.
+4. **Grammar Topic Intro**: selected topic loads, aspects/examples displayed, voice narration controls available.
+5. **Game Challenge**: child answers question with progress context and supportive helper copy.
 
 Current navigation status:
+- Home player-select is on `/`.
+- Onboarding flow is on `/onboarding`.
 - Screen 3 `Start Challenge` now routes to `/challenge` in the Next.js app.
 - Legacy compatibility route `/screen4-game-challenge` redirects to `/challenge` via `next.config.mjs`.
 
 ## Screen-Level Specs
 
-## Screen 1: Home / Start Journey
-- UX goal: simple onboarding and emotional hook before learning begins.
+## Screen 1: Home / Player Select
+- UX goal: quick resume for returning learners while keeping new-user entry obvious.
 - Key components:
-  - Shared branded header (title + subtitle via reusable header component).
+  - Shared branded top header via reusable header component (same treatment as onboarding).
+  - Standalone `Choose Your Adventurer` heading and helper text (no enclosing panel).
+  - Existing learner cards arranged in a centered horizontal carousel that shows one card at a time (left/right chevrons + ArrowLeft/ArrowRight keyboard support) with a `Welcome Back, Adventurer!` heading, paired hero/pet avatars, level badge, and learner details (`Hero`, `Companion`, `Active Topic`, `Completed Topics`, `Last Played`).
+  - Bottom-centered `New Adventurer` CTA below the learner cards.
+- Interaction behavior:
+  - Home reads profile directory from `gpa_player_profiles_v1`.
+  - Home auto-redirects to `/onboarding` when no stored learner profiles exist.
+  - Home `Active Topic` label resolves to the learner's last unlocked topic based on sequential topic prerequisites.
+  - Selecting an existing learner sets active profile (`gpa_player_profile_v1`) and routes to `/world-map`.
+  - `New Adventurer` routes to `/onboarding`.
+- CTA hierarchy:
+  - Primary: learner-card `Continue Adventure`.
+  - Secondary: `New Adventurer`.
+- State handling:
+  - Empty state prompts learner to create first profile.
+  - Existing profile selection keeps player-scoped progress/accessories behavior.
+
+## Screen 1B: Onboarding / Start Journey
+- UX goal: simple profile creation and emotional hook before learning begins.
+- Key components:
   - Name input card.
   - Hero selection grid (8 options shown).
   - Companion selection grid (8 options shown).
-  - Hero + companion preview panel with two supportive dialog bubbles and center connector badge.
-  - Primary CTA: Start Adventure.
+  - Hero + companion preview panel with supportive dialog bubbles and center connector badge.
+  - Primary CTA: `Start Adventure`.
 - Interaction behavior:
-  - Current JS hydrates onboarding fields from `gpa_player_profile_v1`.
+  - Hydrates onboarding fields from active profile (`gpa_player_profile_v1`) when present.
   - `Start Adventure` validates name + hero + companion selection before routing.
-  - Preview panel updates avatar and dialog copy based on selected hero and companion.
-  - Preview dialog borders and curl-tail outlines dynamically match the selected hero/pet avatar background color.
-- CTA hierarchy:
-  - Primary: `Start Adventure`.
-  - Secondary actions are visual only in current implementation.
+  - Persists/updates profile directory and active profile before routing to `/world-map`.
 - State handling:
   - Inline validation states for name/hero/companion with ARIA-live feedback.
-  - Name, hero, and companion validation messages are rendered in each card header (single-line) with reserved space so card/panel height remains stable before and after validation.
-  - Hero and companion dialog bubbles use transparent fills with color-matched borders (outline-first speech style).
-  - Legacy mood bar and next-milestone card are removed from the Screen 1 preview panel.
+  - Name, hero, and companion validation messages reserve space to avoid layout shift.
 
 ## Screen 2: World Map / Topic Selection
 - UX goal: orient child in progression and guide to next actionable topic.

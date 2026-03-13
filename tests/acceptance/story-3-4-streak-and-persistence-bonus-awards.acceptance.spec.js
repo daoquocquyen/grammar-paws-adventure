@@ -21,7 +21,7 @@ const dragCurrentCorrectAnswer = async (page) => {
 
 test.describe("Story 3.4 acceptance", () => {
     test("shows base-only totals in summary without bonus sections", async ({ page }) => {
-        await page.goto("/");
+        await page.goto("/onboarding");
 
         await page.evaluate(() => {
             window.localStorage.setItem("gpa_selected_topic_v1", "nouns");

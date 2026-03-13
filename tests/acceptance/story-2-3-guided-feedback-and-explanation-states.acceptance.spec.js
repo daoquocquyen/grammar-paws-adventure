@@ -3,7 +3,7 @@ import { dragOptionToBlank } from "./challengeDragHelpers";
 
 test.describe("Story 2.3 acceptance", () => {
     test("supports guided retry and locks question after third wrong attempt", async ({ page }) => {
-        await page.goto("/");
+        await page.goto("/onboarding");
 
         await page.evaluate(() => {
             window.localStorage.setItem("gpa_selected_topic_v1", "nouns");

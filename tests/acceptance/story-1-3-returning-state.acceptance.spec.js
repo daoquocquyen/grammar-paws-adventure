@@ -2,7 +2,7 @@ import { expect, test } from "@playwright/test";
 
 test.describe("Story 1.3 acceptance", () => {
     test("initializes progress and accessories storage on valid start", async ({ page }) => {
-        await page.goto("/");
+        await page.goto("/onboarding");
 
         await page.getByLabel("Enter your hero name").fill("Mia");
         await page.getByRole("button", { name: "Mia" }).first().click();

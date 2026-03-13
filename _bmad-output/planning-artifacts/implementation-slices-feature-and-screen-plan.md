@@ -5,19 +5,23 @@ Build vertical slices that are independently testable and demoable. Each slice i
 
 ## Slice 1: Foundation + Topic Intro (Screen-first)
 ### Screens
-- Home / Start Journey (Kid Onboarding)
+- Home / Player Select
+- Onboarding / Start Journey
 - World Map / Topic Selection
 - Grammar Topic Intro
 
 ### Features
+- Existing player card list (name + hero + pet avatar) on home
+- New User routing from home to onboarding
 - Local player profile creation (name)
-- Pet 3D avatar selection
-- Short game introduction on first screen
+- Hero and pet avatar selection on onboarding
+- Short game introduction on onboarding
 - Topic metadata loading (aspects + examples)
 - Intro screen with pet voice and controls
 
 ### Done Criteria
-- Child can enter name, choose pet avatar, and start journey in one simple flow.
+- Child can select an existing profile on home and continue directly to world map.
+- Child can tap New User, enter name, choose hero/pet avatar, and start journey from onboarding.
 - Selecting a topic always opens intro first.
 - Intro displays all aspects with examples.
 - Narration replay/mute works or degrades safely.

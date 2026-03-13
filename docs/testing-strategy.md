@@ -45,9 +45,12 @@ Focus on deterministic gameplay rules:
 
 ### Integration
 Focus on feature seams between screens and storage:
-- Screen 1 profile -> localStorage (`gpa_player_profile_v1`).
-- Screen 1 save flow also initializes/updates progress + accessories state (`gpa_player_progress_v1`, `gpa_pet_accessories_v1`).
-- Screen 1 save flow scopes progress/accessories to active learner identity (`*__player__{playerId}`) and prevents cross-learner XP/progress bleed.
+- Home player-select (`/`) reads profile directory from `gpa_player_profiles_v1`.
+- Home `New User` routes to `/onboarding`.
+- Home existing-user selection sets active profile (`gpa_player_profile_v1`) and routes to `/world-map`.
+- Onboarding (`/onboarding`) profile save flow writes `gpa_player_profile_v1`.
+- Onboarding save flow also initializes/updates progress + accessories state (`gpa_player_progress_v1`, `gpa_pet_accessories_v1`).
+- Onboarding save flow scopes progress/accessories to active learner identity (`*__player__{playerId}`) and prevents cross-learner XP/progress bleed.
 - Screen 2 topic selection -> localStorage (`gpa_selected_topic_v1`) + route.
 - Screen 2 default focus resolves to the latest unlocked topic card from progress state.
 - Screen 2 carousel auto-scroll keeps the focused latest unlocked card visible on initial load.
@@ -88,15 +91,16 @@ Focus on user outcomes:
 ## Manual Regression Checklist (Required Before Integration/Acceptance Execution)
 - [ ] `npm run build` passes for Next.js runtime.
 - [ ] React route `/` loads without console-breaking errors.
-- [ ] React Screen 1 validation blocks start when name or pet is missing.
-- [ ] React Screen 1 navigates to `/world-map` when valid.
+- [ ] React route `/onboarding` loads without console-breaking errors.
+- [ ] React `/onboarding` validation blocks start when name or pet is missing.
+- [ ] React `/onboarding` navigates to `/world-map` when valid.
 - [ ] All existing screen files load without console-breaking errors.
 - [ ] Screen 2 `Start Topic` stores selected topic and opens screen 3.
 - [ ] Screen 2 default focused card is the latest unlocked topic for the current progress state.
 - [ ] Screen 2 auto-scroll reveals the default focused card when it is outside the first visible 4-card viewport.
 - [ ] Screen 2 topic mastery bars reflect stored topic XP ratio (`earned_base_xp / max_base_xp`) and mastery badge wording matches the configured percent tier.
 - [ ] Screen 2 topic boxes display percent-only progress text for all states (do not show `XP/max XP` detail line).
-- [ ] Screen 1 persists learner name + selected pet and survives hard refresh.
+- [ ] Onboarding persists learner name + selected pet and survives hard refresh.
 - [ ] Progress and accessory state keys restore expected UI context on next visit.
 - [ ] Corrupt/missing persisted data degrades safely to first-time flow without crash.
 - [ ] Screen 3 loads topic data and toggles loading/error/content states correctly.

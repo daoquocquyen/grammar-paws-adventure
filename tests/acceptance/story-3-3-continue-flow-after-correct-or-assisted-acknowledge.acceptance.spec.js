@@ -21,7 +21,7 @@ const dragCurrentCorrectAnswer = async (page) => {
 
 test.describe("Story 3.3 acceptance", () => {
     test("gates continue by state and routes last question to summary", async ({ page }) => {
-        await page.goto("/");
+        await page.goto("/onboarding");
 
         await page.evaluate(() => {
             window.localStorage.setItem("gpa_selected_topic_v1", "nouns");

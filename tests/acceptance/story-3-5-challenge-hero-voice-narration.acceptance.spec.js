@@ -62,7 +62,7 @@ test.describe("Story 3.5 acceptance", () => {
             });
         });
 
-        await page.goto("/");
+        await page.goto("/onboarding");
         await page.evaluate(() => {
             window.localStorage.setItem("gpa_selected_topic_v1", "nouns");
             window.localStorage.setItem("gpa_voice_settings_v1", JSON.stringify({ muted: false }));

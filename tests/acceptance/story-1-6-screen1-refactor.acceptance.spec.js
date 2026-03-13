@@ -2,7 +2,7 @@ import { expect, test } from "@playwright/test";
 
 test.describe("Story 1.6 acceptance", () => {
     test("keeps Screen 1 sections and valid start flow intact", async ({ page }) => {
-        await page.goto("/");
+        await page.goto("/onboarding");
 
         await expect(page.getByRole("heading", { name: "Your name" })).toBeVisible();
         await expect(page.getByRole("heading", { name: "Your Hero" })).toBeVisible();

@@ -4,6 +4,11 @@ const nextConfig = {
     async redirects() {
         return [
             {
+                source: "/screen1-home-start-journey",
+                destination: "/onboarding",
+                permanent: true,
+            },
+            {
                 source: "/screen2-world-map-topic-selection",
                 destination: "/world-map",
                 permanent: true,

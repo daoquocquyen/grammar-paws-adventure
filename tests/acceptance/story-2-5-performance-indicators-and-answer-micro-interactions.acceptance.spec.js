@@ -3,7 +3,7 @@ import { dragOptionToBlank } from "./challengeDragHelpers";
 
 test.describe("Story 2.5 acceptance", () => {
     test("shows indicator mapping and non-punitive micro-interaction states", async ({ page }) => {
-        await page.goto("/");
+        await page.goto("/onboarding");
 
         await page.evaluate(() => {
             window.localStorage.setItem("gpa_selected_topic_v1", "nouns");

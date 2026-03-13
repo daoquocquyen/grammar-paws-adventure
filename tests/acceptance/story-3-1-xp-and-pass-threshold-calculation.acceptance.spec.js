@@ -37,7 +37,7 @@ const findEnabledWrongIndex = async (page, correctAnswer) => {
 
 test.describe("Story 3.1 acceptance", () => {
     test("computes XP and pass summary from recorded outcomes", async ({ page }) => {
-        await page.goto("/");
+        await page.goto("/onboarding");
         await page.evaluate(() => {
             window.localStorage.setItem("gpa_selected_topic_v1", "nouns");
         });

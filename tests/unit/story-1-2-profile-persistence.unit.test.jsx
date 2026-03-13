@@ -7,7 +7,7 @@ vi.mock("next/navigation", () => ({
     useRouter: () => ({ push: pushMock }),
 }));
 
-import Home from "../../app/page";
+import Home from "../../app/onboarding/page";
 
 describe("Story 1.2 unit", () => {
     it("persists versioned player profile before navigating", () => {
