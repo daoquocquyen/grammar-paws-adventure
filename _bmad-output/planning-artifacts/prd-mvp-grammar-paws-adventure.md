@@ -28,14 +28,15 @@ Grammar Paws Adventure is a kid-first web game for an 11-year-old non-native Eng
 
 ## 6) MVP Scope
 ### Core Learning Flow
-1. Home / Start Journey onboarding (name + 3D hero avatar + pet avatar + short intro)
-2. Topic selection
-3. Grammar Topic Intro screen
-4. Challenge questions
-5. Per-question explanation feedback
-6. Results + pass/fail logic
-7. Reward selection (if passed)
-8. Pet customization and milestone evolution
+1. Home / Player Select (existing learners with name + hero + pet avatar + New User CTA)
+2. Onboarding / Start Journey (name + 3D hero avatar + pet avatar + short intro)
+3. Topic selection
+4. Grammar Topic Intro screen
+5. Challenge questions
+6. Per-question explanation feedback
+7. Results + pass/fail logic
+8. Reward selection (if passed)
+9. Pet customization and milestone evolution
 
 ### Core Topics (first 8)
 1. Nouns (common/proper)
@@ -48,13 +49,16 @@ Grammar Paws Adventure is a kid-first web game for an 11-year-old non-native Eng
 8. Basic punctuation
 
 ## 7) Functional Requirements (High-Level)
-### FR-00 Home / Start Journey Onboarding
+### FR-00 Home / Player Select + Onboarding
 - First screen must be child-friendly and simple.
-- Must include player name input.
-- Must allow choosing one 3D hero avatar from 8 kid avatars (4 male, 4 female) before starting.
-- Must allow choosing one preferred pet avatar before starting.
-- Must include a short game introduction.
-- Must provide Start Adventure action that routes to topic selection.
+- First screen must show existing learner cards using stored profile data (name, hero avatar, pet avatar).
+- First screen must include a `New User` action that routes to onboarding.
+- Selecting an existing learner card must set active learner context and route directly to topic selection.
+- Onboarding must include player name input.
+- Onboarding must allow choosing one 3D hero avatar from 8 kid avatars (4 male, 4 female) before starting.
+- Onboarding must allow choosing one preferred pet avatar before starting.
+- Onboarding must include a short game introduction.
+- Onboarding must provide `Start Adventure` action that creates/updates learner profile and routes to topic selection.
 
 ### FR-01 Grammar Topic Intro Screen
 - Must appear before challenge starts for every topic attempt.

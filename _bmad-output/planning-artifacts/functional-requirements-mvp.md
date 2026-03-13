@@ -28,14 +28,17 @@
 
 ## 2) Screen-Level Functional Requirements
 
-### SR-00 Home / Start Journey
-- Must be the first screen for a new/local player profile.
-- Capture player name input.
-- Allow choosing one 3D hero avatar from exactly 6 kid avatars (3 male and 3 female).
-- Allow choosing one pet avatar from available options.
-- Display a short game introduction (2-3 short lines).
-- Primary CTA starts journey and routes to World Map / Topic Selection.
-- Show validation if name, hero avatar, or pet selection is missing.
+### SR-00 Home / Player Select + Onboarding
+- Home screen must be the first screen and must show existing learner cards when stored profiles exist.
+- Each learner card must display learner name, hero avatar, and pet avatar.
+- Home screen must provide a `New User` action that routes to onboarding.
+- Selecting an existing learner card must set active learner profile and route to World Map / Topic Selection.
+- Onboarding screen must capture player name input.
+- Onboarding must allow choosing one 3D hero avatar from exactly 8 kid avatars (4 male and 4 female).
+- Onboarding must allow choosing one pet avatar from available options.
+- Onboarding must display a short game introduction (2-3 short lines).
+- Onboarding primary CTA starts journey and routes to World Map / Topic Selection.
+- Onboarding must show validation if name, hero avatar, or pet selection is missing.
 
 ### SR-01 World Map / Topic Selection
 - Show available topics with progress state.

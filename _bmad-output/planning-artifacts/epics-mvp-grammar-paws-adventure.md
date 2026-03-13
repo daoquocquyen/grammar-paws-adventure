@@ -1,7 +1,7 @@
 # Epics and Stories — Grammar Paws Adventure MVP
 
-## Epic 1: Foundation Onboarding and Returning Session
-Goal: Child can start quickly, and returning learners continue without repeating onboarding.
+## Epic 1: Foundation Entry, Onboarding, and Returning Session
+Goal: Child can choose an existing profile or create a new one quickly, and returning learners continue without repeating onboarding.
 
 ### Story 1.1: Onboarding Name and Pet Selection Validation
 As a child learner,
@@ -37,6 +37,11 @@ so that future screens can share consistent UI and reduce duplicated code.
 As a child learner,
 I want to choose my 3D hero avatar from 8 kid avatars (4 male and 4 female) and also choose my pet avatar,
 so that my learning journey feels personal from the first screen.
+
+### Story 1.8: Home Player Select and New User Route Split
+As a learner,
+I want home to show existing player cards and a New User button,
+so that I can continue an existing journey quickly or go to onboarding for a new profile.
 
 ## Epic 2: Challenge Engine and Explanations
 Goal: Core challenge loop uses guided correction, supportive feedback, and clear performance indicators.

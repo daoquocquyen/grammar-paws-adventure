@@ -48,6 +48,7 @@ development_status:
   1-5-topic-intro-rendering-and-voice-controls: done
   1-6-react-reusable-ui-components-and-screen1-refactor: done
   1-7-onboarding-hero-avatar-selection-6-avatars-and-validation: done
+  1-8-home-player-select-and-onboarding-route-split: done
   epic-1-retrospective: optional
 
   epic-2: in-progress

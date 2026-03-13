@@ -45,7 +45,8 @@
 - Start dev server: `npm run dev`
 - Open: `http://localhost:3000/`
 - Migrated routes:
-  - `/` (React Screen 1)
+  - `/` (React home player-select)
+  - `/onboarding` (React onboarding)
   - `/world-map`
   - `/topic-intro`
   - `/challenge`

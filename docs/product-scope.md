@@ -14,7 +14,8 @@
 - Tie learning completion to pet rewards/progression.
 
 ## In Scope (MVP Boundary)
-- Home onboarding: name + pet selection in one start flow.
+- Home player-select hub: show existing learner cards (name + hero + pet avatar) plus `New User` action.
+- New user onboarding: name + hero + pet selection in a dedicated start flow.
 - Returning session restore: if learner profile exists, restore name, selected pet, progress, and equipped accessories so onboarding does not need to be redone.
 - Learner identity isolation: entering a different learner name starts a separate progression state (XP/progress/accessories) and must not reuse another learner's saved data.
 - Topic selection map with progress/lock states.
@@ -38,9 +39,10 @@
 - Multiple pet species.
 - Advanced/custom voice provider integrations.
 
-## Current Implementation Boundary (as of 2026-03-09)
+## Current Implementation Boundary (as of 2026-03-12)
 - Active Next.js routes exist for:
-  - Screen 1 (`/`): onboarding + profile hydrate from localStorage.
+  - Screen 1 (`/`): player-select home with existing learner cards (`name`, `hero`, `pet avatar`) and `New User` route to onboarding.
+  - Screen 1B (`/onboarding`): onboarding + profile hydrate/persist from localStorage.
   - Screen 2 (`/world-map`): topic selection + save selected topic + route to intro.
   - Screen 3 (`/topic-intro`): loading/error/content states + voice controls + dynamic aspect rendering from shared topic metadata.
   - Screen 4 (`/challenge`): challenge flow shell with dynamic question selection tied to selected topic aspects.
@@ -65,6 +67,8 @@
 - `src/ui/stitch/screen2-world-map-topic-selection.html`
 - `src/ui/stitch/screen3-grammar-topic-intro.html`
 - `src/ui/stitch/screen4-game-challenge.html`
+- `app/page.js`
+- `app/onboarding/page.js`
 - `app/topic-intro/page.js`
 - `app/challenge/page.js`
 - `src/lib/topicCatalog.js`
