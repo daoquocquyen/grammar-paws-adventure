@@ -2,7 +2,7 @@ import { expect, test } from "@playwright/test";
 
 test.describe("Story 2.2 acceptance", () => {
     test("produces a different question set on consecutive retries for same topic", async ({ page }) => {
-        await page.goto("/");
+        await page.goto("/onboarding");
 
         await page.evaluate(() => {
             window.localStorage.setItem("gpa_selected_topic_v1", "nouns");

@@ -27,7 +27,7 @@ const findOptionIndexes = async (page, correctAnswer) => {
 
 test.describe("Story 3.2 acceptance", () => {
     test("enforces guided retry and coached acknowledge flow", async ({ page }) => {
-        await page.goto("/");
+        await page.goto("/onboarding");
         await page.evaluate(() => {
             window.localStorage.setItem("gpa_selected_topic_v1", "nouns");
         });

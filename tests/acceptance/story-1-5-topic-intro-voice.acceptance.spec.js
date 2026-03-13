@@ -2,7 +2,7 @@ import { expect, test } from "@playwright/test";
 
 test.describe("Story 1.5 acceptance", () => {
     test("shows safe topic-intro error state for unknown selected topic", async ({ page }) => {
-        await page.goto("/");
+        await page.goto("/onboarding");
 
         await page.evaluate(() => {
             window.localStorage.setItem("gpa_selected_topic_v1", "unknown-topic-key");

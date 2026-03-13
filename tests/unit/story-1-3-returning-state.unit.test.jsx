@@ -7,7 +7,7 @@ vi.mock("next/navigation", () => ({
     useRouter: () => ({ push: pushMock }),
 }));
 
-import Home from "../../app/page";
+import Home from "../../app/onboarding/page";
 
 describe("Story 1.3 unit", () => {
     it("repairs malformed progress and accessories payloads", () => {
